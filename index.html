@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzLib說明書</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Mobile Header (重新設計排版，防止 Icon 重疊) -->
+    <header class="mobile-header">
+        <div class="header-left-group">
+            <button id="mobile-menu-btn" class="mobile-menu-btn" title="選單">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-title">
+                <span class="page-icon" style="font-size: 20px;">🤖</span>
+                <span class="header-text">EzLib說明書</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">目錄導航</div>
+        <div class="sidebar-theme-toggle">
+            <span class="theme-label">暗黑模式</span>
+            <button id="theme-toggle" class="theme-toggle-btn" title="切換暗黑模式">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        
+        <div class="nav-group">
+            <a href="#intro" class="nav-link">📘 序言：系統核心理念</a>
+            <a href="#preface" class="nav-link">⚠️ 序章：使用前必讀警告</a>
+        </div>
+        
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第一章</div>
+            <a href="#ch1-setup" class="nav-link">⚙️ 系統初始化與 Setup</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第二章</div>
+            <a href="#ch2-ezdrive" class="nav-link">🎯 EzDrive 底盤 PID 控制</a>
+            <a href="#ch2-inline-pid" class="nav-link">📐 專屬距離的自訂 PID</a>
+            <a href="#ch2-slew-exit" class="nav-link">⏳ 非同步與 WaitUntil</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第三章</div>
+            <a href="#ch3-lemlib" class="nav-link">📍 LemLib 移動指令</a>
+            <a href="#ch3-movetopoint" class="nav-link">🎯 moveToPoint 直線移動</a>
+            <a href="#ch3-movetopose" class="nav-link">🚀 moveToPose 曲線姿態</a>
+            <a href="#ch3-turnto" class="nav-link">🧭 turnTo 轉向控制</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第四章</div>
+            <a href="#ch4-reset" class="nav-link">🧱 重置座標 (Reset Odometry)</a>
+            <a href="#ch4-wallreset" class="nav-link">💥 撞牆重置 (wallReset)</a>
+            <a href="#ch4-getrealpose" class="nav-link">📏 感測器絕對定位 (getRealPose)</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第五章</div>
+            <a href="#ch5-fsm" class="nav-link">🔄 狀態機 (FSM) 與防卡死</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第六章</div>
+            <a href="#ch6-examples" class="nav-link">📖 實戰 Auto 寫法範例</a>
+            <a href="#ch6-auto-init" class="nav-link">🛑 1. 為何放棄自動對位？</a>
+            <a href="#ch6-skills" class="nav-link">🔥 2. Skills 完美混合連招</a>
+            <a href="#ch6-opcontrol" class="nav-link">🎮 3. 極度乾淨的 Opcontrol</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第七章</div>
+            <a href="#ch7-debug" class="nav-link">🛠️ 遙測與手制快捷鍵</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content-container" id="scroll-area">
+        <div class="page-cover"></div>
+        
+        <div class="page-content">
+            <!-- Intro -->
+            <section id="intro">
+                <h1 class="page-title"><span class="page-icon">🤖</span>EzLib說明書</h1>
+                <p style="color: var(--text-muted); font-size: 18px; margin-top: -10px; margin-bottom: 20px;">專屬高階競技架構：LemLib + EzDrive 混合動力系統</p>
+                
+                <div class="callout success">
+                    <div class="callout-icon">📥</div>
+                    <div class="callout-content">
+                        <h4>下載 EzLib</h4>
+                        <p>點擊下方鏈接下載最新版本的 EzLib：<br>
+                        <a href="https://gofile.io/d/ltHiTh" target="_blank" style="color: var(--accent-blue); font-weight: 700;">下載 ezLib.zip</a></p>
+                        </div>
+                </div>
+                
+                <!-- Preface: Warning Section -->
+            <section id="preface">
+                <h1 class="page-title"><span class="page-icon">⚠️</span>使用前必讀：重要警告</h1>
+                <p style="color: var(--text-muted); font-size: 18px; margin-top: -10px; margin-bottom: 20px;">在使用 EzLib 之前，請務必仔細閱讀以下內容</p>
+                
+                <div class="callout warning">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-content">
+                        <h4>⚠️ 重要警告</h4>
+                        <p>本章內容包含<strong>強烈建議</strong>遵守的關鍵注意事項。跳過本章可能導致嚴重後果。</p>
+                    </div>
+                </div>
+                
+                <div class="callout danger">
+                    <div class="callout-icon">💀</div>
+                    <div class="callout-content">
+                        <h4>請先理解再使用，否則必被 G4</h4>
+                        <p>在使用本套 EzLib 架構之前，你<strong>必須</strong>徹底理解以下核心概念：</p>
+                        <ul>
+                            <li><strong>LemLib 的 Odometry 原理與限制</strong>：為什麼它會產生累積誤差？</li>
+                            <li><strong>EzDrive 的 PID 控制邏輯</strong>：為何需要短距離精準控制？</li>
+                            <li><strong>座標重置的時機與方法</strong>：何時需要強制重置？如何執行？</li>
+                            <li><strong>混合式架構的設計哲學</strong>：為何不能全程依賴單一方案？</li>
+                        </ul>
+                        <p>如果你<strong>沒有仔細閱讀並理解</strong>本說明書的內容，就直接使用本套系統，我<strong>強烈預期</strong>你會在比賽中被 G4。這不是威脅，而是對你跳過理解步驟的必然結果。</p>
+                        <p><strong>理解 → 懂原理 → 再使用</strong>。這是你避免被 G4 的唯一途徑。</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="G4.jpg" alt="G4 Warning" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                </div>
+                
+                <div class="callout success">
+                    <div class="callout-icon">📝</div>
+                    <div class="callout-content">
+                        <h4>學習路徑建議</h4>
+                        <p>建議按照以下順序學習：</p>
+                        <ol>
+                            <li>先理解系統核心理念（本章）</li>
+                            <li>仔細閱讀系統初始化與 Setup 章節</li>
+                            <li>掌握底盤 PID 控制原理</li>
+                            <li>學習 LemLib 移動指令的正確用法</li>
+                            <li>最後才實際應用於 Auto 編寫</li>
+                        </ol>
+                        <p>跳過任何步驟都可能導致你在比賽中失敗。</p>
+                    </div>
+                </div>
+            </section>
+                
+                <div class="callout danger">
+                    <div class="callout-icon">🚨</div>
+                    <div class="callout-content">
+                        <h4>為什麼不能全程依賴 LemLib？</h4>
+                        <p>LemLib 的 Odometry (里程計) 非常強大，但<strong>絕對不能全程單靠它跑完 15/60 秒的 Auto</strong>。在實際比賽中，底盤碰撞、輪胎打滑、重心轉移，都會產生<strong>累積誤差 (Accumulated Error)</strong>。如果全程只信賴開局的 (0,0) 座標，到了中後段必定會出現嚴重的座標偏移 (Drift)。</p>
+                    </div>
+                </div>
+
+                <p>因此，本套系統採用了<strong>混合式架構</strong>：我們利用 LemLib 來處理複雜的曲線追蹤 (moveToPose)，同時必須結合我們自訂的 <strong>EzDrive</strong> 來執行極高精度的短距離直線/轉向 PID，並在關鍵時刻強制執行<strong>座標重置 (Reset Odometry)</strong>。只有這樣，才能確保 Auto 百發百中。</p>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 1 -->
+            <h2 id="ch1-setup">第一章：系統初始化與 Setup</h2>
+            
+            <p>在 <code>main.cpp</code> 的 <code>initialize()</code> 函數中，我們必須一次過設定好 LemLib、EzDrive 以及所有的背景任務 (Tasks)。這決定了整部機器人的物理反應基準。</p>
+
+            <div class="callout info">
+                <div class="callout-icon">📘</div>
+                <div class="callout-content">
+                    <h4>LemLib Chassis 設定注意事項</h4>
+                    <p>關於 LemLib <code>chassis</code> 基礎硬件設定（例如 Drivetrain、Sensors、PID 參數宣告），請直接參閱 <a href="https://lemlib.readthedocs.io/" target="_blank" style="color: var(--accent-blue);">LemLib 官方說明手冊</a>。本說明書將專注於實戰的進階邏輯與 EzDrive 自訂底盤的整合應用。</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 main.cpp -> initialize()</div>
+                <div class="code-block">
+<span class="c-kw">void</span> <span class="c-fn">initialize</span>() {
+    <span class="c-co">// --- 1. LemLib 初始化 ---</span>
+    chassis.<span class="c-fn">calibrate</span>(); <span class="c-co">// 必須執行，校準 IMU 與 Tracking Wheels</span>
+
+    <span class="c-co">// --- 2. EzDrive 參數設定 ---</span>
+    <span class="c-co">// 設定馬達 Cartridge (600: Blue, 200: Green, 100: Red)</span>
+    ezPID.<span class="c-fn">set_gear_cartridge</span>(<span class="c-st">600</span>);
+
+    <span class="c-co">// [直行 PID] P:推力, I:微調積分(預設0), D:煞車防震, Start_I:積分啟動閾值</span>
+    ezPID.<span class="c-fn">set_drive_constants</span>(<span class="c-st">0.85</span>, <span class="c-st">0</span>, <span class="c-st">12</span>, <span class="c-st">0</span>); 
+
+    <span class="c-co">// [直行修正 PID] 控制直行時 "多用力" 修正歪掉的角度</span>
+    ezPID.<span class="c-fn">set_heading_constants</span>(<span class="c-st">4</span>, <span class="c-st">0</span>, <span class="c-st">10</span>, <span class="c-st">0</span>);
+
+    <span class="c-co">// [轉向 PID] 控制原地旋轉</span>
+    ezPID.<span class="c-fn">set_turn_constants</span>(<span class="c-st">2.8</span>, <span class="c-st">0.02</span>, <span class="c-st">27</span>, <span class="c-st">15</span>);
+
+    <span class="c-co">// Slew Rate (加速度限制)：數值愈小，起動愈溫和。255 代表不限制。</span>
+    ezPID.<span class="c-fn">set_drive_slew</span>(<span class="c-st">10</span>); <span class="c-co">// 建議 8-15</span>
+    ezPID.<span class="c-fn">set_turn_slew</span>(<span class="c-st">255</span>); 
+
+    <span class="c-co">// 退出條件: (小誤差範圍, 小誤差時間, 大誤差範圍, 大誤差時間, 速度限制時間)</span>
+    ezPID.<span class="c-fn">set_drive_exit_conditions</span>(<span class="c-st">100</span>, <span class="c-st">100</span>, <span class="c-st">300</span>, <span class="c-st">500</span>, <span class="c-st">500</span>); <span class="c-co">// 單位: 馬達度數</span>
+    ezPID.<span class="c-fn">set_turn_exit_conditions</span>(<span class="c-st">1</span>, <span class="c-st">100</span>, <span class="c-st">3</span>, <span class="c-st">250</span>, <span class="c-st">500</span>);      <span class="c-co">// 單位: 角度</span>
+
+    <span class="c-co">// --- 3. 啟動多執行緒任務 (Multi-threading) ---</span>
+    pros::Task <span class="c-fn">intakeTask</span>(updateIntakeFSM); <span class="c-co">// 每 20ms 運算一次 FSM</span>
+    pros::Task <span class="c-fn">uiTask</span>(updateControllerUI); <span class="c-co">// 獨立處理螢幕顯示</span>
+}
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 2 -->
+            <h2 id="ch2-ezdrive">第二章：EzDrive 底盤 PID 控制</h2>
+            
+            <p>在 Auto 階段，EzDrive 負責執行最高精度的點對點移動與轉向。它完全由我們掌控，參數設定極度靈活。</p>
+
+            <h3 id="ch2-inline-pid">絕對準則：每一段距離都有最佳的 PID 數值</h3>
+            
+            <div class="callout warning">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-content">
+                    <h4>不能一條數用到尾</h4>
+                    <p>很多新手會犯一個嚴重錯誤：設定好一組 <code>kp, ki, kd</code> 後，就期望它能完美推動車子行 5 吋，又能完美行 50 吋。<strong>這在物理上是不可能的。</strong> 理論上，推動長距離需要更大的煞車力 (kd) 來抵消龐大的慣性；而短距離微調則需要更敏銳的比例推力 (kp)。</p>
+                </div>
+            </div>
+
+            <p>因此，我們的 <code>ezPID.drive</code> 支援 <strong>Inline PID (行內覆寫)</strong>。針對特定的距離，我們必須傳入專屬的 <code>{kp, ki, kd}</code> 陣列來覆寫全域預設值。</p>
+            
+            <div class="callout info">
+                <div class="callout-icon">💡</div>
+                <div class="callout-content">
+                    <h4>PID 模擬器</h4>
+                    <p>想要更直觀地理解 PID 控制原理，你可以使用這個互動式 PID 模擬器：<br>
+                    <a href="https://vex.ykyle.eu/pid" target="_blank" style="color: var(--accent-blue); font-weight: 700;">PID 模擬器 | VEX V5 教學</a></p>
+                    <p>透過這個模擬器，你可以調整不同的 PID 參數，觀察系統的響應曲線，從而更好地理解每個參數的作用。</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 語法: drive(目標, 最高速度, 逾時ms, PIDGains數值, 是否非同步)</span>
+
+<span class="c-co">// 1. 使用預設的 Global PID (適合一般距離)</span>
+ezPID.<span class="c-fn">turn</span>(<span class="c-st">90</span>, <span class="c-st">90</span>, <span class="c-st">1500</span>, <span class="c-kw">true</span>);
+
+<span class="c-co">// 2. 自訂專屬 PID 數組 (強烈要求使用！)</span>
+<span class="c-co">// 例如這段 710 度的移動，我們給予專屬的 {P:0.3, I:0, D:20} 來達到完美煞停</span>
+ezPID.<span class="c-fn">drive</span>(<span class="c-st">710</span>, <span class="c-st">125</span>, <span class="c-st">1000</span>, {<span class="c-st">0.3</span>, <span class="c-st">0</span>, <span class="c-st">20</span>}, <span class="c-kw">true</span>);
+                </div>
+            </div>
+
+            <h3 id="ch2-slew-exit" style="margin-top: 30px;">⏳ 非同步/同步控制與 WaitUntil</h3>
+            <p>在 <code>drive</code> 或 <code>turn</code> 的最後一個參數設為 <code>true</code> 即可開啟<strong>非同步模式 (Async)</strong>，讓程式可以立刻執行下一行（例如提早啟動 Intake）。</p>
+            
+            <div class="callout danger">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-content">
+                    <h4>重要：必須等待完成 (waitUntilDone)</h4>
+                    <p>配合 <code>ezPID.waitUntil(deg)</code> 觸發半途動作後，<strong>必須添加 <code>ezPID.waitUntilDone()</code></strong>。這能確保移動完全結束後才執行下一個底盤指令，否則新舊動作會嚴重衝突。</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 例子：車子向前行 1000 度，去到一半 (500度) 提早開 Intake</span>
+ezPID.<span class="c-fn">drive</span>(<span class="c-st">1000</span>, <span class="c-st">110</span>, <span class="c-st">2000</span>, <span class="c-kw">true</span>); <span class="c-co">// true 開啟非同步</span>
+ezPID.<span class="c-fn">waitUntil</span>(<span class="c-st">500</span>);             <span class="c-co">// 等待車子行到 500 度</span>
+intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);            <span class="c-co">// 半路開啟吸件</span>
+ezPID.<span class="c-fn">waitUntilDone</span>();              <span class="c-co">// 必須加！確保 1000 度行完才去下一句</span>
+                </div>
+            </div>
+
+            <p><strong>參數詳解：</strong></p>
+            <ul>
+                <li><code>motor_degrees / angle</code>：目標馬達度數 (直行) 或 目標絕對角度 (轉向)。</li>
+                <li><code>max_speed</code>：最高速度 (0-127)。</li>
+                <li><code>timeout</code>：強制退出時間 (毫秒)。安全網，防止死等。</li>
+                <li><code>gains</code>：PID 常數。傳入 <code>{kp, ki, kd}</code> 以作覆寫。</li>
+                <li><code>async</code>：布林值。設為 <code>true</code> 時，底盤在背景移動，程式會立刻往下執行下一行。</li>
+            </ul>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 3 -->
+            <h2 id="ch3-lemlib">第三章：LemLib 移動指令</h2>
+            <p>對於長距離、跨越半個場地、或者需要畫出優雅曲線的動作，我們交給 LemLib 處理。必須熟悉其結構體 <code>MoveToPoseParams</code> 的用法。</p>
+
+            <h3 id="ch3-movetopoint">1. moveToPoint (點對點直線移動)</h3>
+            <p>最基礎的移動方式。車子會計算自身位置與目標點的直線距離，並驅動底盤前往。<strong>注意：它不會管你到達時車頭指著哪裡。</strong></p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 基礎寫法：chassis.moveToPoint(x, y, timeout);</span>
+chassis.<span class="c-fn">moveToPoint</span>(<span class="c-st">24</span>, <span class="c-st">48</span>, <span class="c-st">2000</span>);
+
+<span class="c-co">// 進階寫法：加入參數 (Params)</span>
+chassis.<span class="c-fn">moveToPoint</span>(<span class="c-st">24</span>, <span class="c-st">48</span>, <span class="c-st">2000</span>, {
+    .<span class="c-vr">forwards</span> = <span class="c-kw">false</span>,  <span class="c-co">// 車尾向前駛過去 (預設 true)</span>
+    .<span class="c-vr">maxSpeed</span> = <span class="c-st">90</span>     <span class="c-co">// 限制最高速度 (0-127)</span>
+});
+                </div>
+            </div>
+
+            <h3 id="ch3-movetopose" style="margin-top: 30px;">2. moveToPose (曲線姿態移動)</h3>
+            <p>指令要求車子到達 <code>(x, y)</code> 時，車頭必須精確指著 <code>theta</code> 角度。</p>
+            
+            <div class="callout info">
+                <div class="callout-icon">💻</div>
+                <div class="callout-content">
+                    <h4>互動式模擬器</h4>
+                    <p>建議先使用 <a href="https://vex.ykyle.eu/moveToPose" target="_blank" style="color: var(--accent-blue); font-weight: 700;">moveToPose 模擬器</a> 練習參數調整，理解不同參數對機器人路徑的影響。</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 移至 (24, 48) 且最終車頭朝向 90度</span>
+chassis.<span class="c-fn">moveToPose</span>(<span class="c-st">24</span>, <span class="c-st">48</span>, <span class="c-st">90</span>, <span class="c-st">3000</span>, {
+    .<span class="c-vr">lead</span> = <span class="c-st">0.6</span>,      <span class="c-co">// 控制曲線的弧度 (靈魂參數！)</span>
+    .<span class="c-vr">minSpeed</span> = <span class="c-st">20</span>,   <span class="c-co">// 設定最低速度</span>
+    .<span class="c-vr">earlyExitRange</span> = <span class="c-st">5</span> <span class="c-co">// 距離目標 5 吋時提早結束指令，連貫下一動作</span>
+});
+                </div>
+            </div>
+
+            <h4 style="color: var(--text-bold); margin-top: 20px; margin-bottom: 10px;">MoveToPoseParams 結構完整參數詳解</h4>
+            <table class="notion-table">
+                <tr><th>參數 (Parameter)</th><th>詳細說明與應用場景</th></tr>
+                <tr><td><code>forwards</code></td><td>預設 <code>true</code>。設為 <code>false</code> 代表車尾向前行駛。</td></tr>
+                <tr><td><code>horizontalDrift</code></td><td>轉彎時的橫向漂移容許值。建議設 <code>2-15</code>。<code>0</code> 代表使用預設值。</td></tr>
+                <tr><td><code>lead</code></td><td>預設 <code>0.6</code>。決定車子多早就開始轉向。太低會直角急轉，太高會畫極大圓弧。</td></tr>
+                <tr><td><code>maxSpeed</code></td><td>限制最高速度 (0-127)。</td></tr>
+                <tr><td><code>minSpeed</code></td><td>最低速度。<strong>非常重要：</strong>設為非零值時，退出條件會切換為「較不精確但更平滑」，防止停車時窒頓。</td></tr>
+                <tr><td><code>earlyExitRange</code></td><td>連貫動作神技。<strong>必須配合 minSpeed > 0 使用</strong>。車子進入範圍內即提早結束指令，無縫接駁下一段路線。</td></tr>
+            </table>
+
+            <h3 id="ch3-turnto" style="margin-top: 30px;">3. turnToHeading & turnToPoint</h3>
+            <p>專注於原地轉向 (Pivot Turn)。</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 轉向面向座標點 (24, 48)</span>
+chassis.<span class="c-fn">turnToPoint</span>(<span class="c-st">24</span>, <span class="c-st">48</span>, <span class="c-st">1000</span>, {
+    .<span class="c-vr">direction</span> = AngularDirection::CW_CLOCKWISE, <span class="c-co">// 強制順時針轉，避開障礙物</span>
+    .<span class="c-vr">minSpeed</span> = <span class="c-st">15</span> <span class="c-co">// 保底推力，防止最後 1 度因摩擦力卡住</span>
+});
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 4 -->
+            <h2 id="ch4-reset">第四章：重置座標 (Reset Odometry)</h2>
+            <p>呼應序言：為了解決累積誤差，我們必須在 Auto 的中段，利用場地邊界或感測器重新校正 <code>(x, y, theta)</code>。</p>
+
+            <h3 id="ch4-wallreset">撞牆重置 (wallReset)</h3>
+            <p>利用電流偵測判定「確定撞實」，然後立刻重寫座標。</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 語法: wallReset(軸向, 速度, 目標角度, 逾時毫秒)</span>
+<span class="c-fn">wallReset</span>(<span class="c-st">'x'</span>, <span class="c-st">-40</span>, <span class="c-st">0</span>, <span class="c-st">500</span>);
+                </div>
+            </div>
+            <ul>
+                <li><code>axis</code>：輸入 <code>'x'</code> 或 <code>'y'</code>，告訴系統現正貼緊哪條軸的牆壁。</li>
+                <li><code>velocity</code>：例如 <code>-40</code> 代表以 40 力量向後倒車撞牆。</li>
+                <li><code>theta</code>：撞牆後強制寫入的車身角度 (例如 0 度)。</li>
+            </ul>
+
+            <h3 id="ch4-getrealpose">利用距離感測器絕對定位 (getRealPose)</h3>
+            <p>這是本系統極度高階的校正函數。我們能隔空射向牆壁計算完美座標，並內建了嚴謹的「防雜訊機制」。</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 計算真實座標</span>
+<span class="c-co">// 語法: getRealPose(預期值, 黃金距離(常數), 感測器物件, side)</span>
+<span class="c-ty">double</span> <span class="c-vr">new_y</span> = <span class="c-fn">getRealPose</span>(<span class="c-st">0</span>, <span class="c-st">16.3</span>, dist_right, <span class="c-st">1</span>);
+
+<span class="c-co">// 更新入底盤</span>
+chassis.<span class="c-fn">setPose</span>(chassis.<span class="c-fn">getPose</span>().x, <span class="c-vr">new_y</span>, chassis.<span class="c-fn">getPose</span>().theta);
+                </div>
+            </div>
+
+            <table class="notion-table">
+                <tr><th>參數 (Parameter)</th><th>設定與原理解釋</th></tr>
+                <tr><td><code>expected</code></td><td><strong>預期座標。</strong> 例：你期望車子此時在 Y = 0。</td></tr>
+                <tr><td><code>golden</code></td><td><strong>黃金距離。</strong> 當機器人「完美停在預期座標」時，感測器量度出來的標準數值 (例：16.3 吋)。需事先測量記錄。</td></tr>
+                <tr><td><code>sensor</code></td><td><strong>使用的測距儀。</strong> 例：<code>dist_right</code>。程式內部會連續讀取 5 次並取中位數來濾除雜訊。</td></tr>
+                <tr><td><code>side</code></td><td><strong>修正方向 (極重要)。</strong><br><code>1</code>：感測器指向場地的 North (北) 或 East (東) (座標增長的方向)。<br><code>-1</code>：感測器指向 South (南) 或 West (西) (座標減少的方向)。<br><em>原理：如果讀數比 golden 大了 1 吋，且 side 為 1，代表車子遠離了北牆，Y 座標必須修正減去 1 吋。</em></td></tr>
+            </table>
+
+            <div class="callout success">
+                <div class="callout-icon">🛡️</div>
+                <div class="callout-content">
+                    <h4>getRealPose 的內部防護機制</h4>
+                    <p>為何這個函數如此可靠？因為我們寫入了三層防護：<br>
+                    1. <strong>中位數濾波</strong>：連續抽 5 次數據排走極端值。<br>
+                    2. <strong>信心值攔截</strong>：如果讀數大於 8 吋，且感測器的 Confidence (信心值) 小於 60%，視為掃描到網子或裁判，直接回傳 <code>expected</code>，放棄修正。<br>
+                    3. <strong>微小誤差忽略</strong>：如果實測與 <code>golden</code> 相差小於 0.25 吋，視為已經夠準確，不作修正以防止微細震盪。</p>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 5 -->
+            <h2 id="ch5-fsm">第五章：狀態機 (FSM) 與防卡死機制</h2>
+            <p>我們的機構控制（如 Intake）嚴禁在 <code>opcontrol</code> 裡面寫死 <code>motor.move()</code>。我們必須依賴 Enum 與 Switch 的狀態機架構，以支援智能防卡死與非同步操作。</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 main.cpp (Global 區域)</div>
+                <div class="code-block">
+<span class="c-kw">enum class</span> <span class="c-ty">IntakeState</span> { STOP, INTAKE, L1_SORT, REVERSING };
+<span class="c-ty">IntakeState</span> <span class="c-vr">currentState</span> = IntakeState::STOP;
+<span class="c-ty">IntakeState</span> <span class="c-vr">prevState</span> = IntakeState::STOP;
+                </div>
+            </div>
+
+            <p>所有的馬達給電邏輯，全部封裝在獨立的 <code>updateIntakeFSM()</code> 內，並放入背景 Task 執行。當遇到電流超載時，系統會自動接管執行反轉。</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 狀態更新與防卡死函數</div>
+                <div class="code-block">
+<span class="c-kw">void</span> <span class="c-fn">updateIntakeFSM</span>() {
+    <span class="c-ty">double</span> <span class="c-vr">maxCurrent</span> = std::<span class="c-fn">max</span>({
+        low_roller.<span class="c-fn">get_current_draw</span>(),
+        high_roller.<span class="c-fn">get_current_draw</span>(),
+        intake_motors.<span class="c-fn">get_current_draw</span>()
+    });
+
+    <span class="c-co">// 【執行狀態】</span>
+    <span class="c-kw">switch</span> (<span class="c-vr">currentIntakeState</span>) {
+        <span class="c-kw">case</span> IntakeState::INTAKE:
+            intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
+            low_roller.<span class="c-fn">move</span>(<span class="c-st">127</span>);
+            high_roller.<span class="c-fn">move</span>(<span class="c-st">50</span>);
+
+            <span class="c-co">// 【防卡死偵測】: 電流 > 2500mA 且持續 400ms</span>
+            <span class="c-kw">if</span> (<span class="c-vr">maxCurrent</span> > JAM_THRESHOLD) {
+                <span class="c-vr">jamTimer</span> += <span class="c-st">20</span>; 
+                <span class="c-kw">if</span> (<span class="c-vr">jamTimer</span> > <span class="c-st">400</span>) {
+                    <span class="c-vr">prevState</span> = <span class="c-vr">currentIntakeState</span>; 
+                    <span class="c-vr">currentIntakeState</span> = IntakeState::REVERSING; <span class="c-co">// 強制反轉</span>
+                    <span class="c-vr">jamTimer</span> = <span class="c-st">0</span>;
+                }
+            } <span class="c-kw">else</span> {
+                <span class="c-vr">jamTimer</span> = <span class="c-st">0</span>; 
+            }
+            <span class="c-kw">break</span>;
+            
+        <span class="c-co">// ... 其他狀態 ...</span>
+    }
+}
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 6: Real-world Examples -->
+            <h2 id="ch6-examples">第六章：實戰 Auto 寫法範例</h2>
+            <p>這章節將透過你真實比賽的程式碼，展現如何將前面五章的理論完美結合。</p>
+
+            <h3 id="ch6-auto-init">1. 開局定位策略：為何放棄「全自動對位」？</h3>
+            <div class="callout danger">
+                <div class="callout-icon">🛑</div>
+                <div class="callout-content">
+                    <h4>不建議使用 auto_init_universal</h4>
+                    <p>雖然利用多顆測距儀配合 Cosine Theorem 算出絕對座標在數學上看似完美，但<strong>實戰中強烈不建議使用</strong>。原因有二：<br>
+                    1. <strong>Offset 測量困難</strong>：要在 CAD 以外精確量度出每顆 Sensor 距離底盤中心的 X/Y 偏差值 (Offset) 是極度困難的。<br>
+                    2. <strong>場地公差致命</strong>：正式比賽場地的圍牆尺寸往往有 ±1 吋以上的誤差。依賴邊界測距等同於將場地的誤差吃進系統裡。</p>
+                </div>
+            </div>
+
+            <p><strong>👑 頂級隊伍的標準開局：物理對位 (Physical Alignment)</strong></p>
+            <p>最穩陣、最暴力的做法，是利用機器人平整的車尾或使用對位治具 (Jig) <strong>死死地頂住場地牆壁</strong>，然後直接將座標寫死為 0。</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 1. 物理靠實後牆，確保絕對垂直</span>
+<span class="c-co">// 2. 開機後直接將起步點定義為 (0, 0, 0)</span>
+chassis.<span class="c-fn">setPose</span>(<span class="c-st">0</span>, <span class="c-st">0</span>, <span class="c-st">0</span>);
+
+<span class="c-co">// 3. 如果需要精確出發，可以用 EzDrive 微微推前</span>
+ezPID.<span class="c-fn">drive</span>(<span class="c-st">200</span>, <span class="c-st">60</span>, <span class="c-st">500</span>, <span class="c-kw">false</span>);
+
+<span class="c-co">// 4. 開始執行 Auto 路線...</span>
+chassis.<span class="c-fn">moveToPoint</span>(<span class="c-st">0</span>, <span class="c-st">30.41</span>, <span class="c-st">800</span>, {.<span class="c-vr">forwards</span>=<span class="c-kw">true</span>, .<span class="c-vr">maxSpeed</span>=<span class="c-st">127</span>});
+                </div>
+            </div>
+
+            <h3 id="ch6-skills">2. 技能賽 (Skills) 的完美混合連招</h3>
+            <p>這段來自你的 <code>skill()</code> 函數。它完美展示了：「曲線走位」➔「氣動與吸氣控制」➔「撞牆重置」➔「高精度微調」的標準作業流程。</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 autons.cpp -> skill() 摘錄</div>
+                <div class="code-block">
+<span class="c-co">// 1. 利用 LemLib 畫出大曲線前往目標點</span>
+chassis.<span class="c-fn">moveToPose</span>(<span class="c-st">115.05</span>, <span class="c-st">47.73</span>, <span class="c-st">-95.96</span>, <span class="c-st">2000</span>, {.<span class="c-vr">forwards</span>=<span class="c-kw">false</span>, .<span class="c-vr">earlyExitRange</span>=<span class="c-st">6</span>, .<span class="c-vr">minSpeed</span>=<span class="c-st">80</span>}, <span class="c-kw">false</span>);
+chassis.<span class="c-fn">waitUntilDone</span>(); <span class="c-co">// 等待到達</span>
+
+<span class="c-co">// 2. 【防飄移手段】執行撞牆重置 (消滅累積誤差)</span>
+<span class="c-fn">wallReset</span>(<span class="c-st">'x'</span>, <span class="c-st">-40</span>, <span class="c-st">0</span>, <span class="c-st">500</span>); <span class="c-co">// 撞 X 軸牆壁</span>
+
+<span class="c-co">// 3. 【絕對定位】利用右方測距儀，精準重寫 Y 座標，保持 X 與 Theta 不變</span>
+chassis.<span class="c-fn">setPose</span>(<span class="c-fn">getRealPose</span>(<span class="c-st">0</span>, <span class="c-st">7</span>, dist_right, <span class="c-st">1</span>), chassis.<span class="c-fn">getPose</span>().y, chassis.<span class="c-fn">getPose</span>().theta);
+
+<span class="c-co">// 4. 準備下一個動作：使用 ezPID 進行高精度原地旋轉</span>
+ezPID.<span class="c-fn">turn</span>(<span class="c-st">77.44</span>, <span class="c-st">100</span>, <span class="c-st">700</span>);
+
+<span class="c-co">// 5. 結合 FSM 與氣動件，進入吸氣模式</span>
+cover.<span class="c-fn">set_value</span>(<span class="c-kw">false</span>);
+intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
+low_roller.<span class="c-fn">move</span>(<span class="c-st">127</span>);
+chassis.<span class="c-fn">waitUntilDone</span>();
+                </div>
+            </div>
+
+            <h3 id="ch6-opcontrol">3. 極度乾淨的遙控期 (Opcontrol)</h3>
+            <p>一個專業的 Opcontrol 應該只扮演「翻譯員」的角色：讀取手掣訊號 ➔ 改變全域變數 (State) ➔ 結束。絕對不要在裡面寫死 <code>motor.move()</code>。</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 main.cpp -> opcontrol()</div>
+                <div class="code-block">
+<span class="c-kw">void</span> <span class="c-fn">opcontrol</span>() {
+    <span class="c-kw">while</span> (<span class="c-kw">true</span>) {     
+        <span class="c-co">// 1. 底盤運動 (讀取搖桿並輸入 Arcade 邏輯)</span>
+        <span class="c-ty">int</span> <span class="c-vr">leftY</span> = controller.<span class="c-fn">get_analog</span>(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        <span class="c-ty">int</span> <span class="c-vr">leftX</span> = controller.<span class="c-fn">get_analog</span>(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        chassis.<span class="c-fn">arcade</span>(<span class="c-vr">leftY</span>, (<span class="c-vr">leftX</span> * <span class="c-st">0.85</span>));
+
+        <span class="c-co">// 2. 氣動件按鈕檢查 (封裝在獨立函數)</span>
+        <span class="c-fn">pneumaticsBtn</span>(); 
+        
+        <span class="c-co">// 3. 機構控制 (純粹改變 State，不直接碰馬達)</span>
+        <span class="c-kw">if</span>(controller.<span class="c-fn">get_digital</span>(DIGITAL_R1)) {
+            <span class="c-fn">setIntakeState</span>(IntakeState::INTAKE);
+        } <span class="c-kw">else if</span>(controller.<span class="c-fn">get_digital</span>(DIGITAL_R2)) {
+            <span class="c-fn">setIntakeState</span>(IntakeState::REVERSE);
+        } <span class="c-kw">else</span> {
+            <span class="c-fn">setIntakeState</span>(IntakeState::STOP);
+        }
+        
+        <span class="c-co">// 4. 釋放 CPU，防止系統崩潰 (極度重要！)</span>
+        pros::<span class="c-fn">delay</span>(<span class="c-st">20</span>); 
+    }
+}
+                </div>
+            </div>
+            
+            <p><strong>這段程式碼為何優秀？</strong> 因為它將真正的耗時運算（如防卡死電流偵測）交給了 <code>initialize()</code> 中的 <code>intakeTask</code> 背景執行。<code>opcontrol</code> 每一轉都飛快完成，保證了手掣操控的<strong>零延遲 (Zero Latency)</strong> 反應。</p>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 7: Telemetry & Shortcuts -->
+            <h2 id="ch7-debug">第七章：實用工具與除錯 (Tools & Debug)</h2>
+            <p>在開發與練車階段，我們內建了極其實用的即時遙測與快捷鍵，幫助你快速調整 PID 及測量場地距離。</p>
+
+            <h3>📊 即時遙測 (Telemetry)</h3>
+            <p>程式的 <code>telemetry_fn()</code> 任務會在 V5 Brain 屏幕上即時顯示底盤的核心數據。最實用的功能是：</p>
+            <div class="callout info">
+                <div class="callout-icon">📏</div>
+                <div class="callout-content">
+                    <h4>Brain 顯示：For PID Distance</h4>
+                    <p>當你在 Brain 的畫面上看到 <code>For PID Distance: XXX</code>，你可以直接<strong>用手推動車子</strong>。屏幕會即時顯示車子移動了多少馬達度數。這是你設定 <code>ezPID.drive()</code> 距離目標的最佳測量工具，完全不需要盲目估算！</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">⌨️ 手制快捷鍵 (Controller Shortcuts)</h3>
+            <p>為了加快練習效率，<code>opcontrol</code> 內置了以下隱藏快捷鍵：</p>
+            <table class="notion-table">
+                <tr><th>按鍵組合</th><th>功能說明</th></tr>
+                <tr><td><strong>【上箭頭 (UP)】</strong></td><td><strong>快速歸零 (Reset)：</strong><br>重置 EzDrive 的所有 PID 狀態，並將當前位置強制設為 0。非常適合推車到新位置後，按一下 UP 重新測量下一段距離。</td></tr>
+                <tr><td><strong>【下箭頭 (DOWN) + B 鍵】</strong></td><td><strong>手動觸發自動賽 (Run Auton)：</strong><br>不用插場地控制線，按住 DOWN 再按 B，即可隨時隨地觸發選定好的 Autonomous 程式，極大提升練車效率。</td></tr>
+            </table>
+
+            <div style="margin-top: 80px; padding-top: 20px; border-top: 1px solid var(--border-color); color: var(--text-muted); text-align: center; font-family: 'Fira Code', monospace; font-size: 14px;">
+                // COMPILED SUCCESSFULLY | POWERED BY 15383.
+            </div>
+            
+        </div>
+    </main>
+
+    <button id="back-to-top" class="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- JavaScript Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
