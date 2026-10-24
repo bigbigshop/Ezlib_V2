@@ -1,14 +1,6 @@
 # EzLib 說明書（GitHub Pages）
 
-本倉庫是 [ezlib.ykyle.eu](https://ezlib.ykyle.eu/) 的靜態說明書網站（`index.html` + CSS／JS）。
-
-## 來源準則
-
-**行為與 API 以源碼倉庫為準：**
-
-- [bigbigshop/EzLib-EzDrive-motions](https://github.com/bigbigshop/EzLib-EzDrive-motions)（尤其 `main` 上的 `README.md`）
-
-本站負責教學敘事（混合架構、G4 警告、章節流程）。若站上範例與 motions `main` 衝突，以 motions 為準。
+本倉庫是 [ezlib.ykyle.eu](https://ezlib.ykyle.eu/) 的公開靜態說明書網站（`index.html` + CSS／JS）。教學敘事、單位說明與章節流程以本站為準。
 
 ## 單位速記
 
