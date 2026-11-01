@@ -163,9 +163,8 @@ function initJudgeQuiz() {
     const progressFill = document.getElementById('quiz-progress-fill');
     if (!root || !stage || !progressLabel || !progressFill) return;
 
-    const PASS_RATIO = 0.9; // ≥90% of total (20 → 至少 18 題)
+    const PASS_RATIO = 0.9;
     const questions = [
-        // Correct answers shuffled across A/B/C/D (indices 0–3); ~5 each.
         {
             q: 'ezPID.drive(distance, …) 的距離單位是？裁判問「你 drive 寫 24 係咩意思？」',
             choices: [
@@ -276,7 +275,6 @@ function initJudgeQuiz() {
             answer: 2,
             explain: '須拔場控；X+A 進入，單獨 X 退出。場控接上會 force_off。'
         },
-        // --- 10 finer-grained additions ---
         {
             q: 'ezPID / LemLib motion 的 timeout 單位係？逾時後會點？',
             choices: [
@@ -404,7 +402,7 @@ function initJudgeQuiz() {
         answered = false;
         setProgress('準備開始', 0);
         stage.innerHTML = `
-            <p class="judge-quiz-lead">共 ${questions.length} 題選擇題（正確項打散喺 A／B／C／D）。涵蓋 PID 單位、bind、Dash vs 舊 Console、練習掣細節、odom／getRealPose、dash_config、場控 teardown、standalone LVGL、auton_select 等。</p>
+            <p class="judge-quiz-lead">共 ${questions.length} 題選擇題，涵蓋 PID 單位、底盤 bind、Dash 與舊 Console、練習掣、odom／getRealPose、dash_config、場控 teardown、standalone LVGL、auton_select 等。</p>
             <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">開始練習</button>
         `;
         stage.querySelector('#quiz-start-btn').addEventListener('click', () => {
@@ -474,7 +472,7 @@ function initJudgeQuiz() {
             <div class="judge-quiz-result">
                 <p class="score-line">${score} / ${questions.length}（${pctLabel}%）</p>
                 <p class="${pass ? 'pass' : 'fail'}">${pass ? '熟用 EzLib' : '未達「熟用 EzLib」——再讀相關章節後重試'}</p>
-                <p class="judge-quiz-lead" style="margin-top:12px;">及格線：≥90% 正確（${questions.length} 題要至少 ${Math.ceil(PASS_RATIO * questions.length)} 題）。建議對照第七章 Dash／LVGL、第二章單位、第四章 reset。</p>
+                <p class="judge-quiz-lead" style="margin-top:12px;">及格線：答對率 ≥90%。建議對照第七章 Dash／LVGL、第二章單位、第四章 reset。</p>
                 <div class="judge-quiz-actions">
                     <button type="button" id="quiz-retry-btn" class="judge-quiz-btn primary">再試一次</button>
                 </div>
