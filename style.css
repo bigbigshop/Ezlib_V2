@@ -300,6 +300,165 @@ code {
 .notion-table th { background-color: var(--bg-hover); color: var(--text-bold); font-weight: 500; }
 .notion-table td:first-child { width: 30%; background-color: rgba(255,255,255,0.02); }
 
+/* --- Judge interview quiz --- */
+.judge-quiz {
+    margin: 24px 0 8px;
+    padding: 20px 22px;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-blue);
+    background: var(--bg-callout);
+    border-radius: 4px;
+}
+
+.judge-quiz-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.judge-quiz-bar #quiz-progress-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'Fira Code', monospace;
+}
+
+.judge-quiz-meter {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+:root.light-mode .judge-quiz-meter {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.judge-quiz-meter span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--accent-blue);
+    transition: width 0.25s ease;
+}
+
+.judge-quiz-lead {
+    color: var(--text-muted);
+    margin-bottom: 18px;
+}
+
+.judge-quiz-q {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-bold);
+    margin-bottom: 14px;
+    line-height: 1.45;
+}
+
+.judge-quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.judge-quiz-option {
+    text-align: left;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-main);
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.judge-quiz-option:hover:not(:disabled) {
+    background: var(--bg-hover);
+}
+
+.judge-quiz-option:disabled {
+    cursor: default;
+}
+
+.judge-quiz-option.correct {
+    border-color: var(--accent-green);
+    background: rgba(15, 131, 77, 0.15);
+}
+
+.judge-quiz-option.wrong {
+    border-color: var(--accent-red);
+    background: rgba(224, 62, 62, 0.12);
+}
+
+.judge-quiz-feedback {
+    min-height: 1.4em;
+    margin-bottom: 14px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.judge-quiz-feedback.ok { color: var(--accent-green); }
+.judge-quiz-feedback.bad { color: var(--accent-red); }
+
+.judge-quiz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.judge-quiz-btn {
+    border: 1px solid var(--border-color);
+    background: var(--bg-hover);
+    color: var(--text-main);
+    border-radius: 4px;
+    padding: 10px 16px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.judge-quiz-btn:hover:not(:disabled) {
+    background: rgba(46, 170, 220, 0.18);
+}
+
+.judge-quiz-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.judge-quiz-btn.primary {
+    border-color: var(--accent-blue);
+    background: rgba(46, 170, 220, 0.2);
+    color: var(--text-bold);
+}
+
+.judge-quiz-result {
+    text-align: left;
+}
+
+.judge-quiz-result .score-line {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-bold);
+    margin-bottom: 8px;
+}
+
+.judge-quiz-result .pass {
+    color: var(--accent-green);
+    font-weight: 700;
+}
+
+.judge-quiz-result .fail {
+    color: var(--accent-yellow);
+    font-weight: 700;
+}
+
 /* --- Back to Top Button --- */
 .back-to-top {
     position: fixed;
