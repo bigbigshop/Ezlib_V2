@@ -89,6 +89,12 @@
             <a href="#ch7-tuner" class="nav-link">🎛️ PID 調校器</a>
             <a href="#ch7-sd" class="nav-link">💾 SD 卡 CSV</a>
             <a href="#ch7-monitor" class="nav-link">📱 Controller monitor</a>
+            <a href="#ch7-lvgl" class="nav-link">🖼️ standalone LVGL</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第八章</div>
+            <a href="#ch8-quiz" class="nav-link">🎤 裁判訪問練習</a>
         </div>
     </nav>
 
@@ -122,6 +128,7 @@
                             <li>位姿保留在 LemLib <code>chassis.getPose()</code>；馬達輸出與到位判斷都經過全域 <code>ezPID</code>（<code>ez_compat::EzDrive</code>）。</li>
                         </ul>
                         <p>本站對齊 EzLib-EzDrive-motions 的 <strong><code>EzLib_2.0.0_beta</code></strong>（PROS 4.2.2 hard float、standalone LVGL、Type R Dash）。線上輔助：<a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue); font-weight: 700;">pid.ykyle.eu</a>（PID）、<a href="https://vex.ykyle.eu/moveToPose" target="_blank" style="color: var(--accent-blue); font-weight: 700;">moveToPose 模擬器</a>。模擬器不代替場上／SD CSV 實測。</p>
+                        <p><strong>UI 棧：</strong>隨 PROS <strong>4.2.2</strong>（hard float）路線，<strong>robodash 已淡出</strong>——現行 beta <strong>只用 standalone LVGL</strong>（Type R Dash／PID／動畫 via <code>ui_pages</code>），唔再依賴 robodash Console／Selector 頁。詳見<a href="#ch7-debug">第七章</a>；自測見<a href="#ch8-quiz">裁判訪問練習</a>。</p>
                     </div>
                 </div>
                 
@@ -168,7 +175,8 @@
                             <li>仔細閱讀系統初始化與 Setup 章節</li>
                             <li>掌握底盤 PID 控制原理（英吋／絕對航向）</li>
                             <li>學習 LemLib 移動指令（bind 後共用 ezPID）</li>
-                            <li>最後才實際應用於 Auto 編寫</li>
+                            <li>實際應用於 Auto 編寫，並搞清楚 Brain UI（standalone LVGL／Type R Dash）</li>
+                            <li>用<a href="#ch8-quiz">裁判訪問練習</a>自測（≥90%＝熟用 EzLib）</li>
                         </ol>
                         <p>跳過任何步驟都可能導致你在比賽中失敗。</p>
                     </div>
@@ -261,9 +269,16 @@
                 <tr><td><code>include/ezlib/</code> + <code>src/ezlib/</code></td><td><strong>庫內</strong>（一般不用改）：<code>ez_compat</code>、<code>pid_tuner</code>、<code>relocate</code>、<code>telem_dash</code>、<code>monitor</code>、<code>auton_select</code>、<code>sd_log</code>、<code>boot_log</code>、<code>ui_pages</code></td></tr>
                 <tr><td><code>include/ez_compat/</code></td><td><code>pid.hpp</code>、<code>motion_math.hpp</code>（LemLib motions 共用數學；路徑維持 <code>ez_compat/...</code>）</td></tr>
                 <tr><td><code>src/assets/robot01.c</code> … <code>robot10.c</code></td><td>LVGL C array 動畫幀（flash）</td></tr>
-                <tr><td><code>firmware/liblvgl.a</code></td><td>預編譯 LVGL（beta：hardfp + <code>LV_MEM_CUSTOM</code>）</td></tr>
+                <tr><td><code>firmware/liblvgl.a</code></td><td>預編譯 <strong>standalone</strong> LVGL（beta：hardfp + <code>LV_MEM_CUSTOM</code>；<strong>唔再經 robodash</strong>）</td></tr>
             </table>
             <p>Include 例：<code>#include "ezlib/ez_compat.hpp"</code>、<code>#include "ezlib/telem_dash.hpp"</code>、<code>#include "customs/dash_config.hpp"</code>。</p>
+            <div class="callout warning">
+                <div class="callout-icon">🧯</div>
+                <div class="callout-content">
+                    <h4>robodash 已淡出（PROS 4.2.2）</h4>
+                    <p><code>EzLib_2.0.0_beta</code> 對齊 PROS <strong>4.2.2</strong> hard float 後，Brain UI 改走 <strong>standalone LVGL</strong>：Type R Dash、PID 頁、動畫都經 <code>ui_pages</code>／自編 <code>liblvgl.a</code>。舊的 robodash Console／Selector 頁<strong>已移除</strong>（慳 heap）；auton 用 headless <code>auton_select</code>，唔好再寫 <code>rd::Console</code>／<code>rd::Selector</code>。</p>
+                </div>
+            </div>
 
             <div class="code-block-wrapper">
                 <div class="code-header">📁 objDeclare.hpp / main.cpp（摘要）</div>
@@ -826,7 +841,15 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
 
             <!-- Chapter 7: Telemetry & Shortcuts -->
             <h2 id="ch7-debug">第七章：實用工具與除錯 (Tools & Debug)</h2>
-            <p>練車階段內建 <strong>Type R Dash</strong>、PID 調校器、SD CSV、Controller monitor、動畫與場控 teardown。Brain 開機直入 Dash；auton 用 headless <code>auton_select</code>——<strong>不再有</strong> robodash Console／Selector LVGL 頁。</p>
+            <p>練車階段內建 <strong>Type R Dash</strong>、PID 調校器、SD CSV、Controller monitor、動畫與場控 teardown。Brain 開機直入 Dash；auton 用 headless <code>auton_select</code>。</p>
+
+            <div class="callout warning">
+                <div class="callout-icon">🧯</div>
+                <div class="callout-content">
+                    <h4>Robodash fadeout → standalone LVGL</h4>
+                    <p>因應 PROS <strong>4.2.2</strong>（hard float）路線，<strong>robodash 已淡出</strong>：EzLib 現行 beta <strong>只用 standalone LVGL</strong> 做 Brain UI（Dash／PID／Anim）。<strong>不再有</strong> robodash Console／Selector LVGL 頁；唔好再依賴 <code>rd::Console::printf</code> 或右上 views 掣。舊站若仍寫「Console 遙測」，請改讀本節的 <strong>Type R Dash</strong>。</p>
+                </div>
+            </div>
 
             <h3 id="ch7-dash">🏎️ Type R Dash（<code>telem_dash</code>）</h3>
             <p>開機流程（<code>EzLib_2.0.0_beta</code>）：</p>
@@ -903,14 +926,42 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             </table>
             <p>Tuner 內 LEFT／RIGHT 仍會 <code>set_pose(0,0,0)</code>（換 field）。Controller 換 auton、DOWN 回 Dash 會清 <code>autoChange</code>。</p>
 
+            <h3 id="ch7-lvgl" style="margin-top: 30px;">🖼️ standalone LVGL（唔再經 robodash）</h3>
             <div class="callout warning">
                 <div class="callout-icon">🎬</div>
                 <div class="callout-content">
                     <h4>動畫與 LVGL 記憶體</h4>
                     <p>Standalone LVGL overlay：<code>anim_page</code> + <strong>一個</strong> <code>lv_img</code>，換 <code>robot01</code>…<code>robot10</code> src（按住 UP → <code>autoChange</code>）。開動畫 <code>set_gauge_hidden(true)</code>；關動畫／DOWN：<code>show_dash()</code> 還原電量錶。<strong>不要</strong>為每幀建多個 widget 再 focus——會爆 heap／碎裂。</p>
-                    <p>現行設定：<code>include/liblvgl/lv_conf.h</code> → <strong><code>LV_MEM_CUSTOM 1</code></strong>（<code>malloc</code>／<code>free</code>／<code>realloc</code>），不是固定 256KB BSS pool。Dash 顯示真實 free RAM（<code>mallinfo</code> + sbrk）。<code>EzLib_2.0.0_beta</code> 的 <code>liblvgl.a</code> 須 hard float ABI。唔好用 <code>rd::Console::printf</code>（已移除 Console 頁）。</p>
+                    <p>現行設定：<code>include/liblvgl/lv_conf.h</code> → <strong><code>LV_MEM_CUSTOM 1</code></strong>（<code>malloc</code>／<code>free</code>／<code>realloc</code>），不是固定 256KB BSS pool。Dash 顯示真實 free RAM（<code>mallinfo</code> + sbrk）。<code>EzLib_2.0.0_beta</code> 的 <code>liblvgl.a</code> 須 hard float ABI（對齊 PROS 4.2.2）。</p>
+                    <p><strong>Robodash：</strong>已淡出。唔好用 <code>rd::Console::printf</code>（Console／Selector 頁已移除，慳 heap）。Brain 畫面只靠 standalone LVGL + Type R Dash。</p>
                 </div>
             </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 8: Judge interview quiz -->
+            <section id="ch8-quiz">
+                <h2>第八章：裁判訪問練習（Judge Interview）</h2>
+                <p>用本站已寫嘅 EzLib 概念自測——題目模仿裁判常問嘅 stack／流程，唔考庫外 trivia。答完即時睇對錯；全部做完計分。</p>
+                <div class="callout info">
+                    <div class="callout-icon">🎯</div>
+                    <div class="callout-content">
+                        <h4>及格線：≥90%</h4>
+                        <p>答對率 <strong>≥90%</strong> → 判定為<strong>熟用 EzLib</strong>。未達標就返去相關章節再讀，然後「再試一次」。</p>
+                    </div>
+                </div>
+
+                <div id="judge-quiz" class="judge-quiz" aria-live="polite">
+                    <div class="judge-quiz-bar">
+                        <span id="quiz-progress-label">準備開始</span>
+                        <div class="judge-quiz-meter" aria-hidden="true"><span id="quiz-progress-fill"></span></div>
+                    </div>
+                    <div id="quiz-stage" class="judge-quiz-stage">
+                        <p class="judge-quiz-lead">十題選擇題，涵蓋 PID 單位、底盤 bind、Dash vs 舊 Console、練習掣、odom／pose、standalone LVGL、路徑等。</p>
+                        <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">開始練習</button>
+                    </div>
+                </div>
+            </section>
 
             <div style="margin-top: 80px; padding-top: 20px; border-top: 1px solid var(--border-color); color: var(--text-muted); text-align: center; font-family: 'Fira Code', monospace; font-size: 14px;">
                 // COMPILED SUCCESSFULLY | POWERED BY 15383.
