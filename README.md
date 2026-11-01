@@ -1,6 +1,6 @@
 # EzLib 說明書（GitHub Pages）
 
-本倉庫是 [ezlib.ykyle.eu](https://ezlib.ykyle.eu/) 的公開靜態說明書網站（`index.html` + CSS／JS）。教學敘事、單位說明與章節流程以本站為準。
+本倉庫是 [ezlib.ykyle.eu](https://ezlib.ykyle.eu/) 的公開靜態說明書網站（`index.html` + CSS／JS）。教學敘事、單位說明與章節流程以本站為準；內容對齊 EzLib-EzDrive-motions 的 **`EzLib_2.0.0_beta`**（Type R Dash、`ezlib/` 路徑、`getRealPose` cos、練習掣等）。
 
 ## 單位速記
 
@@ -11,6 +11,8 @@
 | `timeout` | 毫秒 |
 
 `EzDrive` 建構後會 `bindEzDrive`：LemLib 的 `moveToPoint`／`moveToPose`／`turnTo*`／`swingTo*` 共用 `ezPID` 的 drive／turn PID。
+
+線上輔助：[pid.ykyle.eu](https://pid.ykyle.eu)（PID）、[moveToPose 模擬器](https://vex.ykyle.eu/moveToPose)。
 
 ## 本站檔案
 
