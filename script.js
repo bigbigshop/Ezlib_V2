@@ -164,7 +164,7 @@ function initJudgeQuiz() {
     if (!root || !stage || !progressLabel || !progressFill) return;
 
     const PASS_RATIO = 0.9;
-    const questions = [
+    const questionBank = [
         {
             q: 'ezPID.drive(distance, …) 的距離單位是？裁判問「你 drive 寫 24 係咩意思？」',
             choices: [
@@ -387,9 +387,39 @@ function initJudgeQuiz() {
         }
     ];
 
+    let session = [];
     let index = 0;
     let score = 0;
     let answered = false;
+
+    function shuffleInPlace(arr) {
+        for (let i = arr.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+        }
+        return arr;
+    }
+
+    function buildSession() {
+        const order = shuffleInPlace(questionBank.map((_, i) => i));
+        session = order.map((qi) => {
+            const src = questionBank[qi];
+            const choiceOrder = shuffleInPlace(src.choices.map((_, i) => i));
+            const choices = choiceOrder.map((ci) => src.choices[ci]);
+            const answer = choiceOrder.indexOf(src.answer);
+            return { q: src.q, choices, answer, explain: src.explain };
+        });
+    }
+
+    function startSession() {
+        buildSession();
+        index = 0;
+        score = 0;
+        answered = false;
+        renderQuestion();
+    }
 
     function setProgress(label, ratio) {
         progressLabel.textContent = label;
@@ -400,22 +430,20 @@ function initJudgeQuiz() {
         index = 0;
         score = 0;
         answered = false;
+        session = [];
         setProgress('準備開始', 0);
         stage.innerHTML = `
-            <p class="judge-quiz-lead">共 ${questions.length} 題選擇題，涵蓋 PID 單位、底盤 bind、Dash 與舊 Console、練習掣、odom／getRealPose、dash_config、場控 teardown、standalone LVGL、auton_select 等。</p>
+            <p class="judge-quiz-lead">共 ${questionBank.length} 題選擇題，涵蓋 PID 單位、底盤 bind、Dash 與舊 Console、練習掣、odom／getRealPose、dash_config、場控 teardown、standalone LVGL、auton_select 等。</p>
             <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">開始練習</button>
         `;
-        stage.querySelector('#quiz-start-btn').addEventListener('click', () => {
-            index = 0;
-            score = 0;
-            renderQuestion();
-        });
+        stage.querySelector('#quiz-start-btn').addEventListener('click', startSession);
     }
 
     function renderQuestion() {
         answered = false;
-        const item = questions[index];
-        setProgress(`第 ${index + 1} / ${questions.length} 題`, index / questions.length);
+        const item = session[index];
+        const total = session.length;
+        setProgress(`第 ${index + 1} / ${total} 題`, index / total);
         stage.innerHTML = `
             <p class="judge-quiz-q">${item.q}</p>
             <div class="judge-quiz-options" role="group" aria-label="選項"></div>
@@ -446,15 +474,15 @@ function initJudgeQuiz() {
                 feedback.className = `judge-quiz-feedback ${correct ? 'ok' : 'bad'}`;
                 feedback.textContent = (correct ? '正確。' : '未中。') + ' ' + item.explain;
                 nextBtn.disabled = false;
-                nextBtn.textContent = index === questions.length - 1 ? '睇成績' : '下一題';
-                setProgress(`第 ${index + 1} / ${questions.length} 題`, (index + 1) / questions.length);
+                nextBtn.textContent = index === total - 1 ? '睇成績' : '下一題';
+                setProgress(`第 ${index + 1} / ${total} 題`, (index + 1) / total);
             });
             optionsEl.appendChild(btn);
         });
 
         nextBtn.addEventListener('click', () => {
             if (!answered) return;
-            if (index >= questions.length - 1) {
+            if (index >= total - 1) {
                 renderResult();
             } else {
                 index += 1;
@@ -464,13 +492,14 @@ function initJudgeQuiz() {
     }
 
     function renderResult() {
-        const pct = score / questions.length;
+        const total = session.length;
+        const pct = score / total;
         const pass = pct >= PASS_RATIO;
         const pctLabel = Math.round(pct * 100);
-        setProgress(`完成 · ${score}/${questions.length}`, 1);
+        setProgress(`完成 · ${score}/${total}`, 1);
         stage.innerHTML = `
             <div class="judge-quiz-result">
-                <p class="score-line">${score} / ${questions.length}（${pctLabel}%）</p>
+                <p class="score-line">${score} / ${total}（${pctLabel}%）</p>
                 <p class="${pass ? 'pass' : 'fail'}">${pass ? '熟用 EzLib' : '未達「熟用 EzLib」——再讀相關章節後重試'}</p>
                 <p class="judge-quiz-lead" style="margin-top:12px;">及格線：答對率 ≥90%。建議對照第七章 Dash／LVGL、第二章單位、第四章 reset。</p>
                 <div class="judge-quiz-actions">
@@ -483,10 +512,6 @@ function initJudgeQuiz() {
 
     const startBtn = document.getElementById('quiz-start-btn');
     if (startBtn) {
-        startBtn.addEventListener('click', () => {
-            index = 0;
-            score = 0;
-            renderQuestion();
-        });
+        startBtn.addEventListener('click', startSession);
     }
 }
