@@ -37,6 +37,7 @@
         
         <div class="nav-group">
             <a href="#intro" class="nav-link">📘 序言：系統核心理念</a>
+            <a href="#version-notes" class="nav-link">🏷️ 版本近況</a>
             <a href="#preface" class="nav-link">⚠️ 序章：使用前必讀警告</a>
         </div>
         
@@ -127,8 +128,20 @@
                             <li><code>timeout</code> 單位是毫秒；時間屆滿後馬達停止，該次運動結束。</li>
                             <li>位姿保留在 LemLib <code>chassis.getPose()</code>；馬達輸出與到位判斷都經過全域 <code>ezPID</code>（<code>ez_compat::EzDrive</code>）。</li>
                         </ul>
-                        <p>本站對齊 EzLib-EzDrive-motions 的 <strong><code>EzLib_2.0.0_beta</code></strong>（PROS 4.2.2 hard float、standalone LVGL、Type R Dash）。線上輔助：<a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue); font-weight: 700;">pid.ykyle.eu</a>（PID）、<a href="https://vex.ykyle.eu/moveToPose" target="_blank" style="color: var(--accent-blue); font-weight: 700;">moveToPose 模擬器</a>。模擬器不代替場上／SD CSV 實測。</p>
-                        <p><strong>UI 棧：</strong>隨 PROS <strong>4.2.2</strong>（hard float）路線，<strong>robodash 已淡出</strong>——現行 beta <strong>只用 standalone LVGL</strong>（Type R Dash／PID／動畫 via <code>ui_pages</code>），唔再依賴 robodash Console／Selector 頁。詳見<a href="#ch7-debug">第七章</a>；自測見<a href="#ch8-quiz">裁判訪問練習</a>。</p>
+                        <p>線上輔助：<a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue); font-weight: 700;">pid.ykyle.eu</a>（PID）、<a href="https://vex.ykyle.eu/moveToPose" target="_blank" style="color: var(--accent-blue); font-weight: 700;">moveToPose 模擬器</a>。模擬器不代替場上／SD CSV 實測。</p>
+                    </div>
+                </div>
+
+                <div class="callout success" id="version-notes">
+                    <div class="callout-icon">🏷️</div>
+                    <div class="callout-content">
+                        <h4>版本近況（摘要）</h4>
+                        <ul>
+                            <li>本站對齊 <strong><code>EzLib_2.0.0_beta</code></strong>：PROS 4.2.2、standalone LVGL、Type R Dash。</li>
+                            <li>Brain UI：<strong>robodash 已淡出</strong>，改用 standalone LVGL（詳見<a href="#ch7-debug">第七章</a>）。</li>
+                            <li>自測：<a href="#ch8-quiz">裁判訪問練習</a>（≥90%＝熟用 EzLib）。</li>
+                        </ul>
+                        <p>詳細 changelog／分支沿革<strong>唔喺本說明書展開</strong>——請睇 motions 倉庫 README：<a href="https://github.com/bigbigshop/EzLib-EzDrive-motions/blob/EzLib_2.0.0_beta/README.md#changelog" target="_blank" style="color: var(--accent-blue); font-weight: 700;">EzLib_2.0.0_beta Changelog</a>。</p>
                     </div>
                 </div>
                 
@@ -275,8 +288,8 @@
             <div class="callout warning">
                 <div class="callout-icon">🧯</div>
                 <div class="callout-content">
-                    <h4>robodash 已淡出（PROS 4.2.2）</h4>
-                    <p><code>EzLib_2.0.0_beta</code> 對齊 PROS <strong>4.2.2</strong> hard float 後，Brain UI 改走 <strong>standalone LVGL</strong>：Type R Dash、PID 頁、動畫都經 <code>ui_pages</code>／自編 <code>liblvgl.a</code>。舊的 robodash Console／Selector 頁<strong>已移除</strong>（慳 heap）；auton 用 headless <code>auton_select</code>，唔好再寫 <code>rd::Console</code>／<code>rd::Selector</code>。</p>
+                    <h4>robodash 已淡出</h4>
+                    <p>現行 beta 用 <strong>standalone LVGL</strong>（Type R Dash／PID／Anim）。唔好再寫 <code>rd::Console</code>／<code>rd::Selector</code>；auton 用 headless <code>auton_select</code>。版本摘要見<a href="#version-notes">序言</a>。</p>
                 </div>
             </div>
 
@@ -846,20 +859,14 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             <div class="callout warning">
                 <div class="callout-icon">🧯</div>
                 <div class="callout-content">
-                    <h4>Robodash fadeout → standalone LVGL</h4>
-                    <p>因應 PROS <strong>4.2.2</strong>（hard float）路線，<strong>robodash 已淡出</strong>：EzLib 現行 beta <strong>只用 standalone LVGL</strong> 做 Brain UI（Dash／PID／Anim）。<strong>不再有</strong> robodash Console／Selector LVGL 頁；唔好再依賴 <code>rd::Console::printf</code> 或右上 views 掣。舊站若仍寫「Console 遙測」，請改讀本節的 <strong>Type R Dash</strong>。</p>
+                    <h4>Robodash → standalone LVGL</h4>
+                    <p><strong>不再有</strong> robodash Console／Selector 頁。Brain 畫面用 Type R Dash／PID／Anim（standalone LVGL）。舊「Console 遙測」請改讀本節 Dash。版本摘要見<a href="#version-notes">序言</a>。</p>
                 </div>
             </div>
 
             <h3 id="ch7-dash">🏎️ Type R Dash（<code>telem_dash</code>）</h3>
-            <p>開機流程（<code>EzLib_2.0.0_beta</code>）：</p>
-            <ol>
-                <li><code>telem_dash::start()</code> — 黑屏等 ignition（品牌／BATT 隱藏）。</li>
-                <li><code>finish_boot()</code> → splash → <strong>中 KM/H + 左 TORQUE Nm + 右 FUEL %</strong> sin sweep（全程<strong>無針</strong>）。</li>
-                <li>掃完 → 左 <strong>BATT %</strong> 弧（無針）+ pose／DIST／DRV／MCH／RAM／auton；<code>live_ready_</code>。</li>
-                <li><code>ui_pages::show_dash()</code>／<code>show_pid()</code> 互斥 focus；PID／robot 動畫會 <code>set_gauge_hidden</code> 避免電量透出。</li>
-            </ol>
-            <p>溫度來源集中在 <code>include/customs/dash_config.hpp</code>（改 DRV／MCH 不用改 <code>telem_dash.cpp</code>）。顏色：batt &lt;40 黃／40–80 紅／&gt;80 綠；DIST inch≈999 灰、conf&gt;50 綠、&lt;20 黃、其餘紅。</p>
+            <p>開機直入 Type R Dash（splash／開機動畫後顯示 pose、DIST、DRV／MCH、RAM、auton）。Dash 與 PID 頁用 <code>ui_pages</code> 互斥 focus；開 PID／動畫時會隱藏電量錶，避免透出。</p>
+            <p>溫度對應改 <code>include/customs/dash_config.hpp</code>（唔使改 <code>telem_dash.cpp</code>）。batt／DIST 顏色按電量與 confidence 提示狀態。</p>
 
             <h3>📊 量距離：For PID Distance（英吋）</h3>
             <div class="callout info">
@@ -932,8 +939,7 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
                 <div class="callout-content">
                     <h4>動畫與 LVGL 記憶體</h4>
                     <p>Standalone LVGL overlay：<code>anim_page</code> + <strong>一個</strong> <code>lv_img</code>，換 <code>robot01</code>…<code>robot10</code> src（按住 UP → <code>autoChange</code>）。開動畫 <code>set_gauge_hidden(true)</code>；關動畫／DOWN：<code>show_dash()</code> 還原電量錶。<strong>不要</strong>為每幀建多個 widget 再 focus——會爆 heap／碎裂。</p>
-                    <p>現行設定：<code>include/liblvgl/lv_conf.h</code> → <strong><code>LV_MEM_CUSTOM 1</code></strong>（<code>malloc</code>／<code>free</code>／<code>realloc</code>），不是固定 256KB BSS pool。Dash 顯示真實 free RAM（<code>mallinfo</code> + sbrk）。<code>EzLib_2.0.0_beta</code> 的 <code>liblvgl.a</code> 須 hard float ABI（對齊 PROS 4.2.2）。</p>
-                    <p><strong>Robodash：</strong>已淡出。唔好用 <code>rd::Console::printf</code>（Console／Selector 頁已移除，慳 heap）。Brain 畫面只靠 standalone LVGL + Type R Dash。</p>
+                    <p>現行：<code>LV_MEM_CUSTOM 1</code>（malloc）；Dash 顯示 free RAM。<code>EzLib_2.0.0_beta</code> 的 <code>liblvgl.a</code> 須 hard float ABI。唔好用 <code>rd::Console::printf</code>。</p>
                 </div>
             </div>
 

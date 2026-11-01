@@ -1,6 +1,6 @@
 # EzLib 說明書（GitHub Pages）
 
-本倉庫是 [ezlib.ykyle.eu](https://ezlib.ykyle.eu/) 的公開靜態說明書網站（`index.html` + CSS／JS）。教學敘事、單位說明與章節流程以本站為準；內容對齊 EzLib-EzDrive-motions 的 **`EzLib_2.0.0_beta`**（PROS 4.2.2、**robodash 已淡出／standalone LVGL**、Type R Dash、`ezlib/` 路徑、`getRealPose` cos、練習掣、第八章裁判訪問練習 ≥90%＝熟用 EzLib）。
+本倉庫是 [ezlib.ykyle.eu](https://ezlib.ykyle.eu/) 的公開靜態說明書網站（`index.html` + CSS／JS）。教學敘事、單位說明與章節流程以本站為準；內容對齊 **`EzLib_2.0.0_beta`**。版本近況只保留高階摘要；詳細 changelog 請睇 [motions README](https://github.com/bigbigshop/EzLib-EzDrive-motions/blob/EzLib_2.0.0_beta/README.md#changelog)，唔喺本站展開。
 
 ## 單位速記
 
