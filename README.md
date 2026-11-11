@@ -1,6 +1,6 @@
 # EzLib 說明書（GitHub Pages）
 
-本倉庫是 [ezlib.ykyle.eu](https://ezlib.ykyle.eu/) 的公開靜態說明書網站（`index.html` + CSS／JS）。教學敘事、單位說明與章節流程以本站為準；內容對齊 **`EzLib_2.0.0_beta`**。版本近況只保留高階摘要；詳細 changelog 請睇 [motions README](https://github.com/bigbigshop/EzLib-EzDrive-motions/blob/EzLib_2.0.0_beta/README.md#changelog)，唔喺本站展開。
+本倉庫是 [ezlib.ykyle.eu](https://ezlib.ykyle.eu/) 的公開靜態說明書網站（`index.html` + CSS／JS）。教學敘事、單位說明與章節流程以本站為準；內容對齊 **`EzLib_2.0.0_beta`**（PROS **4.2.3**、selectable loading／Dash 主題）。版本近況只保留高階摘要；詳細 changelog 請睇 [motions README](https://github.com/bigbigshop/EzLib-EzDrive-motions/blob/EzLib_2.0.0_beta/README.md#changelog)，唔喺本站展開。
 
 ## 單位速記
 

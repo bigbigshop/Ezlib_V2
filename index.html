@@ -86,7 +86,7 @@
         <div class="nav-group">
             <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第七章</div>
             <a href="#ch7-debug" class="nav-link">🛠️ 遙測與手制快捷鍵</a>
-            <a href="#ch7-dash" class="nav-link">🏎️ Type R Dash</a>
+            <a href="#ch7-dash" class="nav-link">🖥️ Brain Dash 主題</a>
             <a href="#ch7-tuner" class="nav-link">🎛️ PID 調校器</a>
             <a href="#ch7-sd" class="nav-link">💾 SD 卡 CSV</a>
             <a href="#ch7-monitor" class="nav-link">📱 Controller monitor</a>
@@ -137,8 +137,8 @@
                     <div class="callout-content">
                         <h4>版本近況（摘要）</h4>
                         <ul>
-                            <li>本站對齊 <strong><code>EzLib_2.0.0_beta</code></strong>：PROS 4.2.2、standalone LVGL、Type R Dash。</li>
-                            <li>Brain UI：<strong>robodash 已淡出</strong>，改用 standalone LVGL（詳見<a href="#ch7-debug">第七章</a>）。</li>
+                            <li>本站對齊 <strong><code>EzLib_2.0.0_beta</code></strong>：PROS <strong>4.2.3</strong>、standalone LVGL、可揀 loading／Dash 主題。</li>
+                            <li>Brain UI：<strong>robodash 已淡出</strong>；Dash 可選 Type R 錶或 DOS raw console（詳見<a href="#ch7-dash">第七章</a>）。</li>
                             <li>自測：<a href="#ch8-quiz">裁判訪問練習</a>（≥90%＝熟用 EzLib）。</li>
                         </ul>
                         <p>詳細 changelog／分支沿革<strong>唔喺本說明書展開</strong>——請睇 motions 倉庫 README：<a href="https://github.com/bigbigshop/EzLib-EzDrive-motions/blob/EzLib_2.0.0_beta/README.md#changelog" target="_blank" style="color: var(--accent-blue); font-weight: 700;">EzLib_2.0.0_beta Changelog</a>。</p>
@@ -289,7 +289,7 @@
                 <div class="callout-icon">🧯</div>
                 <div class="callout-content">
                     <h4>robodash 已淡出</h4>
-                    <p>現行 beta 用 <strong>standalone LVGL</strong>（Type R Dash／PID／Anim）。唔好再寫 <code>rd::Console</code>／<code>rd::Selector</code>；auton 用 headless <code>auton_select</code>。版本摘要見<a href="#version-notes">序言</a>。</p>
+                    <p>現行 beta 用 <strong>standalone LVGL</strong>（Dash 主題／PID／Anim）。唔好再寫 <code>rd::Console</code>／<code>rd::Selector</code>；auton 用 headless <code>auton_select</code>。版本摘要見<a href="#version-notes">序言</a>。</p>
                 </div>
             </div>
 
@@ -854,19 +854,36 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
 
             <!-- Chapter 7: Telemetry & Shortcuts -->
             <h2 id="ch7-debug">第七章：實用工具與除錯 (Tools & Debug)</h2>
-            <p>練車階段內建 <strong>Type R Dash</strong>、PID 調校器、SD CSV、Controller monitor、動畫與場控 teardown。Brain 開機直入 Dash；auton 用 headless <code>auton_select</code>。</p>
+            <p>練車階段內建 <strong>Brain Dash</strong>（可揀主題）、PID 調校器、SD CSV、Controller monitor、動畫與場控 teardown。auton 用 headless <code>auton_select</code>。</p>
 
             <div class="callout warning">
                 <div class="callout-icon">🧯</div>
                 <div class="callout-content">
                     <h4>Robodash → standalone LVGL</h4>
-                    <p><strong>不再有</strong> robodash Console／Selector 頁。Brain 畫面用 Type R Dash／PID／Anim（standalone LVGL）。舊「Console 遙測」請改讀本節 Dash。版本摘要見<a href="#version-notes">序言</a>。</p>
+                    <p><strong>不再有</strong> robodash Console／Selector 頁。Brain 畫面用 <code>telem_dash</code>／PID／Anim（standalone LVGL）。舊「Console 遙測」請改讀本節 Dash（含 DOS 文字主題）。版本摘要見<a href="#version-notes">序言</a>。</p>
                 </div>
             </div>
 
-            <h3 id="ch7-dash">🏎️ Type R Dash（<code>telem_dash</code>）</h3>
-            <p>開機直入 Type R Dash（splash／開機動畫後顯示 pose、DIST、DRV／MCH、RAM、auton）。Dash 與 PID 頁用 <code>ui_pages</code> 互斥 focus；開 PID／動畫時會隱藏電量錶，避免透出。</p>
-            <p>溫度對應改 <code>include/customs/dash_config.hpp</code>（唔使改 <code>telem_dash.cpp</code>）。batt／DIST 顏色按電量與 confidence 提示狀態。</p>
+            <h3 id="ch7-dash">🖥️ Brain Dash（<code>telem_dash</code>）</h3>
+            <p>喺 <code>src/main.cpp</code> 用兩個 constexpr 揀主題（<code>initialize()</code> 會呼叫 <code>set_loading_theme</code>／<code>set_dash_theme</code>）：</p>
+            <table class="notion-table">
+                <tr><th>變數</th><th>值</th><th>效果</th></tr>
+                <tr><td rowspan="3"><code>k_loading_theme</code></td><td><code>1</code></td><td>none — 跳過開機動畫</td></tr>
+                <tr><td><code>2</code></td><td>Type R — 三錶 ignition（KM/H／TORQUE／FUEL）</td></tr>
+                <tr><td><code>3</code></td><td>Spear of Longinus — 紅 progress + 槍尖</td></tr>
+                <tr><td rowspan="3"><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauge／卡 Dash（BATT 弧 + pose／DIST／DRV／MCH／RAM）</td></tr>
+                <tr><td><code>2</code></td><td>Terminal — DOS raw 文字（黑底綠字）</td></tr>
+                <tr><td><code>3</code></td><td>Light — 同一套 console（白底黑字）</td></tr>
+            </table>
+            <p>Loading 同 Dash <strong>分開揀</strong>。Type R Dash 與 PID 頁用 <code>ui_pages</code> 互斥 focus；開 PID／動畫時會 <code>set_gauge_hidden</code>，避免電量透出。</p>
+            <div class="callout info">
+                <div class="callout-icon">⌨️</div>
+                <div class="callout-content">
+                    <h4>DOS console（主題 2／3）</h4>
+                    <p>全屏 raw 文字，無錶無卡。例：<code>auton=...</code>、<code>batt=87%</code>、<code>ram=0.12M</code>、pose／dist／drv／mch。右下角隱形 <code>pid</code> 可撳入 PID 頁。呢個<strong>唔係</strong>舊 robodash Console。</p>
+                </div>
+            </div>
+            <p>溫度對應改 <code>include/customs/dash_config.hpp</code>（唔使改 <code>telem_dash.cpp</code>）。Type R 主題下 batt／DIST 顏色按電量與 confidence 提示狀態。</p>
 
             <h3>📊 量距離：For PID Distance（英吋）</h3>
             <div class="callout info">
