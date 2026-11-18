@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EzLib說明書 · 2.0.0</title>
+    <title>EzLib說明書</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -96,13 +96,19 @@
             <a href="#ch7-debug" class="nav-link">🛠️ 遙測與手制快捷鍵</a>
             <a href="#ch7-dash" class="nav-link">🖥️ Brain Dash 主題</a>
             <a href="#ch7-tuner" class="nav-link">🎛️ PID 調校器</a>
+            <a href="#ch7-console" class="nav-link only-v201">📟 Brain 右邊 CONSOLE</a>
             <a href="#ch7-sd" class="nav-link">💾 SD 卡 CSV</a>
             <a href="#ch7-monitor" class="nav-link">📱 Controller monitor</a>
             <a href="#ch7-lvgl" class="nav-link">🖼️ standalone LVGL</a>
         </div>
 
+        <div class="nav-group only-v201">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第八章（2.0.1）</div>
+            <a href="#ch8-liftlib" class="nav-link">🦾 升降臂（Liftlib）入門</a>
+        </div>
+
         <div class="nav-group">
-            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第八章</div>
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;"><span class="only-v200">第八章</span><span class="only-v201">第九章</span></div>
             <a href="#ch8-quiz" class="nav-link">🎤 裁判訪問練習</a>
         </div>
     </nav>
@@ -140,18 +146,33 @@
                     </div>
                 </div>
 
-                <div class="callout success" id="version-notes">
+                <div id="version-notes">
+                <div class="callout success only-v200">
                     <div class="callout-icon">🏷️</div>
                     <div class="callout-content">
-                        <h4>版本近況（摘要）— 你而家睇緊 <code>2.0.0</code></h4>
+                        <h4>你而家睇緊：2.0.0</h4>
+                        <p>呢個版本教你：底盤點行、點轉、點寫 auton、Brain 畫面（Dash）同 PID 調校。右上角可以隨時切去 <strong>2.0.1</strong>（有升降臂教學）。</p>
                         <ul>
-                            <li>本頁對齊 <strong><code>EzLib_2.0.0_beta</code></strong>：PROS <strong>4.2.3</strong>、standalone LVGL、可揀 loading／Dash 主題。</li>
-                            <li>Brain UI：<strong>robodash 已淡出</strong>；Dash 可選 Type R 錶或 DOS raw console（詳見<a href="#ch7-dash">第七章</a>）。</li>
-                            <li><strong>2.0.1</strong>（Liftlib、`ezlib::printf` console、nested LemLib）請用右上角 <strong>Version</strong> 切換，避免同 2.0.0 內容混淆。</li>
-                            <li>自測：<a href="#ch8-quiz">裁判訪問練習</a>（≥90%＝熟用 EzLib）。</li>
+                            <li>對應程式 branch：<code>EzLib_2.0.0_beta</code>（PROS 4.2.3）</li>
+                            <li>Brain 用自己嘅 Dash／PID 頁（唔再係舊 robodash）</li>
+                            <li>做完可去<a href="#ch8-quiz">裁判訪問練習</a>自測</li>
                         </ul>
-                        <p>詳細 changelog／分支沿革<strong>唔喺本說明書展開</strong>——請睇 motions 倉庫 README：<a href="https://github.com/bigbigshop/EzLib-EzDrive-motions/blob/EzLib_2.0.0_beta/README.md#changelog" target="_blank" style="color: var(--accent-blue); font-weight: 700;">EzLib_2.0.0_beta Changelog</a>。</p>
                     </div>
+                </div>
+
+                <div class="callout success only-v201">
+                    <div class="callout-icon">🏷️</div>
+                    <div class="callout-content">
+                        <h4>你而家睇緊：2.0.1</h4>
+                        <p>喺 2.0.0 基礎上，多咗三樣成日會用到嘅嘢：</p>
+                        <ul>
+                            <li><strong>升降臂</strong>（Liftlib）— 見<a href="#ch8-liftlib">第八章</a>，有抄得走嘅例子</li>
+                            <li><strong>Brain 右邊 CONSOLE</strong> — 用 <code>ezlib::printf</code> 睇 live 數值（好似印筆記）</li>
+                            <li>PID 頁撳 <strong>Dash</strong> 返去會自動清走 PID 畫面（唔使驚爆紅 mon）</li>
+                        </ul>
+                        <p>唔使一次讀晒。先跟例子抄，再慢慢改 port／度數。</p>
+                    </div>
+                </div>
                 </div>
                 
                 <!-- Preface: Warning Section -->
@@ -281,19 +302,35 @@
             </div>
 
             <h3 id="ch1-structure" style="margin-top: 30px;">專案結構與宣告慣例</h3>
-            <p><code>main.h</code> 引入 <code>lemlib/api.hpp</code> 與 <code>ezlib/ez_compat.hpp</code>。<code>chassis</code>、<code>ezPID</code> 與 <code>pidTuner</code> 在 <code>src/main.cpp</code> 建立。庫碼與 user 碼分開；宣告遵守 <code>extern</code>（大物件）與 <code>inline</code>（小硬體）慣例。</p>
 
+            <div class="only-v200">
+            <p>簡單記：<strong>你改 customs</strong>；庫檔一般唔使動。<code>chassis</code>／<code>ezPID</code>／<code>pidTuner</code> 喺 <code>src/main.cpp</code> 整好。</p>
             <table class="notion-table">
-                <tr><th>路徑</th><th>內容</th></tr>
-                <tr><td><code>src/main.cpp</code></td><td>底盤馬達／IMU／tracking／<code>chassis</code>／<code>ezPID</code>／<code>pidTuner</code> 定義；<code>auton_select::init</code></td></tr>
-                <tr><td><code>include/customs/</code> + <code>src/customs/</code></td><td><strong>User 側</strong>（自己改／寫）：<code>objDeclare</code>、<code>autons</code>、<code>controls</code>、<code>fsm</code>、<code>dash_config</code></td></tr>
-                <tr><td><code>include/customs/dash_config.hpp</code></td><td><strong>改這裡</strong>設定 Dash 的 DRV／MCH 溫度對應哪粒馬達</td></tr>
-                <tr><td><code>include/ezlib/</code> + <code>src/ezlib/</code></td><td><strong>庫內</strong>（一般不用改）：<code>ez_compat</code>、<code>pid_tuner</code>、<code>relocate</code>、<code>telem_dash</code>、<code>monitor</code>、<code>auton_select</code>、<code>sd_log</code>、<code>boot_log</code>、<code>ui_pages</code></td></tr>
-                <tr><td><code>include/ez_compat/</code></td><td><code>pid.hpp</code>、<code>motion_math.hpp</code>（LemLib motions 共用數學；路徑維持 <code>ez_compat/...</code>）</td></tr>
-                <tr><td><code>src/assets/robot01.c</code> … <code>robot10.c</code></td><td>LVGL C array 動畫幀（flash）</td></tr>
-                <tr><td><code>firmware/liblvgl.a</code></td><td>預編譯 <strong>standalone</strong> LVGL（beta：hardfp + <code>LV_MEM_CUSTOM</code>；<strong>唔再經 robodash</strong>）</td></tr>
+                <tr><th>路徑</th><th>你要知咩</th></tr>
+                <tr><td><code>src/main.cpp</code></td><td>開機設定、底盤、PID 數字</td></tr>
+                <tr><td><code>include/customs/</code> + <code>src/customs/</code></td><td><strong>你寫嘅</strong>：auton、掣、機構</td></tr>
+                <tr><td><code>include/ezlib/</code></td><td>庫（通常唔改）</td></tr>
             </table>
-            <p>Include 例：<code>#include "ezlib/ez_compat.hpp"</code>、<code>#include "ezlib/telem_dash.hpp"</code>、<code>#include "customs/dash_config.hpp"</code>。</p>
+            <p>開頭通常會：<code>#include "ezlib/ez_compat.hpp"</code>、<code>#include "customs/dash_config.hpp"</code>。</p>
+            </div>
+
+            <div class="only-v201">
+            <p>2.0.1 多咗升降臂庫；檔案位置可以咁記：</p>
+            <table class="notion-table">
+                <tr><th>你想改咩</th><th>去邊</th></tr>
+                <tr><td>auton／掣／氣壓</td><td><code>customs/</code>（你嘅功課簿）</td></tr>
+                <tr><td>底盤 PID、開機</td><td><code>src/main.cpp</code></td></tr>
+                <tr><td>升降臂</td><td>都係 <code>main.cpp</code> 宣告 <code>armLift</code>；細節見<a href="#ch8-liftlib">第八章</a></td></tr>
+                <tr><td>Brain 印字（CONSOLE）</td><td><code>#include "ezlib/console.hpp"</code> 之後 <code>ezlib::printf</code></td></tr>
+            </table>
+            <div class="callout info">
+                <div class="callout-icon">💡</div>
+                <div class="callout-content">
+                    <h4>小白心態</h4>
+                    <p>唔使一次搞明全部資料夾。先令車郁、再加臂、再印數值。卡關就抄下面例子改 port 同度數。</p>
+                </div>
+            </div>
+            </div>
             <div class="callout warning">
                 <div class="callout-icon">🧯</div>
                 <div class="callout-content">
@@ -877,12 +914,14 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             <p>喺 <code>src/main.cpp</code> 用兩個 constexpr 揀主題（<code>initialize()</code> 會呼叫 <code>set_loading_theme</code>／<code>set_dash_theme</code>）：</p>
             <table class="notion-table">
                 <tr><th>變數</th><th>值</th><th>效果</th></tr>
-                <tr><td rowspan="3"><code>k_loading_theme</code></td><td><code>1</code></td><td>none — 跳過開機動畫</td></tr>
+                <tr><td rowspan="4"><code>k_loading_theme</code></td><td><code>1</code></td><td>none — 跳過開機動畫</td></tr>
                 <tr><td><code>2</code></td><td>Type R — 三錶 ignition（KM/H／TORQUE／FUEL）</td></tr>
                 <tr><td><code>3</code></td><td>Spear of Longinus — 紅 progress + 槍尖</td></tr>
-                <tr><td rowspan="3"><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauge／卡 Dash（BATT 弧 + pose／DIST／DRV／MCH／RAM）</td></tr>
+                <tr class="only-v201"><td><code>4</code></td><td>KeeTa Rider — splash logo</td></tr>
+                <tr><td rowspan="4"><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauge／卡 Dash（BATT 弧 + pose／DIST／DRV／MCH／RAM）</td></tr>
                 <tr><td><code>2</code></td><td>Terminal — DOS raw 文字（黑底綠字）</td></tr>
                 <tr><td><code>3</code></td><td>Light — 同一套 console（白底黑字）</td></tr>
+                <tr class="only-v201"><td><code>4</code></td><td>V5Console — 經典 Brain console 風</td></tr>
             </table>
             <p>Loading 同 Dash <strong>分開揀</strong>。Type R Dash 與 PID 頁用 <code>ui_pages</code> 互斥 focus；開 PID／動畫時會 <code>set_gauge_hidden</code>，避免電量透出。</p>
             <div class="callout info">
@@ -904,10 +943,33 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             </div>
 
             <h3 id="ch7-tuner" style="margin-top: 30px;">🎛️ PID 調校器</h3>
+            <div class="only-v200">
             <p><code>pidTuner.start()</code> 在 <code>initialize()</code> 呼叫。增益寫在 <code>ezPID</code> 上，與 auton／底盤 motion <strong>同一套</strong>。</p>
-            <p>Brain <strong>PID</strong> 頁（compact UI）：換 field、± 調值、+12／−12、h±90、Print、Ctrl、Pose0、L10／R10（十圈）。亦可 <strong>X+A</strong> 用 controller 調。Print 會把常數片段打到 terminal，並寫一行 SD snapshot（有卡時）。線上先建立直覺：<a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue);">pid.ykyle.eu</a>。</p>
-
-            <p><strong>建議流程（練習場）</strong>：插 microSD（可選）→ 拔場控 → 開機等 Dash／校正完 → <strong>X+A</strong> 開 tuner → <strong>A</strong> 清 pose；←→ 揀 field；↑↓ 改數值 → B／Y 測 ±12″、L1／R1 測 ±90° → 滿意後 <strong>Print</strong> 貼返 <code>initialize()</code> → <strong>X</strong> 退出。要估 tracking 偏移再跑 L2／R2 十圈。</p>
+            <p>Brain <strong>PID</strong> 頁（compact UI）：換 field、± 調值、+12／−12、h±90、Print、Ctrl、Pose0、L10／R10（十圈）。亦可 <strong>X+A</strong> 用 controller 調。線上先建立直覺：<a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue);">pid.ykyle.eu</a>。</p>
+            <p><strong>建議流程（練習場）</strong>：拔場控 → 開機 → <strong>X+A</strong> 開 tuner → ←→ 揀 field；↑↓ 改數 → B／Y 測 ±12″ → 滿意就抄數字返 <code>initialize()</code> → <strong>X</strong> 退出。</p>
+            </div>
+            <div class="only-v201">
+            <p>想調底盤「推幾硬／煞幾急」：拔場控，手掣 <strong>X+A</strong>（或者 Brain Dash 上嘅 PID 掣）。</p>
+            <p>Brain 畫面大概係：</p>
+            <ul>
+                <li><strong>左邊</strong>：而家調緊邊個數、live 讀數、<strong>Dash</strong>（返主畫面）、<strong>Manual</strong>（開咗可以邊調邊用手掣推車）</li>
+                <li><strong>右邊 CONSOLE</strong>：你用程式印出嚟嘅字（見下一節）</li>
+            </ul>
+            <div class="callout info">
+                <div class="callout-icon">🧪</div>
+                <div class="callout-content">
+                    <h4>第一次調校可以咁做</h4>
+                    <ol>
+                        <li>場地清空，拔裁判線</li>
+                        <li><strong>X+A</strong> 入 PID</li>
+                        <li>←→ 揀例如 drive P；↑↓ 改細少少</li>
+                        <li>B／Y 叫車行 ±12 吋，睇超唔超衝</li>
+                        <li>滿意就抄畫面／Print 嘅數字，貼返 <code>main.cpp</code> 嘅 <code>set_drive_constants(...)</code></li>
+                        <li>撳 Brain <strong>Dash</strong> 或手掣 <strong>X</strong> 離開</li>
+                    </ol>
+                </div>
+            </div>
+            </div>
 
             <p><strong>控制器調校（須拔場控）</strong>：<strong>X+A</strong> 進入（上升沿）；進入時 cancel 運動、停 arcade。<strong>X</strong>（未按住 A）退出。</p>
             <table class="notion-table">
@@ -920,7 +982,35 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
                 <tr><td>L2／R2</td><td>左 CCW／右 CW 各轉 10 圈 → <code>findingOffset.csv</code></td></tr>
                 <tr><td>X（單獨）</td><td>退出 tuner</td></tr>
             </table>
-            <p>十圈實作：每圈 4×(±90°) 絕對 turn（避開 wrap 無法一次轉 360°）。開始時會 <code>set_pose(0,0,0)</code>。調校開啟時 intake 肩鍵讓給 L1／R1／L2／R2；關閉後恢復。</p>
+            <p>十圈實作：每圈 4×(±90°) 絕對 turn（避開 wrap 無法一次轉 360°）。開始時會 <code>set_pose(0,0,0)</code>。調校開啟時肩鍵讓給 L1／R1／L2／R2；關閉後恢復。</p>
+
+            <div class="only-v201">
+            <h3 id="ch7-console" style="margin-top: 30px;">📟 Brain 右邊 CONSOLE（印字俾自己睇）</h3>
+            <p>入咗 PID 頁之後，右邊可以顯示你程式印出嚟嘅字——好似練習簿，方便睇「而家臂喺幾多度」。</p>
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 例：opcontrol 每 0.2 秒更新一行</div>
+                <div class="code-block">
+<span class="c-pp">#include</span> <span class="c-st">"ezlib/console.hpp"</span>
+
+<span class="c-co">// 只留最新一行（適合 live 數值）</span>
+ezlib::<span class="c-fn">set</span>(<span class="c-st">"arm %.1f"</span>, armLift.<span class="c-fn">getPosition</span>());
+
+<span class="c-co">// 想一行行累積可以用 printf</span>
+ezlib::<span class="c-fn">printf</span>(<span class="c-st">"color %d\n"</span>, hue);
+                </div>
+            </div>
+            <div class="callout info">
+                <div class="callout-icon">📝</div>
+                <div class="callout-content">
+                    <h4>記住三句</h4>
+                    <ul>
+                        <li>要睇字 → 先入 PID 頁（右邊先有 CONSOLE）</li>
+                        <li>接咗場控／比賽線 → 印字會自動停，唔會嘈比賽</li>
+                        <li>唔使自己搞畫面刷新；你 call <code>set</code>／<code>printf</code> 就得</li>
+                    </ul>
+                </div>
+            </div>
+            </div>
 
             <h3 id="ch7-sd" style="margin-top: 30px;">💾 SD 卡 CSV</h3>
             <p>路徑前綴 <code>/usd/</code>（PROS），需插入 microSD。輔助 API 在 <code>sd_log</code>（<code>src/ezlib/sd_log.cpp</code>）：檔案不存在或為空時自動寫 header，之後 <strong>append 累積</strong>。</p>
@@ -969,11 +1059,85 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
                 </div>
             </div>
 
+            <div class="section-divider only-v201"></div>
+
+            <section id="ch8-liftlib" class="only-v201">
+                <h2>第八章：升降臂入門（Liftlib）</h2>
+                <p>想用馬達抬臂／升降？2.0.1 用 Liftlib。下面由「一粒馬達」開始，再講兩粒點寫。</p>
+
+                <h3>1. 先喺 main.cpp 宣告臂</h3>
+                <p>假設馬達 port <strong>1</strong>、齒比馬達 12T → 臂 84T、軟限位 0°～50°（輸出端度數）：</p>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 抄得走：一粒馬達</div>
+                    <div class="code-block">
+<span class="c-kw">constexpr</span> <span class="c-kw">float</span> k_arm_gear = <span class="c-st">12.0f</span> / <span class="c-st">84.0f</span>;
+liftlib::MotorConfig armMotorCfg{<span class="c-st">1</span>, k_arm_gear, pros::E_MOTOR_BRAKE_HOLD, pros::MotorGears::green};
+liftlib::PID armLiftPid(<span class="c-st">5.4f</span>, <span class="c-st">0</span>, <span class="c-st">1.0f</span>, <span class="c-st">2.0f</span>);
+liftlib::Subsystem armLift({armMotorCfg}, armLiftPid, <span class="c-st">0.0f</span>, <span class="c-st">50.0f</span>);
+                    </div>
+                </div>
+
+                <h3>2. initialize() 開機開一次</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 initialize() 裏面</div>
+                    <div class="code-block">
+armLift.<span class="c-fn">initialize</span>();
+<span class="c-co">// 抗重力：慢慢加大 10→20→30，直到手放開會停喺半空又唔自己向上</span>
+armLift.<span class="c-fn">setFeedforward</span>(liftlib::Feedforward::<span class="c-fn">constant</span>(<span class="c-st">20.0f</span>));
+armLift.<span class="c-fn">addPosition</span>(<span class="c-st">"max"</span>, <span class="c-st">50</span>);
+armLift.<span class="c-fn">addPosition</span>(<span class="c-st">"mid"</span>, <span class="c-st">25</span>);
+                    </div>
+                </div>
+
+                <h3>3. 手掣例子（Arcade：用右搖桿上下）</h3>
+                <p>Y → 去 max；A → 去 mid；RIGHT_Y 手動升降。放棍就 hold（近底可以 coast）。</p>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 opcontrol 裏面（概念）</div>
+                    <div class="code-block">
+<span class="c-kw">if</span> (controller.<span class="c-fn">get_digital_new_press</span>(DIGITAL_Y))
+    armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"max"</span>, <span class="c-kw">true</span>, <span class="c-st">600</span>);
+<span class="c-kw">else if</span> (controller.<span class="c-fn">get_digital_new_press</span>(DIGITAL_A))
+    armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"mid"</span>, <span class="c-kw">true</span>, <span class="c-st">600</span>);
+
+<span class="c-kw">int</span> stick = controller.<span class="c-fn">get_analog</span>(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+<span class="c-co">// |stick| 夠大 → setOutput；太細 → hold／近 0° 就 setOutput(0)</span>
+<span class="c-co">// 撞到 0／50 要停出力，唔好繼續推（setOutput 自己唔會停喺 soft limit）</span>
+                    </div>
+                </div>
+
+                <h3>4. 兩粒馬達點寫？</h3>
+                <p>Liftlib <strong>唔用</strong> <code>MotorGroup</code>。兩粒就寫兩個 config；要反轉嗰粒用<strong>負 port</strong>：</p>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 兩粒馬達（1 同 2，2 反轉）</div>
+                    <div class="code-block">
+liftlib::Subsystem armLift(
+    {
+        {<span class="c-st">1</span>,  k_arm_gear, pros::E_MOTOR_BRAKE_HOLD, pros::MotorGears::green},
+        {<span class="c-st">-2</span>, k_arm_gear, pros::E_MOTOR_BRAKE_HOLD, pros::MotorGears::green},
+    },
+    armLiftPid,
+    <span class="c-st">0.0f</span>, <span class="c-st">50.0f</span>);
+                    </div>
+                </div>
+
+                <div class="callout warning">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-content">
+                        <h4>新手常見踩坑</h4>
+                        <ul>
+                            <li>每一轉（每一 loop）都 call <code>hold()</code> → 容易紅 mon。只喺「由手動轉返自動停」嗰下 call 一次。</li>
+                            <li>手動 <code>setOutput</code> 可以衝過上限 → 自己檢查角度，到頂就停。</li>
+                            <li>齒輪比／軟限位度數要同機械一致；唔啱就會「以為到 50 其實未到」。</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
             <div class="section-divider"></div>
 
-            <!-- Chapter 8: Judge interview quiz -->
+            <!-- Judge interview quiz -->
             <section id="ch8-quiz">
-                <h2>第八章：裁判訪問練習（Judge Interview）</h2>
+                <h2><span class="only-v200">第八章</span><span class="only-v201">第九章</span>：裁判訪問練習（Judge Interview）</h2>
                 <p>用本站已寫嘅 EzLib 概念自測——題目模仿裁判常問嘅 stack／流程。答完即時睇對錯；全部做完計分。</p>
                 <div class="callout info">
                     <div class="callout-icon">🎯</div>

@@ -524,6 +524,10 @@ code {
     color: var(--text-muted);
 }
 
+/* --- Same-page version panes --- */
+html[data-docs-version="2.0.0"] .only-v201 { display: none !important; }
+html[data-docs-version="2.0.1"] .only-v200 { display: none !important; }
+
 /* --- Docs version switcher (top-right) --- */
 .version-bar {
     position: fixed;

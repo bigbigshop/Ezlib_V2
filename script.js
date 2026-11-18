@@ -1,17 +1,47 @@
-// --- Docs version switcher (default landing = 2.0.0 at /) ---
+// --- Docs version switcher (same page; default 2.0.0) ---
 (function initDocsVersion() {
     const select = document.getElementById('docs-version');
     if (!select) return;
-    const current = document.documentElement.getAttribute('data-docs-version') || '2.0.0';
-    select.value = current;
-    select.addEventListener('change', function () {
-        const v = select.value;
-        const hash = window.location.hash || '';
-        if (v === '2.0.1') {
-            window.location.href = '/2.0.1/' + hash;
-        } else {
-            window.location.href = '/' + hash;
+
+    function applyDocsVersion(v, pushUrl) {
+        if (v !== '2.0.0' && v !== '2.0.1') v = '2.0.0';
+        document.documentElement.setAttribute('data-docs-version', v);
+        select.value = v;
+        const mobileTitle = document.querySelector('.mobile-header .header-text');
+        if (mobileTitle) mobileTitle.textContent = 'EzLib · ' + v;
+        document.title = 'EzLib說明書 · ' + v;
+
+        // Keep shareable link without leaving the page
+        if (pushUrl) {
+            const url = new URL(window.location.href);
+            if (v === '2.0.0') url.searchParams.delete('v');
+            else url.searchParams.set('v', v);
+            history.replaceState(null, '', url.pathname + url.search + url.hash);
         }
+
+        // If current hash target is hidden in this version, scroll to intro
+        const hash = window.location.hash.replace(/^#/, '');
+        if (hash) {
+            const target = document.getElementById(hash);
+            if (target) {
+                const hidden = target.closest('.only-v200, .only-v201');
+                if (hidden && getComputedStyle(hidden).display === 'none') {
+                    const intro = document.getElementById('intro');
+                    const area = document.getElementById('scroll-area');
+                    if (intro && area) area.scrollTo({ top: Math.max(0, intro.offsetTop - 40), behavior: 'smooth' });
+                }
+            }
+        }
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = params.get('v');
+    // Default always 2.0.0 unless URL asks for 2.0.1 (no localStorage lock-in)
+    const initial = fromQuery === '2.0.1' ? '2.0.1' : '2.0.0';
+    applyDocsVersion(initial, false);
+
+    select.addEventListener('change', function () {
+        applyDocsVersion(select.value, true);
     });
 })();
 
