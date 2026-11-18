@@ -524,6 +524,52 @@ code {
     color: var(--text-muted);
 }
 
+/* --- Docs version switcher (top-right) --- */
+.version-bar {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background-color: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.version-bar-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.version-bar select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--bg-hover);
+    color: var(--text-bold);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 4px 28px 4px 10px;
+    font-family: "Fira Code", ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+
+.version-bar select:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 1px;
+}
+
 /* --- Mobile Header --- */
 .mobile-header {
     display: none;
@@ -642,6 +688,22 @@ code {
         width: 100%;
         margin-top: 60px;
         height: calc(100vh - 60px);
+    }
+
+    .version-bar {
+        top: 10px;
+        right: 10px;
+        padding: 4px 8px;
+        gap: 6px;
+    }
+
+    .version-bar-label {
+        display: none;
+    }
+
+    .version-bar select {
+        font-size: 12px;
+        padding: 4px 24px 4px 8px;
     }
 
     .page-content {

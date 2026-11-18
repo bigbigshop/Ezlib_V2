@@ -1,3 +1,20 @@
+// --- Docs version switcher (default landing = 2.0.0 at /) ---
+(function initDocsVersion() {
+    const select = document.getElementById('docs-version');
+    if (!select) return;
+    const current = document.documentElement.getAttribute('data-docs-version') || '2.0.0';
+    select.value = current;
+    select.addEventListener('change', function () {
+        const v = select.value;
+        const hash = window.location.hash || '';
+        if (v === '2.0.1') {
+            window.location.href = '/2.0.1/' + hash;
+        } else {
+            window.location.href = '/' + hash;
+        }
+    });
+})();
+
 // --- Theme Toggle Logic ---
 const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn, .mobile-theme-btn');
 

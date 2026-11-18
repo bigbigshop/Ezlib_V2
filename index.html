@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="zh-HK" data-docs-version="2.0.0">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EzLib說明書</title>
+    <title>EzLib說明書 · 2.0.0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -11,6 +11,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div class="version-bar" aria-label="Docs version">
+        <span class="version-bar-label">Version</span>
+        <select id="docs-version" aria-label="Select EzLib docs version">
+            <option value="2.0.0">2.0.0</option>
+            <option value="2.0.1">2.0.1</option>
+        </select>
+    </div>
 
     <!-- Mobile Header (重新設計排版，防止 Icon 重疊) -->
     <header class="mobile-header">
@@ -20,7 +28,7 @@
             </button>
             <div class="header-title">
                 <span class="page-icon" style="font-size: 20px;">🤖</span>
-                <span class="header-text">EzLib說明書</span>
+                <span class="header-text">EzLib · 2.0.0</span>
             </div>
         </div>
     </header>
@@ -135,10 +143,11 @@
                 <div class="callout success" id="version-notes">
                     <div class="callout-icon">🏷️</div>
                     <div class="callout-content">
-                        <h4>版本近況（摘要）</h4>
+                        <h4>版本近況（摘要）— 你而家睇緊 <code>2.0.0</code></h4>
                         <ul>
-                            <li>本站對齊 <strong><code>EzLib_2.0.0_beta</code></strong>：PROS <strong>4.2.3</strong>、standalone LVGL、可揀 loading／Dash 主題。</li>
+                            <li>本頁對齊 <strong><code>EzLib_2.0.0_beta</code></strong>：PROS <strong>4.2.3</strong>、standalone LVGL、可揀 loading／Dash 主題。</li>
                             <li>Brain UI：<strong>robodash 已淡出</strong>；Dash 可選 Type R 錶或 DOS raw console（詳見<a href="#ch7-dash">第七章</a>）。</li>
+                            <li><strong>2.0.1</strong>（Liftlib、`ezlib::printf` console、nested LemLib）請用右上角 <strong>Version</strong> 切換，避免同 2.0.0 內容混淆。</li>
                             <li>自測：<a href="#ch8-quiz">裁判訪問練習</a>（≥90%＝熟用 EzLib）。</li>
                         </ul>
                         <p>詳細 changelog／分支沿革<strong>唔喺本說明書展開</strong>——請睇 motions 倉庫 README：<a href="https://github.com/bigbigshop/EzLib-EzDrive-motions/blob/EzLib_2.0.0_beta/README.md#changelog" target="_blank" style="color: var(--accent-blue); font-weight: 700;">EzLib_2.0.0_beta Changelog</a>。</p>
