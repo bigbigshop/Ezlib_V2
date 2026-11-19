@@ -275,228 +275,228 @@ function initJudgeQuiz() {
               retry: '再試一次',
               optGroup: '選項'
           };
-                        const questionBankZh = [
+                            const questionBankZh = [
         {
-            q: "ezPID.drive(distance, …) 用咩單位？",
+            q: "ezPID.drive(distance, …) 使用什麼單位？",
             choices: [
-                "英吋（同 tracking 行程一致）",
+                "英吋（與 tracking 行程一致）",
                 "馬達編碼器度數",
                 "公分",
                 "LemLib tile"
             ],
             answer: 0,
-            explain: "drive 距離係英吋。"
+            explain: "drive 的距離單位為英吋。"
         },
         {
-            q: "ezPID.turn 的目標係？",
+            q: "ezPID.turn 的目標是什麼？",
             choices: [
-                "相對而家航向再加減幾多度",
-                "絕對航向（度），唔係相對 delta",
+                "相對目前航向再加減若干度",
+                "絕對航向（度），而非相對差值",
                 "弧度",
-                "净係 tracking wheel 角度"
+                "僅 tracking wheel 角度"
             ],
             answer: 1,
-            explain: "turn 目標係絕對航向（度）。"
+            explain: "turn 的目標為絕對航向（度）。"
         },
         {
-            q: "bindEzDrive 之後，chassis.moveToPose 用邊套 PID？",
+            q: "bindEzDrive 之後，chassis.moveToPose 使用哪一套 PID？",
             choices: [
-                "建構時嗰套 LemLib ControllerSettings",
+                "建構時的 LemLib ControllerSettings",
                 "另外再調一套 LemLib angular gains",
-                "同 turnTo* 一樣改用 ezPID",
+                "與 turnTo* 相同，改用 ezPID",
                 "drive 用 ezPID，turn 永遠另一套"
             ],
             answer: 2,
-            explain: "bind 後 moveToPose／turnTo* 共用 ezPID。"
+            explain: "bind 之後，moveToPose／turnTo* 共用 ezPID。"
         },
         {
-            q: "Brain 上邊度睇電量／pose／溫度？",
+            q: "在 Brain 上何處查看電量／位姿／溫度？",
             choices: [
                 "PC USB terminal",
-                "Brain 上嘅 Dash（telem_dash）",
-                "淨讀 /usd 入面 CSV",
-                "手掣三行就夠，Brain 無畫面"
+                "Brain 上的 Dash（telem_dash）",
+                "僅讀取 /usd 內的 CSV",
+                "控制器三行即可，Brain 無畫面"
             ],
             answer: 1,
-            explain: "用 Brain Dash（telem_dash）。"
+            explain: "使用 Brain 上的 Dash（telem_dash）。"
         },
         {
-            q: "練習場 ←→ 換 auton，會唔會 set_pose(0,0,0)？",
+            q: "練習場以 ←→ 切換 auton 時，會不會執行 set_pose(0,0,0)？",
             choices: [
-                "唔會；只換名稱，位姿照舊",
-                "會；每次換名都強制回原點",
-                "只清 X／Y，θ 保留",
-                "會，同埋自動 wallReset"
+                "不會；只更換名稱，位姿維持不變",
+                "會；每次更名都強制回到原點",
+                "只清除 X／Y，θ 保留",
+                "會，並且自動執行 wallReset"
             ],
             answer: 0,
-            explain: "←→ 只換名稱；唔會 set_pose。"
+            explain: "←→ 只更換名稱；不會 set_pose。"
         },
         {
-            q: "練習場撳 DOWN（無按住 B／Y）做咩？",
+            q: "練習場按下 DOWN（未按住 B／Y）會做什麼？",
             choices: [
-                "強制開 PID tuner",
-                "刪晒 LVGL 頁再重建 Dash",
-                "返 Dash，練習場通常一併 reset_pid",
-                "寫 SD CSV header 之後先清 traveled"
+                "強制開啟 PID tuner",
+                "刪除所有 LVGL 頁面後重建 Dash",
+                "返回 Dash，練習場通常一併 reset_pid",
+                "寫入 SD CSV header 後才清除 traveled"
             ],
             answer: 2,
-            explain: "DOWN 返 Dash；練習場會 reset_pid。"
+            explain: "DOWN 返回 Dash；練習場會 reset_pid。"
         },
         {
-            q: "點解長 Auto 唔好全程只信 odometry？",
+            q: "為何長距離 Auto 不宜全程只依賴 odometry？",
             choices: [
-                "因為 ezPID 完全唔可以行長距離",
+                "因為 ezPID 完全無法行走長距離",
                 "因為 PROS 禁止呼叫 getPose()",
-                "因為 moveToPose 根本唔需要位姿",
-                "碰撞／打滑會 drift，中段要 reset"
+                "因為 moveToPose 根本不需要位姿",
+                "碰撞／打滑會造成漂移，中段需 reset"
             ],
             answer: 3,
-            explain: "碰撞／打滑會累積誤差，要中段 reset。"
+            explain: "碰撞／打滑會累積誤差，需於中段 reset。"
         },
         {
-            q: "getRealPose 主要做咩？",
+            q: "getRealPose 的主要用途是什麼？",
             choices: [
-                "一定要你提供 CAD 上嘅 sensor offset",
-                "用距離感測做相對位姿校正",
-                "同 wallReset 完全一樣，一定要撞牆",
-                "只改 θ，X／Y 永遠唔郁"
+                "必須先提供 CAD 上的 sensor offset",
+                "以距離感測進行相對位姿校正",
+                "與 wallReset 完全相同，一定要撞牆",
+                "只改變 θ，X／Y 永遠不動"
             ],
             answer: 1,
-            explain: "用距離感測做相對位姿校正。"
+            explain: "以距離感測進行相對位姿校正。"
         },
         {
-            q: "改 DRV／MCH 溫度對應邊粒馬達，改邊個檔？",
+            q: "要修改 DRV／MCH 溫度對應哪顆馬達，應改哪個檔案？",
             choices: [
-                "customs/dash_config.hpp 入面嘅對應表",
-                "ezlib/telem_dash.cpp 硬編碼",
-                "firmware/liblvgl.a 要重編",
+                "customs/dash_config.hpp 內的對應表",
+                "ezlib/telem_dash.cpp 的硬編碼",
+                "firmware/liblvgl.a 需要重新編譯",
                 "auton_select 註冊表一併決定溫度"
             ],
             answer: 0,
-            explain: "改 customs/dash_config.hpp。"
+            explain: "修改 customs/dash_config.hpp。"
         },
         {
-            q: "練習場點入 PID tuner？",
+            q: "練習場如何進入 PID tuner？",
             choices: [
-                "場控接住撳 X 就得",
-                "一定要插 SD 先開到",
-                "拔場控之後撳 X+A",
-                "DOWN+Y 會直接進入 tuner 頁"
+                "接上場控後按 X 即可",
+                "必須插入 SD 才能開啟",
+                "拔除場控後按下 X+A",
+                "DOWN+Y 會直接進入 tuner 頁面"
             ],
             answer: 2,
-            explain: "拔場控後 X+A 進入。"
+            explain: "拔除場控後按 X+A 進入。"
         },
         {
-            q: "timeout 單位係？逾時會點？",
+            q: "timeout 的單位是什麼？逾時後會如何？",
             choices: [
-                "秒；逾時只寫 log，馬達繼續",
+                "秒；逾時只寫 log，馬達繼續運轉",
                 "編碼器 tick；逾時自動 wallReset",
                 "LVGL 幀數",
-                "毫秒；該次運動會停"
+                "毫秒；該次運動會停止"
             ],
             answer: 3,
-            explain: "timeout 毫秒；屆滿該次運動停止。"
+            explain: "timeout 單位為毫秒；屆滿後該次運動停止。"
         },
         {
-            q: "set_heading_constants 主要畀邊個用？",
+            q: "set_heading_constants 主要供哪個功能使用？",
             choices: [
-                "moveToPose 成條曲線嘅角向／lead",
-                "ezPID.drive() 直線時鎖向",
+                "moveToPose 整條曲線的角向／lead",
+                "ezPID.drive() 直線行駛時鎖定航向",
                 "所有 turnTo*／swingTo* 專用",
-                "只改手掣顯示，唔影響出力"
+                "只改控制器顯示，不影響出力"
             ],
             answer: 1,
-            explain: "heading 服務 drive 直線鎖向。"
+            explain: "heading 用於 drive 直線時鎖定航向。"
         },
         {
-            q: "MotorGroup.get_temperature(index) 嘅 index？",
+            q: "MotorGroup.get_temperature(index) 的 index 是指？",
             choices: [
-                "MotorGroup 宣告 list 次序（由 0 起）",
+                "MotorGroup 宣告 list 的順序（由 0 起）",
                 "等於 smart-port 號碼（port 14 → 14）",
-                "開機自動掃到嘅第一粒馬達",
-                "反轉接線嘅馬達必須用負 index"
+                "開機自動掃描到的第一顆馬達",
+                "反轉接線的馬達必須使用負 index"
             ],
             answer: 0,
-            explain: "係 MotorGroup 宣告次序，唔係 port 號。"
+            explain: "是 MotorGroup 的宣告順序，不是 port 號碼。"
         },
         {
-            q: "getRealPose 碰到不可信／大斜角讀數會點？",
+            q: "getRealPose 遇到不可信或大斜角讀數時會如何？",
             choices: [
-                "仍然強制寫入，無上限",
-                "斜角再大都照用 raw 距離",
-                "跳過該次修正，或回 expected",
-                "固定 return -1 令 setPose 崩潰"
+                "仍然強制寫入，沒有上限",
+                "斜角再大也照用 raw 距離",
+                "跳過該次修正，或回傳 expected",
+                "固定 return -1 並使 setPose 崩潰"
             ],
             answer: 2,
-            explain: "低可信或大斜角會放棄該次修正。"
+            explain: "低可信度或大斜角會放棄該次修正。"
         },
         {
-            q: "手推車量距離（For PID Distance）睇邊？",
+            q: "手推車量測距離（For PID Distance）應查看何處？",
             choices: [
-                "只可以睇 PC terminal",
-                "一定要開住 PID tuner",
-                "只能事後開 SD CSV",
-                "手掣 menu 1 嘅 D:（get_traveled）"
+                "只能查看 PC terminal",
+                "必須開啟 PID tuner",
+                "只能事後開啟 SD CSV",
+                "控制器 menu 1 的 D:（get_traveled）"
             ],
             answer: 3,
             explain: "displayMenu=1 顯示 get_traveled()（英吋）。"
         },
         {
-            q: "DOWN+B 做咩？（練習場）",
+            q: "練習場按下 DOWN+B 會做什麼？",
             choices: [
-                "只清 traveled，唔跑程式",
-                "跑 autonomous()（同場邊測 auton）",
-                "打開 PID tuner",
-                "刪 LVGL 之後先重建 Dash"
+                "只清除 traveled，不執行程式",
+                "執行 autonomous()（場邊測試 auton）",
+                "開啟 PID tuner",
+                "刪除 LVGL 後才重建 Dash"
             ],
             answer: 1,
-            explain: "DOWN+B：跑 autonomous()。"
+            explain: "DOWN+B：執行 autonomous()。"
         },
         {
-            q: "inline PID {.p,.i,.d} 跑完之後？",
+            q: "使用 inline PID {.p,.i,.d} 執行完畢後？",
             choices: [
-                "恢復全域增益，唔永久覆寫",
-                "永久覆寫全域，要人手 set_*_constants",
-                "連 startI 一齊改成今次傳入值",
-                "只改 Brain 顯示，實際出力唔變"
+                "恢復全域增益，不會永久覆寫",
+                "永久覆寫全域，需手動 set_*_constants",
+                "連 startI 一併改為本次傳入值",
+                "只改變 Brain 顯示，實際出力不變"
             ],
             answer: 0,
-            explain: "單次覆寫，結束後恢復全域。"
+            explain: "單次覆寫，結束後恢復全域增益。"
         },
         {
-            q: "場控接上之後，PID tuner 會點？",
+            q: "場控接上之後，PID tuner 會如何？",
             choices: [
-                "保持開住方便場邊調",
-                "只停動畫，tuner 繼續刷新",
-                "會關掉／force_off 釋放 PID UI",
-                "自動跑一次 autonomous()"
+                "保持開啟以便場邊調整",
+                "只停止動畫，tuner 繼續刷新",
+                "會關閉／force_off 釋放 PID UI",
+                "自動執行一次 autonomous()"
             ],
             answer: 2,
             explain: "場控會 force_off／釋放 PID UI。"
         },
         {
-            q: "LV_MEM_CUSTOM 1 代表？",
+            q: "LV_MEM_CUSTOM 設為 1 代表什麼？",
             choices: [
                 "固定 256KB BSS，禁止 malloc",
-                "必須用 10MB 內建 pool",
-                "softfp 庫可以直接配 hardfp kernel",
-                "LVGL 改用系統 malloc／free"
+                "必須使用 10MB 內建 pool",
+                "softfp 函式庫可直接搭配 hardfp kernel",
+                "LVGL 改用系統的 malloc／free"
             ],
             answer: 3,
-            explain: "LV_MEM_CUSTOM 走系統 malloc／free。"
+            explain: "LV_MEM_CUSTOM 使用系統的 malloc／free。"
         },
         {
-            q: "點樣換 auton？",
+            q: "如何切換 auton？",
             choices: [
-                "一定要 Brain 上有 Selector 頁點選",
-                "手掣 ←→（auton_select 換名）",
+                "必須在 Brain 的 Selector 頁面點選",
+                "控制器 ←→（auton_select 更換名稱）",
                 "main.cpp 只能寫死一個，無法切換",
-                "只靠 SD 檔名，同手掣無關"
+                "只依 SD 檔名，與控制器無關"
             ],
             answer: 1,
-            explain: "auton_select + 手掣 ←→ 換名。"
+            explain: "auton_select + 控制器 ←→ 更換名稱。"
         }
-    ];;;;;;
+    ];;;;;;;
 
                         const questionBankEn = [
         {
