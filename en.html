@@ -159,7 +159,7 @@
                         <p>This version teaches chassis drive/turn, writing auton, Brain Dash, and PID tuning. Use the top-right control to switch to <strong>2.0.1</strong> (adds lift-arm docs).</p>
                         <ul>
                             <li>Matching code branch: <code>EzLib_2.0.0_beta</code> (PROS 4.2.3)</li>
-                            <li>Brain uses its own Dash / PID pages (not the old robodash)</li>
+                            <li>Brain: Dash / PID / anim; autons via <code>auton_select</code></li>
                             <li>When ready, try the <a href="#ch8-quiz">judge interview practice</a></li>
                         </ul>
                     </div>
@@ -336,11 +336,11 @@
                 </div>
             </div>
             </div>
-            <div class="callout warning">
-                <div class="callout-icon">🧯</div>
+            <div class="callout info">
+                <div class="callout-icon">🖥️</div>
                 <div class="callout-content">
-                    <h4>robodash is phased out</h4>
-                    <p>Current beta uses <strong>standalone LVGL</strong> (Dash themes / PID / Anim). Do not write <code>rd::Console</code> / <code>rd::Selector</code>; use headless <code>auton_select</code> for auton. Version summary is in the <a href="#version-notes">intro</a>.</p>
+                    <h4>How Brain UI works</h4>
+                    <p>Use <code>telem_dash</code> (Dash), the PID page, and the anim overlay. Register autons with <code>auton_select::init({name, fn})</code> and switch names with ←→. Details in Chapter 7.</p>
                 </div>
             </div>
 
@@ -434,7 +434,7 @@ ezPID.<span class="c-fn">turn</span>(<span class="c-st">0</span>, <span class="c
                 <div class="callout-icon">⚠️</div>
                 <div class="callout-content">
                     <h4>Auton distance caution</h4>
-                    <p>Some older routes may still use large encoder-degree-style numbers. New routes should always use <strong>inches / degrees</strong>. Do not treat old large numbers as inches when measuring.</p>
+                    <p><code>ezPID.drive</code> uses <strong>inches</strong>; <code>ezPID.turn</code> uses <strong>absolute heading (degrees)</strong>. Measure with controller menu 1 <code>D:</code>.</p>
                 </div>
             </div>
 
@@ -732,7 +732,7 @@ chassis.<span class="c-fn">setPose</span>(
 
             <!-- Chapter 6: Real-world Examples -->
             <h2 id="ch6-examples">Chapter 6: Real auton writing examples</h2>
-            <p>This chapter shows theory in practice: LemLib curve → reset → ezPID short precision. Units are always <strong>inches / degrees</strong> (old code may still have encoder-degree-style big numbers—do not copy those into new routes).</p>
+            <p>Put the pieces together: LemLib curve → reset → ezPID short precision. Units are always <strong>inches / degrees</strong>.</p>
 
             <h3 id="ch6-workflow">From push-bot to writing auton (suggested workflow)</h3>
             <p>Goal: get drive/turn <strong>stable</strong>, then <strong>push / drive by hand</strong> to measure real distance and heading, then write into <code>customs/autons.cpp</code>.</p>
@@ -907,36 +907,47 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             <h2 id="ch7-debug">Chapter 7: Tools &amp; debug</h2>
             <p>Practice tools include <strong>Brain Dash</strong> (themeable), PID tuner, SD CSV, controller monitor, animations, and field-control teardown. Auton uses headless <code>auton_select</code>.</p>
 
-            <div class="callout warning">
-                <div class="callout-icon">🧯</div>
-                <div class="callout-content">
-                    <h4>Robodash → standalone LVGL</h4>
-                    <p>There is <strong>no longer</strong> a robodash Console/Selector page. Brain UI uses <code>telem_dash</code> / PID / Anim (standalone LVGL). Old “Console telemetry” readers should use this section’s Dash (including DOS text themes). Version summary: <a href="#version-notes">intro</a>.</p>
+            <h3 id="ch7-dash">🖥️ Brain Dash (<code>telem_dash</code>)</h3>
+            <p>In <code>src/main.cpp</code>, pick themes with two constexprs (<code>initialize()</code> calls <code>set_loading_theme</code> / <code>set_dash_theme</code>). Loading and Dash are <strong>chosen separately</strong>.</p>
+
+            <table class="notion-table only-v200">
+                <tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>1</code></td><td>none — skip boot animation</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>2</code></td><td>Type R — triple-gauge ignition</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>3</code></td><td>Spear of Longinus — red progress</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauges/cards (BATT / pose / DIST / DRV / MCH / RAM)</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>2</code></td><td>Terminal — black/green text Dash</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>3</code></td><td>Light — white/black text Dash</td></tr>
+            </table>
+
+            <table class="notion-table only-v201">
+                <tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>1</code></td><td>none — skip boot animation</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>2</code></td><td>Type R — triple-gauge ignition</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>3</code></td><td>Spear of Longinus — red progress</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>4</code></td><td>KeeTa Rider — splash logo</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauges/cards (BATT / pose / DIST / DRV / MCH / RAM)</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>2</code></td><td>Terminal — black/green text Dash</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>3</code></td><td>Light — white/black text Dash</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>4</code></td><td>V5Console — classic Brain console look</td></tr>
+            </table>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 main.cpp example</div>
+                <div class="code-block">
+<span class="c-kw">constexpr</span> <span class="c-kw">int</span> k_loading_theme = <span class="c-st">2</span>;
+<span class="c-kw">constexpr</span> <span class="c-kw">int</span> k_dash_theme = <span class="c-st">1</span>;
                 </div>
             </div>
-
-            <h3 id="ch7-dash">🖥️ Brain Dash (<code>telem_dash</code>)</h3>
-            <p>In <code>src/main.cpp</code>, pick themes with two constexpr values (<code>initialize()</code> calls <code>set_loading_theme</code> / <code>set_dash_theme</code>):</p>
-            <table class="notion-table">
-                <tr><th>Variable</th><th>Value</th><th>Effect</th></tr>
-                <tr><td rowspan="4"><code>k_loading_theme</code></td><td><code>1</code></td><td>none — skip boot animation</td></tr>
-                <tr><td><code>2</code></td><td>Type R — three ignition gauges (KM/H / TORQUE / FUEL)</td></tr>
-                <tr><td><code>3</code></td><td>Spear of Longinus — red progress + spear tip</td></tr>
-                <tr class="only-v201"><td><code>4</code></td><td>KeeTa Rider — splash logo</td></tr>
-                <tr><td rowspan="4"><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauge/card Dash (BATT arc + pose / DIST / DRV / MCH / RAM)</td></tr>
-                <tr><td><code>2</code></td><td>Terminal — DOS raw text (black bg, green text)</td></tr>
-                <tr><td><code>3</code></td><td>Light — same console style (white bg, black text)</td></tr>
-                <tr class="only-v201"><td><code>4</code></td><td>V5Console — classic Brain console look</td></tr>
-            </table>
-            <p>Loading and Dash are <strong>chosen separately</strong>. Type R Dash and PID page use exclusive <code>ui_pages</code> focus; opening PID/anim calls <code>set_gauge_hidden</code> so battery does not bleed through.</p>
+            <p>Type R Dash and the PID page are mutually exclusive; opening PID/anim hides gauges so the battery meter does not bleed through.</p>
             <div class="callout info">
                 <div class="callout-icon">⌨️</div>
                 <div class="callout-content">
-                    <h4>DOS console (themes 2 / 3)</h4>
-                    <p>Full-screen raw text, no gauges or cards. Examples: <code>auton=...</code>, <code>batt=87%</code>, <code>ram=0.12M</code>, pose / dist / drv / mch. Invisible bottom-right <code>pid</code> opens the PID page. This is <strong>not</strong> the old robodash Console.</p>
+                    <h4>Text Dash (themes 2 / 3)</h4>
+                    <p>Full-screen text, e.g. <code>auton=...</code>, <code>batt=87%</code>, <code>ram=0.12M</code>, pose / dist / drv / mch. Invisible bottom-right <code>pid</code> opens the PID page.</p>
                 </div>
             </div>
-            <p>Map temperatures in <code>include/customs/dash_config.hpp</code> (no need to edit <code>telem_dash.cpp</code>). On Type R, batt/DIST colors hint status from battery and confidence.</p>
+            <p>Map temperatures in <code>include/customs/dash_config.hpp</code>. On Type R, batt/DIST colors hint status from battery and confidence.</p>
 
             <h3>📊 Measuring distance: For PID Distance (inches)</h3>
             <div class="callout info">
@@ -1038,29 +1049,31 @@ ezlib::<span class="c-fn">printf</span>(<span class="c-st">"color %d\n"</span>, 
                 <tr><td>Practice menu 2</td><td><code>X</code> / <code>Y</code> / <code>T</code></td></tr>
             </table>
 
-            <p><strong>When field control connects</strong> (<code>competition::is_connected()</code>): <code>pidTuner.force_off()</code>, block X+A, stop anim, release Anim/Dash/PID UI, slim controller to three lines. After unplug, rebuild PID/Dash.</p>
+            <p><strong>When field control connects</strong>: closes PID tuner / console UI; Dash stays. Hold <strong>UP</strong> still plays anim; <strong>DOWN</strong> returns to Dash.</p>
 
-            <h4 style="color: var(--text-bold); margin-top: 20px; margin-bottom: 10px;">Practice shortcuts (tuner off)</h4>
+            <h4 style="color: var(--text-bold); margin-top: 20px; margin-bottom: 10px;">Controller shortcuts</h4>
             <table class="notion-table">
                 <tr><th>Action</th><th>Effect</th></tr>
-                <tr><td>Right stick left/right</td><td><code>displayMenu</code> 0 / 1 / 2</td></tr>
-                <tr><td>LEFT / RIGHT</td><td>Change auton (<strong>no</strong> <code>set_pose</code>); name on Dash/controller</td></tr>
-                <tr><td>UP (tap)</td><td>cancel + <code>reset_pid</code> + rumble</td></tr>
-                <tr><td>UP (hold)</td><td>start anim (<code>autoChange</code>); on start <code>set_gauge_hidden(true)</code></td></tr>
-                <tr><td>DOWN</td><td><code>reset_pid</code> (clear traveled) + back to Dash</td></tr>
-                <tr><td>DOWN+B</td><td>focus Dash + run <code>autonomous()</code></td></tr>
-                <tr><td>DOWN+Y</td><td><code>moveToPose(0,0,0,…)</code></td></tr>
-                <tr><td>X+A</td><td>open PID tuner (see table above)</td></tr>
+                <tr><td>Right stick left/right</td><td><code>displayMenu</code> 0 / 1 / 2 (practice only)</td></tr>
+                <tr><td>LEFT / RIGHT</td><td>Change auton name (practice only; no <code>set_pose</code>)</td></tr>
+                <tr><td>UP (hold)</td><td>Robot anim (practice <strong>and</strong> field)</td></tr>
+                <tr><td>DOWN</td><td>Back to Dash; stop anim</td></tr>
+                <tr><td>DOWN+B</td><td>Run <code>autonomous()</code> (practice only)</td></tr>
+                <tr><td>DOWN+Y</td><td><code>moveToPose(0,0,0,…)</code> (practice only)</td></tr>
+                <tr><td>X+A</td><td>Open PID tuner (practice only)</td></tr>
             </table>
-            <p>Inside tuner, LEFT/RIGHT still <code>set_pose(0,0,0)</code> when changing field. Changing auton on controller or DOWN back to Dash clears <code>autoChange</code>.</p>
 
-            <h3 id="ch7-lvgl" style="margin-top: 30px;">🖼️ standalone LVGL (no more robodash)</h3>
-            <div class="callout warning">
+            <h3 id="ch7-lvgl" style="margin-top: 30px;">🖼️ Animation (robot frames)</h3>
+            <div class="callout info">
                 <div class="callout-icon">🎬</div>
                 <div class="callout-content">
-                    <h4>Animation &amp; LVGL memory</h4>
-                    <p>Standalone LVGL overlay: <code>anim_page</code> + <strong>one</strong> <code>lv_img</code>, swapping <code>robot01</code>…<code>robot10</code> src (hold UP → <code>autoChange</code>). Opening anim <code>set_gauge_hidden(true)</code>; closing anim / DOWN: <code>show_dash()</code> restores battery gauge. <strong>Do not</strong> create many widgets per frame then focus—heap blows up / fragments.</p>
-                    <p>Current: <code>LV_MEM_CUSTOM 1</code> (malloc); Dash shows free RAM. <code>EzLib_2.0.0_beta</code> <code>liblvgl.a</code> needs hard-float ABI. Do not use <code>rd::Console::printf</code>.</p>
+                    <h4>How to use</h4>
+                    <ul>
+                        <li>Hold <strong>UP</strong>: play <code>robot01</code>…<code>robot10</code></li>
+                        <li><strong>DOWN</strong>: stop anim, return to Dash</li>
+                        <li>Implementation: one <code>lv_img</code> swapping src; gauges hide while playing</li>
+                    </ul>
+                    <p>Memory: <code>LV_MEM_CUSTOM 1</code> (malloc). For Brain debug text use <code>ezlib::printf</code> (2.0.1 PID CONSOLE).</p>
                 </div>
             </div>
 
@@ -1158,7 +1171,7 @@ liftlib::Subsystem armLift(
                         <div class="judge-quiz-meter" aria-hidden="true"><span id="quiz-progress-fill"></span></div>
                     </div>
                     <div id="quiz-stage" class="judge-quiz-stage">
-                        <p class="judge-quiz-lead">20 multiple-choice questions covering PID units, chassis bind, Dash vs old Console, practice buttons, odom / getRealPose, dash_config, field-control teardown, standalone LVGL, auton_select, and more.</p>
+                        <p class="judge-quiz-lead">20 questions on units, bind, Dash, controls, odom/reset, dash_config, field control, LVGL, and auton_select.</p>
                         <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">Start practice</button>
                     </div>
                 </div>

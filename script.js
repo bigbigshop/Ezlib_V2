@@ -245,7 +245,7 @@ function initJudgeQuiz() {
     const ui = en
         ? {
               ready: 'Ready',
-              lead: '20 multiple-choice questions covering PID units, chassis bind, Dash vs old Console, practice buttons, odom/getRealPose, dash_config, field teardown, standalone LVGL, auton_select, and more.',
+              lead: '20 multiple-choice questions on units, bind, Dash, controls, odom/reset, dash_config, field control, LVGL, and auton_select.',
               start: 'Start practice',
               next: 'Next',
               results: 'See results',
@@ -261,7 +261,7 @@ function initJudgeQuiz() {
           }
         : {
               ready: '準備開始',
-              lead: '共 20 題選擇題，涵蓋 PID 單位、底盤 bind、Dash 與舊 Console、練習掣、odom／getRealPose、dash_config、場控 teardown、standalone LVGL、auton_select 等。',
+              lead: '共 20 題：單位、bind、Dash、練習掣、odom／reset、dash_config、場控、LVGL、auton_select 等。',
               start: '開始練習',
               next: '下一題',
               results: '睇成績',
@@ -275,451 +275,451 @@ function initJudgeQuiz() {
               retry: '再試一次',
               optGroup: '選項'
           };
-    const questionBankZh = [
+                const questionBankZh = [
         {
-            q: 'ezPID.drive(distance, …) 的距離單位是？裁判問「你 drive 寫 24 係咩意思？」',
+            q: "ezPID.drive(distance, …) 的距離單位是？",
             choices: [
-                '英吋（沿該次呼叫開始時的航向計算）',
-                '馬達編碼器度數',
-                '公分',
-                'LemLib tile（1 tile = 24"）'
+                "英吋（沿該次呼叫開始航向）　　　　",
+                "馬達編碼器累積嘅度數　　　　　　　",
+                "場地量度用嘅公分單位　　　　　　　",
+                "LemLib 計上嘅 tile 數"
             ],
             answer: 0,
-            explain: '單位是英吋，不是馬達度數。見序言單位表與第二章。'
+            explain: "距離單位是英吋，不是馬達度數。"
         },
         {
-            q: 'ezPID.turn 的目標角係邊種？',
+            q: "ezPID.turn 的目標角係邊種？",
             choices: [
-                '相對當前航向的增量（度）',
-                '弧度（rad）',
-                '絕對航向（度；LemLib：0° → +Y，順時針為正）',
-                '只跟 tracking wheel 有關，與 IMU 無關'
+                "相對而家航向嘅增量角　　　　　　",
+                "用弧度 rad 表示嘅角度　　　",
+                "絕對航向（度；0°→+Y）　　　",
+                "淨係跟住 tracking 角度"
             ],
             answer: 2,
-            explain: '轉向目標是絕對航向（度）。'
+            explain: "轉向目標是絕對航向（度）。"
         },
         {
-            q: 'EzDrive 建構並 bindEzDrive 之後，chassis.moveToPose／turnTo*／swingTo* 的 drive／turn PID 走邊套？',
+            q: "bindEzDrive 之後，moveToPose／turnTo* 用邊套 PID？",
             choices: [
-                '仍只用 LemLib ControllerSettings，與 ezPID 無關',
-                '必須另調一套 LemLib angular gains',
-                '只共用 drive，turn 永遠獨立',
-                '共用 ezPID 的 drive／turn PID'
+                "仍然只用 LemLib 內建設定　　　　　",
+                "要另外再調一套 angular　　　　　　",
+                "只共用 drive、turn 獨立　　　　",
+                "共用 ezPID 嘅 drive／turn"
             ],
             answer: 3,
-            explain: 'bind 後 moveToPoint／moveToPose／turnTo*／swingTo* 共用 ezPID。'
+            explain: "bind 後 LemLib 長距／轉向共用 ezPID。"
         },
         {
-            q: 'EzLib_2.0.0_beta（PROS 4.2.2）Brain UI 正確描述係？',
+            q: "Brain 主畫面（Dash／PID）點樣用？",
             choices: [
-                '繼續用 robodash Console／Selector 做主畫面',
-                'robodash 已淡出；只用 standalone LVGL（Type R Dash／PID／Anim）',
-                '完全唔用 LVGL，只印 terminal',
-                '必須保留 rd::Console::printf 先睇到 pose'
+                "一定要連 PC terminal 先睇",
+                "用 Dash、PID 頁同動畫頁　　　",
+                "淨靠手掣三行字就夠　　　　　　　　　　",
+                "只可以靠 SD CSV 睇數　　　　　"
             ],
             answer: 1,
-            explain: '隨 4.2.2 hard float 路線，robodash 淡出，改 standalone LVGL + Type R Dash。'
+            explain: "Brain 用 Dash、PID 頁與動畫 overlay。"
         },
         {
-            q: '練習場（tuner 關）按 LEFT／RIGHT 換 auton 時，會唔會 set_pose？',
+            q: "練習場 LEFT／RIGHT 換 auton（tuner 關）會 set_pose？",
             choices: [
-                '唔會 set_pose；只換名（上 Dash／手掣）',
-                '會，每次都 set_pose(0,0,0)',
-                '只清 X／Y，保留 θ',
-                '會呼叫 wallReset'
+                "唔會；只換名上 Dash／手掣　　　　　　",
+                "會；每次都 set_pose(0,0,0)",
+                "只清 X／Y，θ 永遠保留　　　　　　　　",
+                "會順便呼叫 wallReset　　　　　　"
             ],
             answer: 0,
-            explain: '←→ 只換 auton，不 set_pose。Tuner 內 ←→ 換 field 才會 set_pose。'
+            explain: "←→ 只換 auton 名稱；tuner 內換 field 先會 set_pose。"
         },
         {
-            q: '練習場按 DOWN（tuner 關）做咩？',
+            q: "練習場按 DOWN（tuner 關、無 B／Y）做咩？",
             choices: [
-                'focus 舊 robodash Console',
-                '強制開 PID tuner',
-                'reset_pid（清 traveled）+ 回 Type R Dash',
-                '刪除全部 LVGL 頁並重開機'
+                "強制打開 PID tuner 畫面　　",
+                "刪除 Brain 全部 LVGL 頁　",
+                "reset_pid 並且返回 Dash",
+                "寫一行新嘅 SD CSV 頭　　　　　"
             ],
             answer: 2,
-            explain: 'DOWN = reset_pid + 回 Dash；舊「focus Console」已過期。'
+            explain: "DOWN = 清 traveled（reset_pid）+ 回 Dash。"
         },
         {
-            q: '點解 Auto 唔可以全程只信 LemLib odometry、從不重置？',
+            q: "點解 Auto 唔好全程只信 odometry？",
             choices: [
-                '因為 ezPID 唔支援長距離',
-                'PROS 4.2.2 禁止讀 chassis.getPose()',
-                'moveToPose 唔需要位姿',
-                '碰撞／打滑等會累積誤差（drift），中後段座標會偏'
+                "因為 ezPID 完全唔支援長距　　　",
+                "因為 PROS 禁止讀 getPose",
+                "因為 moveToPose 唔使位姿　",
+                "因為碰撞／打滑會累積 drift　　　"
             ],
             answer: 3,
-            explain: '混合架構：曲線／長距用 LemLib，短距精準用 ezPID，關鍵點 wallReset／getRealPose。'
+            explain: "長距用 LemLib，短距用 ezPID，關鍵點要 reset。"
         },
         {
-            q: 'getRealPose 的設計重點（相對校正）係？',
+            q: "getRealPose 的用法重點係？",
             choices: [
-                '要你提供 CAD sensor offset 先用',
-                'expected − (actual_perp − golden)×side；小角度 cos 投影；golden 已包安裝 offset',
-                '等同 wallReset，一定要撞牆',
-                '只改 θ，永遠唔改 X／Y'
+                "一定要事先填 CAD offset",
+                "用距離感測做相對校正　　　　　　　",
+                "完全等同 wallReset 撞牆",
+                "永遠只改 θ 唔改 X／Y　　　　"
             ],
             answer: 1,
-            explain: '相對公式 + golden；唔使 CAD offset。|α|>25°／低 conf 回 expected；clamp ±6″。'
+            explain: "相對校正；低可信／大斜角時會放棄該次修正。"
         },
         {
-            q: 'Brain Dash 嘅 DRV／MCH 溫度應對應邊粒馬達，改邊個檔？',
+            q: "DRV／MCH 溫度對應邊粒馬達，改邊個檔？",
             choices: [
-                'include/customs/dash_config.hpp',
-                '直接改 ezlib/telem_dash.cpp',
-                'firmware/liblvgl.a',
-                'rd::Selector 設定頁'
+                "customs/dash_config.hpp",
+                "ezlib/telem_dash.cpp　　　",
+                "firmware/liblvgl.a　　　　　",
+                "auton_select 設定檔　　　　　　　"
             ],
             answer: 0,
-            explain: '溫度 map 集中在 dash_config.hpp；唔使改庫內 telem_dash。'
+            explain: "溫度對應寫喺 dash_config.hpp。"
         },
         {
-            q: '開 PID tuner（練習場）嘅正確做法？',
+            q: "開 PID tuner（練習場）正確做法？",
             choices: [
-                '場控接住都得，按 X 即可',
-                '一定要插 SD 先開到',
-                '拔場控後用 X+A 進入；單獨 X 退出',
-                '按 DOWN+Y 進入 tuner'
+                "場控接住，淨係撳 X 就得　　　　　　",
+                "一定要插 SD 卡先開到頁　　　　　　",
+                "拔場控之後用 X+A 進入　　　　　　",
+                "用 DOWN+Y 組合進入 tuner"
             ],
             answer: 2,
-            explain: '須拔場控；X+A 進入，單獨 X 退出。場控接上會 force_off。'
+            explain: "拔場控；X+A 進入，單獨 X 退出。"
         },
         {
-            q: 'ezPID / LemLib motion 的 timeout 單位係？逾時後會點？',
+            q: "motion 的 timeout 單位同逾時行為？",
             choices: [
-                '秒；逾時只記 log，馬達繼續跑',
-                '編碼器 tick；逾時自動 wallReset',
-                '幀數（LVGL tick）',
-                '毫秒；時間屆滿後馬達停止，該次運動結束'
+                "以秒計；逾時只寫 log　　",
+                "以編碼器 tick 計時重置",
+                "以 LVGL 幀數作為計時　",
+                "以毫秒計；屆滿馬達停止　　　"
             ],
             answer: 3,
-            explain: 'timeout 單位是毫秒；屆滿後馬達停、該次運動結束（安全網）。'
+            explain: "timeout 係毫秒；時間到就停該次運動。"
         },
         {
-            q: 'set_heading_constants 主要服務邊種運動？',
+            q: "set_heading_constants 主要服務邊種運動？",
             choices: [
-                'moveToPose 的角向／lead 曲線',
-                '只服務 ezPID.drive() 直線鎖向；唔用於 moveToPose 角向',
-                '所有 LemLib turnTo* 專用，與 drive 無關',
-                '只改 controller 顯示，唔影響出力'
+                "moveToPose 曲線角向控制",
+                "ezPID.drive 直線鎖航向",
+                "所有 turnTo* 專用增益　　",
+                "淨係改手掣顯示文字　　　　　　　　"
             ],
             answer: 1,
-            explain: 'heading PID 只服務 ezPID.drive 直線；turn／曲線角向走 set_turn_constants（bind 後共用）。'
+            explain: "heading 只服務 drive 直線；轉向用 set_turn_constants。"
         },
         {
-            q: 'dash_config 用 MotorGroup.get_temperature(index) 時，index 係咩？',
+            q: "MotorGroup.get_temperature(index) 嘅 index 係？",
             choices: [
-                'main.cpp MotorGroup list 裡面次序（0、1、2…），唔係 smart-port 號',
-                '永遠等於 smart-port 號碼（如 port 14 → index 14）',
-                'Brain 開機自動掃描到嘅第一粒馬達',
-                '必須寫成負數先對應反轉 port'
+                "list 次序 0、1、2…　",
+                "等於 smart-port 號",
+                "開機第一粒馬達　　　　　　　　",
+                "反轉就要負 index　　　　"
             ],
             answer: 0,
-            explain: '例 leftMotors({-14,-15,-16}) → index 0 = port 14。獨立 Motor 用 motor.get_temperature()。'
+            explain: "index 係 MotorGroup 宣告次序，唔係 port 號。"
         },
         {
-            q: 'getRealPose 內部防護：邊項正確？',
+            q: "getRealPose 防護邊項正確？",
             choices: [
-                '永遠強制校正，無上限',
-                '斜超過 45° 仍照樣用 raw 距離寫 pose',
-                '|α|>25° 或低 conf 時放棄／回 expected；單次 correction clamp ±6″',
-                '壞讀數一律 return −1 令 setPose 崩潰'
+                "永遠強制校正無上限　　　　　　",
+                "斜角再大照樣寫入　　　　　　　",
+                "低可信或大斜角跳過　　　　　　",
+                "壞讀數固定 return -1"
             ],
             answer: 2,
-            explain: 'cos 投影；|α|>25°／低 conf 回 expected；clamp ±6″。壞讀走 999／上一格 filter，唔再 −1。'
+            explain: "不可信時放棄／回 expected，並有單次修正上限。"
         },
         {
-            q: '練習場要量「For PID Distance」（手推車睇走咗幾吋）應睇邊度？',
+            q: "手推車量 For PID Distance 應睇邊？",
             choices: [
-                '只睇 terminal 的 rd::Console',
-                '必須開 tuner 先有 D:',
-                '只能睇 SD CSV，手掣無顯示',
-                '右搖桿切 displayMenu = 1 → D: = ezPID.get_traveled()（英吋）'
+                "只睇 PC terminal 輸出",
+                "一定要開住 tuner 先有　　　",
+                "只能由 SD CSV 事後睇　　　",
+                "手掣 menu=1 嘅 D:　　　"
             ],
             answer: 3,
-            explain: '練習場 menu 1 顯示 traveled；Brain Dash 可同時睇 pose／DIST／溫。'
+            explain: "右搖桿切 menu 1，D: 即 get_traveled()（英吋）。"
         },
         {
-            q: '練習場 DOWN+B 同 DOWN+Y 分別做咩？',
+            q: "DOWN+B 同 DOWN+Y（練習場）分別？",
             choices: [
-                '兩者都只係清 traveled',
-                'DOWN+B：focus Dash + 跑 autonomous()；DOWN+Y：moveToPose(0,0,0,…)',
-                'DOWN+B 開 tuner；DOWN+Y 換 auton',
-                'DOWN+B 刪 LVGL；DOWN+Y 寫 SD header'
+                "兩個組合都只清 traveled　　　　　",
+                "B 跑 auton；Y 去 (0,0,0)",
+                "B 開 tuner；Y 換 auton　　",
+                "B 刪 LVGL；Y 寫 SD　　　　　　"
             ],
             answer: 1,
-            explain: '見第七章練習掣表：DOWN+B 驗證 auton；DOWN+Y 回 (0,0,0) pose 曲線。'
+            explain: "DOWN+B 跑 autonomous；DOWN+Y moveToPose(0,0,0)。"
         },
         {
-            q: 'Inline PID（drive／turn 傳 {.p,.i,.d}）結束後增益點樣？startI 呢？',
+            q: "inline PID（{.p,.i,.d}）結束後增益點樣？",
             choices: [
-                '結束後恢復全域 P／I／D；startI 不變',
-                '永久覆寫全域常數，要人手 set_*_constants 先返',
-                '連 startI 一齊改成該次傳入值',
-                '只影響 Brain PID 頁顯示，唔改實際出力'
+                "恢復返全域嘅 P／I／D　　",
+                "永久覆寫晒全域常數　　　　　",
+                "連 startI 都會一齊改",
+                "只影響 Brain 頁面顯示"
             ],
             answer: 0,
-            explain: '單次覆寫；結束恢復全域；startI 不變。'
+            explain: "單次覆寫，結束後恢復全域；startI 不變。"
         },
         {
-            q: '場控接上（competition::is_connected()）時，系統會點處理 tuner／UI？',
+            q: "場控接上時系統會點處理 UI？",
             choices: [
-                '強制保持 tuner 開住方便場邊調',
-                '只關動畫，tuner 同 Dash 全部保留狂刷',
-                'pidTuner.force_off()、禁 X+A、停動畫並釋放 Anim／Dash／PID UI；拔出後重建',
-                '自動跑 autonomous() 一次'
+                "強制維持 tuner 一直開住　　　",
+                "只停止動畫，其他全照舊　　　　　　　",
+                "關閉 tuner 並釋放 PID 頁",
+                "自動立刻跑一次 autonomous"
             ],
             answer: 2,
-            explain: '場控 teardown：關 tuner、釋放 UI、手掣精簡三行；拔出場控再重建 PID／Dash。'
+            explain: "場控會 force_off tuner、釋放 PID／console；Dash／動畫仍可用。"
         },
         {
-            q: 'EzLib_2.0.0_beta 的 LVGL 記憶體設定，邊句正確？',
+            q: "LVGL 記憶體設定邊句正確？",
             choices: [
-                '固定 256KB BSS pool，禁止 malloc',
-                '必須用 robodash 內建 10MB pool',
-                '可用官方 softfp liblvgl.a 直接配 hard float kernel',
-                'lv_conf：LV_MEM_CUSTOM 1（malloc／free）；beta 的 liblvgl.a 須 hard float ABI'
+                "固定使用 256KB BSS pool　　　",
+                "必須使用 10MB 內建池　　　　　　　　　",
+                "softfp 庫可配 hardfp 核　　　",
+                "LV_MEM_CUSTOM 用 malloc"
             ],
             answer: 3,
-            explain: 'CUSTOM malloc；Dash 用 mallinfo 顯示 free RAM。beta 對齊 PROS 4.2.2 hardfp。'
+            explain: "現行用 LV_MEM_CUSTOM（malloc）；liblvgl 要 hard float ABI。"
         },
         {
-            q: '現行 beta 點樣揀 auton？同舊 robodash Selector 有咩分別？',
+            q: "點樣揀 auton？",
             choices: [
-                '仍要 Brain 上 rd::Selector LVGL 頁點選',
-                'headless auton_select::init({名, 函數})；←→ 換名上 Dash／手掣，無 Selector 頁',
-                '只能改 main.cpp 硬編碼一個 auton，無法切換',
-                '靠 SD 卡檔名自動揀，與 controller 無關'
+                "一定要喺 Brain 撳選單頁　　　　　　",
+                "auton_select 配 ←→ 換名稱",
+                "main.cpp 入面只能寫死一個　　　　",
+                "只靠 SD 檔名自動揀 auton　　　　"
             ],
             answer: 1,
-            explain: '唔再有 Selector 頁；auton_select headless + controller／Dash 顯示名。'
+            explain: "headless auton_select；controller／Dash 顯示名稱。"
         }
-    ];
+    ];;;;
 
-    const questionBankEn = [
+                const questionBankEn = [
         {
-            q: 'What unit does ezPID.drive(distance, …) use? (Judge: “What does drive(24) mean?”)',
+            q: "What unit does ezPID.drive(distance, …) use?",
             choices: [
-                'Inches (along the heading at the start of that call)',
-                'Motor encoder degrees',
-                'Centimeters',
-                'LemLib tiles (1 tile = 24")'
+                "Inches along the start heading",
+                "Motor encoder degree totals　　　",
+                "Centimeters on the field tile　",
+                "LemLib tile counts on grid　　　　"
             ],
             answer: 0,
-            explain: 'Distance is inches, not motor degrees. See the units table and Chapter 2.'
+            explain: "Drive distance is inches, not motor degrees."
         },
         {
-            q: 'What kind of angle does ezPID.turn target?',
+            q: "What kind of angle does ezPID.turn target?",
             choices: [
-                'Relative delta from current heading (degrees)',
-                'Radians',
-                'Absolute heading (degrees; LemLib: 0° → +Y, clockwise positive)',
-                'Tracking-wheel only; IMU is ignored'
+                "Relative delta from heading now",
+                "An angle written in radians　　　　",
+                "Absolute heading (deg; 0°→+Y)　　",
+                "Tracking-wheel angle values　　　　"
             ],
             answer: 2,
-            explain: 'Turn targets absolute heading in degrees.'
+            explain: "Turn targets absolute heading in degrees."
         },
         {
-            q: 'After EzDrive binds with bindEzDrive, which PID do chassis.moveToPose / turnTo* / swingTo* use?',
+            q: "After bindEzDrive, which PID do moveToPose / turnTo* use?",
             choices: [
-                'Only LemLib ControllerSettings; ezPID is unrelated',
-                'You must tune a separate LemLib angular set',
-                'Drive is shared; turn is always independent',
-                'Shared ezPID drive / turn PID'
+                "Only LemLib built-in settings　　",
+                "A separately tuned angular set　",
+                "Shared drive, separate turn PID",
+                "Shared ezPID drive and turn　　　　"
             ],
             answer: 3,
-            explain: 'After bind, moveToPoint / moveToPose / turnTo* / swingTo* share ezPID.'
+            explain: "After bind, those motions share ezPID."
         },
         {
-            q: 'Which describes EzLib_2.0.0_beta Brain UI correctly?',
+            q: "How do you use Brain UI (Dash / PID)?",
             choices: [
-                'Still uses robodash Console / Selector as the main UI',
-                'robodash is gone; use standalone LVGL (Type R Dash / PID / Anim)',
-                'No LVGL at all; terminal only',
-                'You must keep rd::Console::printf to see pose'
+                "Pose only on the PC terminal　",
+                "Use Dash, PID, and anim pages",
+                "Controller lines are enough　　",
+                "Read numbers only from SD CSV"
             ],
             answer: 1,
-            explain: 'On the hard-float path, robodash is retired for standalone LVGL + Type R Dash.'
+            explain: "Brain shows Dash, PID overlay, and optional anim."
         },
         {
-            q: 'In practice mode (tuner off), does LEFT/RIGHT to change auton also set_pose?',
+            q: "LEFT/RIGHT auton change (tuner off)—set_pose?",
             choices: [
-                'No set_pose; name only (Dash / controller)',
-                'Yes, always set_pose(0,0,0)',
-                'Clears X/Y only; keeps θ',
-                'Calls wallReset'
+                "No; name only on Dash/handset",
+                "Yes; always set_pose(0,0,0)　　",
+                "Clears X/Y but keeps theta　　　",
+                "Also runs wallReset once　　　　　"
             ],
             answer: 0,
-            explain: '←→ only changes auton. Inside the tuner, ←→ changes field and does set_pose.'
+            explain: "←→ only changes auton name; tuner field change sets pose."
         },
         {
-            q: 'In practice mode (tuner off), what does DOWN do?',
+            q: "What does DOWN do (tuner off, no B/Y)?",
             choices: [
-                'Focus the old robodash Console',
-                'Force-open the PID tuner',
-                'reset_pid (clear traveled) + return to Type R Dash',
-                'Delete all LVGL pages and reboot'
+                "Force-opens the PID tuner UI　",
+                "Deletes every LVGL Brain page",
+                "reset_pid and return to Dash　",
+                "Writes a new SD CSV header　　　"
             ],
             answer: 2,
-            explain: 'DOWN = reset_pid + back to Dash.'
+            explain: "DOWN clears traveled and returns to Dash."
         },
         {
-            q: 'Why can’t Auto trust LemLib odometry alone for the whole run with no resets?',
+            q: "Why not trust odometry alone for full Auto?",
             choices: [
-                'ezPID cannot do long moves',
-                'PROS forbids reading chassis.getPose()',
-                'moveToPose does not need pose',
-                'Bumps / slip accumulate drift; mid/late pose goes wrong'
+                "ezPID cannot do long moves　　　",
+                "PROS forbids reading getPose　",
+                "moveToPose needs no pose data",
+                "Bumps and slip cause drift　　　"
             ],
             answer: 3,
-            explain: 'Hybrid: LemLib for curves/long moves, ezPID for short precise moves, wallReset/getRealPose at key points.'
+            explain: "Use LemLib for long moves, ezPID for short precision, reset at key points."
         },
         {
-            q: 'What is the key idea of getRealPose (relative correction)?',
+            q: "What is the key idea of getRealPose?",
             choices: [
-                'You must supply a CAD sensor offset first',
-                'expected − (actual_perp − golden)×side; small-angle cos; golden includes mount offset',
-                'Same as wallReset; you must hit a wall',
-                'Only changes θ; never X/Y'
+                "Requires a CAD sensor offset　　",
+                "Relative pose fix via distance",
+                "Same as wallReset every time　　",
+                "Only theta changes, never XY　　"
             ],
             answer: 1,
-            explain: 'Relative formula + golden; no CAD offset needed. |α|>25° / low conf → expected; clamp ±6".'
+            explain: "Relative correction; skips when confidence/angle is bad."
         },
         {
-            q: 'Where do you map which motors feed Dash DRV/MCH temperatures?',
+            q: "Where are Dash DRV/MCH temperature motors set?",
             choices: [
-                'include/customs/dash_config.hpp',
-                'Edit ezlib/telem_dash.cpp directly',
-                'firmware/liblvgl.a',
-                'rd::Selector settings page'
+                "customs/dash_config.hpp",
+                "ezlib/telem_dash.cpp　　　",
+                "firmware/liblvgl.a　　　　　",
+                "auton_select config　　　　"
             ],
             answer: 0,
-            explain: 'Temperature map lives in dash_config.hpp.'
+            explain: "Temperature mapping lives in dash_config.hpp."
         },
         {
-            q: 'Correct way to open the PID tuner in practice?',
+            q: "Correct way to open the PID tuner in practice?",
             choices: [
-                'Field control connected; press X only',
-                'SD card required first',
-                'Unplug field control, then X+A to enter; X alone to exit',
-                'DOWN+Y opens the tuner'
+                "Field connected; press X alone",
+                "SD card must be inserted first",
+                "Unplug field, then press X+A　　",
+                "Enter tuner with DOWN+Y keys　　"
             ],
             answer: 2,
-            explain: 'Field control must be off; X+A enter, X exit. Connected field forces force_off.'
+            explain: "Unplug field control; X+A enters, X alone exits."
         },
         {
-            q: 'What unit is timeout, and what happens when it expires?',
+            q: "timeout unit and behavior when it expires?",
             choices: [
-                'Seconds; motors keep running',
-                'Encoder ticks; auto wallReset',
-                'LVGL frames',
-                'Milliseconds; motors stop and that motion ends'
+                "Seconds; only writes a log　　　　",
+                "Encoder ticks; then auto-reset",
+                "Counted in LVGL frame ticks　　　",
+                "Milliseconds; motors stop then"
             ],
             answer: 3,
-            explain: 'timeout is ms; when it expires motors stop (safety net).'
+            explain: "timeout is ms; the motion ends when time is up."
         },
         {
-            q: 'What does set_heading_constants mainly serve?',
+            q: "What does set_heading_constants mainly serve?",
             choices: [
-                'moveToPose angular / lead curves',
-                'Only ezPID.drive() straight heading lock; not moveToPose angular',
-                'All LemLib turnTo* only; unrelated to drive',
-                'Controller display only; no motor effect'
+                "Angular path for moveToPose　",
+                "Heading lock in ezPID.drive　",
+                "Gains only for all turnTo*　　",
+                "Controller display text only"
             ],
             answer: 1,
-            explain: 'Heading PID is for ezPID.drive straight; turn/curves use set_turn_constants after bind.'
+            explain: "Heading PID is for drive straight; turns use set_turn_constants."
         },
         {
-            q: 'For MotorGroup.get_temperature(index) in dash_config, what is index?',
+            q: "What is index in MotorGroup.get_temperature(index)?",
             choices: [
-                'Order in the MotorGroup list in main.cpp (0,1,2…), not the smart-port number',
-                'Always equal to the smart-port number (port 14 → index 14)',
-                'The first motor Brain auto-scanned at boot',
-                'Must be negative for reversed ports'
+                "List order 0, 1, 2…　　　　　　　",
+                "The smart-port number　　　　　",
+                "First motor at boot scan　　",
+                "Negative if motor reversed"
             ],
             answer: 0,
-            explain: 'Example leftMotors({-14,-15,-16}) → index 0 = port 14.'
+            explain: "index is declaration order, not the port number."
         },
         {
-            q: 'Which getRealPose safety rule is correct?',
+            q: "Which getRealPose safety rule is correct?",
             choices: [
-                'Always force a correction with no cap',
-                'Even past 45° skew, write pose from raw distance',
-                'If |α|>25° or low conf, give up / return expected; clamp correction ±6"',
-                'Bad reads always return −1 and crash setPose'
+                "Always force unlimited fixes",
+                "Any skew still writes pose　　",
+                "Skip when conf/skew is bad　　",
+                "Bad reads always return -1　　"
             ],
             answer: 2,
-            explain: 'Cos projection; |α|>25° / low conf → expected; ±6" clamp.'
+            explain: "Untrusted readings are skipped; corrections are capped."
         },
         {
-            q: 'Where do you read “For PID Distance” while pushing the robot by hand?',
+            q: "Where do you read For PID Distance while pushing?",
             choices: [
-                'Only rd::Console on terminal',
-                'Only while tuner is open',
-                'Only SD CSV; controller never shows it',
-                'Right stick to displayMenu = 1 → D: = ezPID.get_traveled() (inches)'
+                "Only from the PC terminal　",
+                "Only while PID tuner open　",
+                "Only afterward from SD CSV",
+                "Handset menu=1 shows D:　　　"
             ],
             answer: 3,
-            explain: 'Practice menu 1 shows traveled; Dash can show pose/DIST/temps too.'
+            explain: "Menu 1 D: is get_traveled() in inches."
         },
         {
-            q: 'What do DOWN+B and DOWN+Y do in practice?',
+            q: "DOWN+B vs DOWN+Y in practice?",
             choices: [
-                'Both only clear traveled',
-                'DOWN+B: focus Dash + run autonomous(); DOWN+Y: moveToPose(0,0,0,…)',
-                'DOWN+B opens tuner; DOWN+Y changes auton',
-                'DOWN+B deletes LVGL; DOWN+Y writes SD header'
+                "Both combos only clear traveled",
+                "B runs auton; Y goes (0,0,0)　　　",
+                "B opens tuner; Y swaps auton　　　",
+                "B deletes UI; Y writes the SD　　"
             ],
             answer: 1,
-            explain: 'DOWN+B verifies auton; DOWN+Y curves back to pose (0,0,0).'
+            explain: "DOWN+B runs autonomous; DOWN+Y moveToPose(0,0,0)."
         },
         {
-            q: 'After an inline PID drive/turn with {.p,.i,.d}, what happens to gains? startI?',
+            q: "After inline PID {.p,.i,.d}, what about gains?",
             choices: [
-                'Global P/I/D restore after the move; startI unchanged',
-                'Permanently overwrite globals until you set_*_constants again',
-                'startI also becomes the inline value',
-                'Only changes Brain PID page display'
+                "Global P/I/D values restore　",
+                "Globals stay permanently set",
+                "startI is changed together　　",
+                "Brain display values only　　　"
             ],
             answer: 0,
-            explain: 'One-shot override; globals restore; startI unchanged.'
+            explain: "One-shot override; globals restore; startI unchanged."
         },
         {
-            q: 'When field control connects (competition::is_connected()), what happens?',
+            q: "When field control connects, UI does what?",
             choices: [
-                'Keep tuner open for pit tuning',
-                'Only stop animation; tuner and Dash keep thrashing',
-                'pidTuner.force_off(), block X+A, stop anim, release Anim/Dash/PID UI; rebuild after unplug',
-                'Automatically run autonomous() once'
+                "Keeps the tuner forced open　　",
+                "Stops anim only; rest same　　　",
+                "Closes tuner and frees PID UI",
+                "Automatically runs autonomous"
             ],
             answer: 2,
-            explain: 'Field teardown closes tuner and heavy UI; rebuild when unplugged.'
+            explain: "Field closes tuner/console UI; Dash and anim remain available."
         },
         {
-            q: 'Which LVGL memory statement is correct for EzLib_2.0.0_beta?',
+            q: "Which LVGL memory statement is correct?",
             choices: [
-                'Fixed 256KB BSS pool; malloc forbidden',
-                'Must use robodash’s built-in 10MB pool',
-                'Official softfp liblvgl.a works on a hard-float kernel',
-                'lv_conf: LV_MEM_CUSTOM 1 (malloc/free); beta liblvgl.a needs hard-float ABI'
+                "Always a fixed 256KB BSS pool",
+                "Must use a built-in 10MB pool",
+                "softfp libs work on hardfp　　　",
+                "LV_MEM_CUSTOM uses malloc　　　　"
             ],
             answer: 3,
-            explain: 'CUSTOM malloc; Dash shows free RAM via mallinfo; hardfp ABI required.'
+            explain: "LV_MEM_CUSTOM malloc; liblvgl needs hard-float ABI."
         },
         {
-            q: 'How do you pick auton on current beta vs old robodash Selector?',
+            q: "How do you select auton?",
             choices: [
-                'Still tap rd::Selector on the Brain',
-                'headless auton_select::init({name, fn}); ←→ changes name on Dash/controller; no Selector page',
-                'Only one hard-coded auton in main.cpp',
-                'SD card filename picks auton; controller unused'
+                "Must tap a Brain picker page　",
+                "auton_select with ←→ names　　　",
+                "Only one hard-coded in main　　",
+                "SD filename alone picks auton"
             ],
             answer: 1,
-            explain: 'No Selector page; headless auton_select + name on controller/Dash.'
+            explain: "headless auton_select; name shows on controller/Dash."
         }
-    ];
+    ];;;;
 
     const questionBank = en ? questionBankEn : questionBankZh;
 

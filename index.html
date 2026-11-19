@@ -159,7 +159,7 @@
                         <p>呢個版本教你：底盤點行、點轉、點寫 auton、Brain 畫面（Dash）同 PID 調校。右上角可以隨時切去 <strong>2.0.1</strong>（有升降臂教學）。</p>
                         <ul>
                             <li>對應程式 branch：<code>EzLib_2.0.0_beta</code>（PROS 4.2.3）</li>
-                            <li>Brain 用自己嘅 Dash／PID 頁（唔再係舊 robodash）</li>
+                            <li>Brain：Dash／PID 頁／動畫；auton 用 <code>auton_select</code></li>
                             <li>做完可去<a href="#ch8-quiz">裁判訪問練習</a>自測</li>
                         </ul>
                     </div>
@@ -336,11 +336,11 @@
                 </div>
             </div>
             </div>
-            <div class="callout warning">
-                <div class="callout-icon">🧯</div>
+            <div class="callout info">
+                <div class="callout-icon">🖥️</div>
                 <div class="callout-content">
-                    <h4>robodash 已淡出</h4>
-                    <p>現行 beta 用 <strong>standalone LVGL</strong>（Dash 主題／PID／Anim）。唔好再寫 <code>rd::Console</code>／<code>rd::Selector</code>；auton 用 headless <code>auton_select</code>。版本摘要見<a href="#version-notes">序言</a>。</p>
+                    <h4>Brain UI 點用</h4>
+                    <p>畫面用 <code>telem_dash</code>（Dash）、PID 頁、動畫 overlay。Auton 用 <code>auton_select::init({名, 函數})</code>，手掣 ←→ 換名。細節見第七章。</p>
                 </div>
             </div>
 
@@ -434,7 +434,7 @@ ezPID.<span class="c-fn">turn</span>(<span class="c-st">0</span>, <span class="c
                 <div class="callout-icon">⚠️</div>
                 <div class="callout-content">
                     <h4>Auton 距離注意</h4>
-                    <p>部分舊路線目標仍可能是編碼器度數風格的大數字。新路線請一律用<strong>英吋／度</strong>。量度前勿把舊大數字當英吋讀。</p>
+                    <p><code>ezPID.drive</code> 用<strong>英吋</strong>；<code>ezPID.turn</code> 用<strong>絕對航向（度）</strong>。量距離請用手掣 menu 1 嘅 <code>D:</code>。</p>
                 </div>
             </div>
 
@@ -732,7 +732,7 @@ chassis.<span class="c-fn">setPose</span>(
 
             <!-- Chapter 6: Real-world Examples -->
             <h2 id="ch6-examples">第六章：實戰 Auto 寫法範例</h2>
-            <p>這章節展現如何將前面的理論結合：LemLib 曲線 → 重置 → ezPID 短距精準。單位一律<strong>英吋／度</strong>（舊碼可能仍有編碼器度數風格大數字——新路線不要跟）。</p>
+            <p>把前面章節串埋：LemLib 曲線 → 重置 → ezPID 短距精準。單位一律<strong>英吋／度</strong>。</p>
 
             <h3 id="ch6-workflow">由推機到寫 Auton（建議工作流）</h3>
             <p>目標：先令 drive／turn <strong>跟得穩</strong>，再<strong>人手推／開</strong>量真實距離同航向，最後寫入 <code>customs/autons.cpp</code>。</p>
@@ -907,33 +907,44 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             <h2 id="ch7-debug">第七章：實用工具與除錯 (Tools & Debug)</h2>
             <p>練車階段內建 <strong>Brain Dash</strong>（可揀主題）、PID 調校器、SD CSV、Controller monitor、動畫與場控 teardown。auton 用 headless <code>auton_select</code>。</p>
 
-            <div class="callout warning">
-                <div class="callout-icon">🧯</div>
-                <div class="callout-content">
-                    <h4>Robodash → standalone LVGL</h4>
-                    <p><strong>不再有</strong> robodash Console／Selector 頁。Brain 畫面用 <code>telem_dash</code>／PID／Anim（standalone LVGL）。舊「Console 遙測」請改讀本節 Dash（含 DOS 文字主題）。版本摘要見<a href="#version-notes">序言</a>。</p>
+            <h3 id="ch7-dash">🖥️ Brain Dash（<code>telem_dash</code>）</h3>
+            <p>喺 <code>src/main.cpp</code> 用兩個 constexpr 揀主題（<code>initialize()</code> 會呼叫 <code>set_loading_theme</code>／<code>set_dash_theme</code>）。Loading 同 Dash <strong>分開揀</strong>。</p>
+
+            <table class="notion-table only-v200">
+                <tr><th>參數</th><th>值</th><th>效果</th></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>1</code></td><td>none — 跳過開機動畫</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>2</code></td><td>Type R — 三錶 ignition</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>3</code></td><td>Spear of Longinus — 紅 progress</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauge／卡（BATT／pose／DIST／DRV／MCH／RAM）</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>2</code></td><td>Terminal — 黑底綠字文字 Dash</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>3</code></td><td>Light — 白底黑字文字 Dash</td></tr>
+            </table>
+
+            <table class="notion-table only-v201">
+                <tr><th>參數</th><th>值</th><th>效果</th></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>1</code></td><td>none — 跳過開機動畫</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>2</code></td><td>Type R — 三錶 ignition</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>3</code></td><td>Spear of Longinus — 紅 progress</td></tr>
+                <tr><td><code>k_loading_theme</code></td><td><code>4</code></td><td>KeeTa Rider — splash logo</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauge／卡（BATT／pose／DIST／DRV／MCH／RAM）</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>2</code></td><td>Terminal — 黑底綠字文字 Dash</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>3</code></td><td>Light — 白底黑字文字 Dash</td></tr>
+                <tr><td><code>k_dash_theme</code></td><td><code>4</code></td><td>V5Console — 經典 Brain console 風</td></tr>
+            </table>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 main.cpp 例</div>
+                <div class="code-block">
+<span class="c-kw">constexpr</span> <span class="c-kw">int</span> k_loading_theme = <span class="c-st">2</span>;
+<span class="c-kw">constexpr</span> <span class="c-kw">int</span> k_dash_theme = <span class="c-st">1</span>;
                 </div>
             </div>
-
-            <h3 id="ch7-dash">🖥️ Brain Dash（<code>telem_dash</code>）</h3>
-            <p>喺 <code>src/main.cpp</code> 用兩個 constexpr 揀主題（<code>initialize()</code> 會呼叫 <code>set_loading_theme</code>／<code>set_dash_theme</code>）：</p>
-            <table class="notion-table">
-                <tr><th>變數</th><th>值</th><th>效果</th></tr>
-                <tr><td rowspan="4"><code>k_loading_theme</code></td><td><code>1</code></td><td>none — 跳過開機動畫</td></tr>
-                <tr><td><code>2</code></td><td>Type R — 三錶 ignition（KM/H／TORQUE／FUEL）</td></tr>
-                <tr><td><code>3</code></td><td>Spear of Longinus — 紅 progress + 槍尖</td></tr>
-                <tr class="only-v201"><td><code>4</code></td><td>KeeTa Rider — splash logo</td></tr>
-                <tr><td rowspan="4"><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauge／卡 Dash（BATT 弧 + pose／DIST／DRV／MCH／RAM）</td></tr>
-                <tr><td><code>2</code></td><td>Terminal — DOS raw 文字（黑底綠字）</td></tr>
-                <tr><td><code>3</code></td><td>Light — 同一套 console（白底黑字）</td></tr>
-                <tr class="only-v201"><td><code>4</code></td><td>V5Console — 經典 Brain console 風</td></tr>
-            </table>
-            <p>Loading 同 Dash <strong>分開揀</strong>。Type R Dash 與 PID 頁用 <code>ui_pages</code> 互斥 focus；開 PID／動畫時會 <code>set_gauge_hidden</code>，避免電量透出。</p>
+            <p>Type R Dash 與 PID 頁互斥顯示；開 PID／動畫時會隱藏 gauge，避免電量錶透出。</p>
             <div class="callout info">
                 <div class="callout-icon">⌨️</div>
                 <div class="callout-content">
-                    <h4>DOS console（主題 2／3）</h4>
-                    <p>全屏 raw 文字，無錶無卡。例：<code>auton=...</code>、<code>batt=87%</code>、<code>ram=0.12M</code>、pose／dist／drv／mch。右下角隱形 <code>pid</code> 可撳入 PID 頁。呢個<strong>唔係</strong>舊 robodash Console。</p>
+                    <h4>文字 Dash（主題 2／3）顯示咩</h4>
+                    <p>全屏文字，例如：<code>auton=...</code>、<code>batt=87%</code>、<code>ram=0.12M</code>、pose／dist／drv／mch。右下角隱形 <code>pid</code> 可撳入 PID 頁。</p>
                 </div>
             </div>
             <p>溫度對應改 <code>include/customs/dash_config.hpp</code>（唔使改 <code>telem_dash.cpp</code>）。Type R 主題下 batt／DIST 顏色按電量與 confidence 提示狀態。</p>
@@ -1038,29 +1049,31 @@ ezlib::<span class="c-fn">printf</span>(<span class="c-st">"color %d\n"</span>, 
                 <tr><td>練習 menu 2</td><td><code>X</code>／<code>Y</code>／<code>T</code></td></tr>
             </table>
 
-            <p><strong>場控接上</strong>（<code>competition::is_connected()</code>）時：<code>pidTuner.force_off()</code>、禁止 X+A、停動畫、釋放 Anim／Dash／PID UI、Controller 精簡三行。拔出後重建 PID／Dash。</p>
+            <p><strong>場控接上</strong>：關 PID tuner／console；Dash 保留。仍可用 <strong>UP</strong> 播動畫、<strong>DOWN</strong> 返 Dash。</p>
 
-            <h4 style="color: var(--text-bold); margin-top: 20px; margin-bottom: 10px;">練習場快捷鍵（tuner 關）</h4>
+            <h4 style="color: var(--text-bold); margin-top: 20px; margin-bottom: 10px;">手掣快捷鍵</h4>
             <table class="notion-table">
                 <tr><th>操作</th><th>作用</th></tr>
-                <tr><td>右搖桿左右</td><td><code>displayMenu</code> 0／1／2</td></tr>
-                <tr><td>LEFT／RIGHT</td><td>換 auton（<strong>不</strong> <code>set_pose</code>）；名上 Dash／手掣</td></tr>
-                <tr><td>UP（短按）</td><td>cancel + <code>reset_pid</code> + rumble</td></tr>
-                <tr><td>UP（按住）</td><td>開動畫（<code>autoChange</code>）；開始時 <code>set_gauge_hidden(true)</code></td></tr>
-                <tr><td>DOWN</td><td><code>reset_pid</code>（清 traveled）+ 回 Dash</td></tr>
-                <tr><td>DOWN+B</td><td>focus Dash + 跑 <code>autonomous()</code></td></tr>
-                <tr><td>DOWN+Y</td><td><code>moveToPose(0,0,0,…)</code></td></tr>
-                <tr><td>X+A</td><td>開 PID tuner（見上表）</td></tr>
+                <tr><td>右搖桿左右</td><td><code>displayMenu</code> 0／1／2（練習場）</td></tr>
+                <tr><td>LEFT／RIGHT</td><td>換 auton 名（練習場；<strong>不</strong> <code>set_pose</code>）</td></tr>
+                <tr><td>UP（按住）</td><td>播動畫（練習場<strong>同場控</strong>）</td></tr>
+                <tr><td>DOWN</td><td>返 Dash；關動畫</td></tr>
+                <tr><td>DOWN+B</td><td>跑 <code>autonomous()</code>（練習場）</td></tr>
+                <tr><td>DOWN+Y</td><td><code>moveToPose(0,0,0,…)</code>（練習場）</td></tr>
+                <tr><td>X+A</td><td>開 PID tuner（練習場）</td></tr>
             </table>
-            <p>Tuner 內 LEFT／RIGHT 仍會 <code>set_pose(0,0,0)</code>（換 field）。Controller 換 auton、DOWN 回 Dash 會清 <code>autoChange</code>。</p>
 
-            <h3 id="ch7-lvgl" style="margin-top: 30px;">🖼️ standalone LVGL（唔再經 robodash）</h3>
-            <div class="callout warning">
+            <h3 id="ch7-lvgl" style="margin-top: 30px;">🖼️ 動畫（robot frames）</h3>
+            <div class="callout info">
                 <div class="callout-icon">🎬</div>
                 <div class="callout-content">
-                    <h4>動畫與 LVGL 記憶體</h4>
-                    <p>Standalone LVGL overlay：<code>anim_page</code> + <strong>一個</strong> <code>lv_img</code>，換 <code>robot01</code>…<code>robot10</code> src（按住 UP → <code>autoChange</code>）。開動畫 <code>set_gauge_hidden(true)</code>；關動畫／DOWN：<code>show_dash()</code> 還原電量錶。<strong>不要</strong>為每幀建多個 widget 再 focus——會爆 heap／碎裂。</p>
-                    <p>現行：<code>LV_MEM_CUSTOM 1</code>（malloc）；Dash 顯示 free RAM。<code>EzLib_2.0.0_beta</code> 的 <code>liblvgl.a</code> 須 hard float ABI。唔好用 <code>rd::Console::printf</code>。</p>
+                    <h4>點用</h4>
+                    <ul>
+                        <li>按住 <strong>UP</strong>：播 <code>robot01</code>…<code>robot10</code>（練習場同場控都得）</li>
+                        <li><strong>DOWN</strong>：關動畫，返 Dash</li>
+                        <li>實作：一個 <code>lv_img</code> 換 src；開播時隱藏 gauge</li>
+                    </ul>
+                    <p>記憶體：<code>LV_MEM_CUSTOM 1</code>（malloc）。要喺 Brain 印 debug 字，用 <code>ezlib::printf</code>（2.0.1 PID 頁右邊 CONSOLE）。</p>
                 </div>
             </div>
 
@@ -1158,7 +1171,7 @@ liftlib::Subsystem armLift(
                         <div class="judge-quiz-meter" aria-hidden="true"><span id="quiz-progress-fill"></span></div>
                     </div>
                     <div id="quiz-stage" class="judge-quiz-stage">
-                        <p class="judge-quiz-lead">共 20 題選擇題，涵蓋 PID 單位、底盤 bind、Dash 與舊 Console、練習掣、odom／getRealPose、dash_config、場控 teardown、standalone LVGL、auton_select 等。</p>
+                        <p class="judge-quiz-lead">共 20 題：單位、bind、Dash、練習掣、odom／reset、dash_config、場控、LVGL、auton_select 等。</p>
                         <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">開始練習</button>
                     </div>
                 </div>
