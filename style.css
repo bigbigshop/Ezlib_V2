@@ -295,10 +295,17 @@ code {
     border-collapse: collapse;
     margin: 20px 0;
     font-size: 15px;
+    table-layout: fixed;
 }
-.notion-table th, .notion-table td { border: 1px solid var(--border-color); padding: 12px; text-align: left; }
+.notion-table th, .notion-table td {
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    text-align: left;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
 .notion-table th { background-color: var(--bg-hover); color: var(--text-bold); font-weight: 500; }
-.notion-table td:first-child { width: 30%; background-color: rgba(255,255,255,0.02); }
+.notion-table td:first-child { width: 32%; background-color: rgba(255,255,255,0.02); }
 
 /* --- Judge interview quiz --- */
 .judge-quiz {
