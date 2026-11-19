@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en" data-docs-version="2.0.0">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzLib Docs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="version-bar" aria-label="Docs controls">
+        <span class="version-bar-label">Lang</span>
+        <select id="docs-lang" aria-label="Language">
+            <option value="zh">中文</option>
+            <option value="en" selected>English</option>
+        </select>
+        <span class="version-bar-label">Version</span>
+        <select id="docs-version" aria-label="Select EzLib docs version">
+            <option value="2.0.0">2.0.0</option>
+            <option value="2.0.1">2.0.1</option>
+        </select>
+    </div>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <div class="header-left-group">
+            <button id="mobile-menu-btn" class="mobile-menu-btn" title="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-title">
+                <span class="page-icon" style="font-size: 20px;">🤖</span>
+                <span class="header-text">EzLib · 2.0.0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">Contents</div>
+        <div class="sidebar-theme-toggle">
+            <span class="theme-label">Dark mode</span>
+            <button id="theme-toggle" class="theme-toggle-btn" title="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        
+        <div class="nav-group">
+            <a href="#intro" class="nav-link">📘 Intro: Core ideas</a>
+            <a href="#version-notes" class="nav-link">🏷️ Version notes</a>
+            <a href="#preface" class="nav-link">⚠️ Preface: Read before use</a>
+        </div>
+        
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 1</div>
+            <a href="#ch1-setup" class="nav-link">⚙️ Setup &amp; initialize</a>
+            <a href="#ch1-structure" class="nav-link">🗂️ Project structure</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 2</div>
+            <a href="#ch2-ezdrive" class="nav-link">🎯 EzDrive chassis PID</a>
+            <a href="#ch2-inline-pid" class="nav-link">📐 Per-move custom PID</a>
+            <a href="#ch2-slew-exit" class="nav-link">⏳ Async &amp; WaitUntil</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 3</div>
+            <a href="#ch3-lemlib" class="nav-link">📍 LemLib motion commands</a>
+            <a href="#ch3-movetopoint" class="nav-link">🎯 moveToPoint straight</a>
+            <a href="#ch3-movetopose" class="nav-link">🚀 moveToPose curved pose</a>
+            <a href="#ch3-turnto" class="nav-link">🧭 turnTo heading control</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 4</div>
+            <a href="#ch4-reset" class="nav-link">🧱 Reset odometry</a>
+            <a href="#ch4-wallreset" class="nav-link">💥 Wall reset (wallReset)</a>
+            <a href="#ch4-getrealpose" class="nav-link">📏 Sensor correction (getRealPose)</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 5</div>
+            <a href="#ch5-fsm" class="nav-link">🔄 FSM &amp; anti-jam</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 6</div>
+            <a href="#ch6-examples" class="nav-link">📖 Real auton examples</a>
+            <a href="#ch6-workflow" class="nav-link">🧭 From push-bot to auton</a>
+            <a href="#ch6-auto-init" class="nav-link">🛑 1. Why skip auto align?</a>
+            <a href="#ch6-skills" class="nav-link">🔥 2. Skills hybrid combo</a>
+            <a href="#ch6-opcontrol" class="nav-link">🎮 3. Clean opcontrol</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 7</div>
+            <a href="#ch7-debug" class="nav-link">🛠️ Telemetry &amp; shortcuts</a>
+            <a href="#ch7-dash" class="nav-link">🖥️ Brain Dash themes</a>
+            <a href="#ch7-tuner" class="nav-link">🎛️ PID tuner</a>
+            <a href="#ch7-console" class="nav-link only-v201">📟 Brain right CONSOLE</a>
+            <a href="#ch7-sd" class="nav-link">💾 SD card CSV</a>
+            <a href="#ch7-monitor" class="nav-link">📱 Controller monitor</a>
+            <a href="#ch7-lvgl" class="nav-link">🖼️ standalone LVGL</a>
+        </div>
+
+        <div class="nav-group only-v201">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 8 (2.0.1)</div>
+            <a href="#ch8-liftlib" class="nav-link">🦾 Lift arm (Liftlib) intro</a>
+        </div>
+
+        <div class="nav-group">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;"><span class="only-v200">Chapter 8</span><span class="only-v201">Chapter 9</span></div>
+            <a href="#ch8-quiz" class="nav-link">🎤 Judge interview practice</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content-container" id="scroll-area">
+        <div class="page-cover"></div>
+        
+        <div class="page-content">
+            <!-- Intro -->
+            <section id="intro">
+                <h1 class="page-title"><span class="page-icon">🤖</span>EzLib Docs</h1>
+                <p style="color: var(--text-muted); font-size: 18px; margin-top: -10px; margin-bottom: 20px;">Competition stack: LemLib + EzDrive hybrid drive system</p>
+                
+                <div class="callout success">
+                    <div class="callout-icon">📥</div>
+                    <div class="callout-content">
+                        <h4>Download EzLib</h4>
+                        <p>Click the link below to download the latest EzLib package:<br>
+                        <a href="https://gofile.io/d/ltHiTh" target="_blank" style="color: var(--accent-blue); font-weight: 700;">Download ezLib.zip</a></p>
+                        </div>
+                </div>
+
+                <div class="callout info">
+                    <div class="callout-icon">📌</div>
+                    <div class="callout-content">
+                        <h4>Units &amp; coordinates (memorize these)</h4>
+                        <ul>
+                            <li><code>ezPID.drive</code> distance is in <strong>inches</strong>, measured along the heading at the start of that call—<strong>not</strong> motor degrees.</li>
+                            <li><code>ezPID.turn</code> targets an <strong>absolute heading in degrees</strong>. LemLib heading uses 0° toward +Y, clockwise positive.</li>
+                            <li><code>timeout</code> is in milliseconds; when time runs out, motors stop and that motion ends.</li>
+                            <li>Pose lives in LemLib <code>chassis.getPose()</code>; motor output and settle checks go through the global <code>ezPID</code> (<code>ez_compat::EzDrive</code>).</li>
+                        </ul>
+                        <p>Online helpers: <a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue); font-weight: 700;">pid.ykyle.eu</a> (PID), <a href="https://vex.ykyle.eu/moveToPose" target="_blank" style="color: var(--accent-blue); font-weight: 700;">moveToPose simulator</a>. Simulators do not replace on-field / SD CSV testing.</p>
+                    </div>
+                </div>
+
+                <div id="version-notes">
+                <div class="callout success only-v200">
+                    <div class="callout-icon">🏷️</div>
+                    <div class="callout-content">
+                        <h4>You are viewing: 2.0.0</h4>
+                        <p>This version teaches chassis drive/turn, writing auton, Brain Dash, and PID tuning. Use the top-right control to switch to <strong>2.0.1</strong> (adds lift-arm docs).</p>
+                        <ul>
+                            <li>Matching code branch: <code>EzLib_2.0.0_beta</code> (PROS 4.2.3)</li>
+                            <li>Brain uses its own Dash / PID pages (not the old robodash)</li>
+                            <li>When ready, try the <a href="#ch8-quiz">judge interview practice</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="callout success only-v201">
+                    <div class="callout-icon">🏷️</div>
+                    <div class="callout-content">
+                        <h4>You are viewing: 2.0.1</h4>
+                        <p>On top of 2.0.0, you get three extras you will use a lot:</p>
+                        <ul>
+                            <li><strong>Lift arm</strong> (Liftlib) — see <a href="#ch8-liftlib">Chapter 8</a>, with copy-paste examples</li>
+                            <li><strong>Brain right CONSOLE</strong> — use <code>ezlib::printf</code> for live values (like a notebook)</li>
+                            <li>Pressing <strong>Dash</strong> from the PID page clears the PID UI automatically (no more red monitor surprises)</li>
+                        </ul>
+                        <p>You do not need to read everything at once. Copy the examples first, then change ports and angles.</p>
+                    </div>
+                </div>
+                </div>
+                
+                <!-- Preface: Warning Section -->
+            <section id="preface">
+                <h1 class="page-title"><span class="page-icon">⚠️</span>Read before use: important warnings</h1>
+                <p style="color: var(--text-muted); font-size: 18px; margin-top: -10px; margin-bottom: 20px;">Please read the following carefully before using EzLib</p>
+                
+                <div class="callout warning">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-content">
+                        <h4>⚠️ Important warning</h4>
+                        <p>This chapter contains key notes we <strong>strongly recommend</strong> you follow. Skipping it can lead to serious problems.</p>
+                    </div>
+                </div>
+                
+                <div class="callout danger">
+                    <div class="callout-icon">💀</div>
+                    <div class="callout-content">
+                        <h4>Understand first—or expect a G4</h4>
+                        <p>Before using this EzLib stack, you <strong>must</strong> understand these core ideas:</p>
+                        <ul>
+                            <li><strong>LemLib odometry strengths and limits</strong>: why error builds up over time?</li>
+                            <li><strong>EzDrive PID logic</strong>: why short, precise moves (in inches) matter?</li>
+                            <li><strong>When and how to reset pose</strong>: when do you need <code>wallReset</code> / <code>getRealPose</code>?</li>
+                            <li><strong>Hybrid design philosophy</strong>: why you cannot rely on one tool for the whole auton?</li>
+                        </ul>
+                        <p>If you <strong>skip reading and understanding</strong> this guide and jump straight into using the system, I <strong>strongly expect</strong> you will get G4’d in competition. That is not a threat—it is the natural result of skipping the “why.”</p>
+                        <p><strong>Understand → know the principles → then use it</strong>. That is the only reliable path to avoid a G4.</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="G4.jpg" alt="G4 Warning" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                </div>
+                
+                <div class="callout success">
+                    <div class="callout-icon">📝</div>
+                    <div class="callout-content">
+                        <h4>Suggested learning path</h4>
+                        <p>Learn in this order:</p>
+                        <ol>
+                            <li>Understand the core ideas (this chapter)</li>
+                            <li>Read Setup &amp; initialize carefully</li>
+                            <li>Learn chassis PID (inches / absolute heading)</li>
+                            <li>Learn LemLib motion commands (shared ezPID after bind)</li>
+                            <li>Apply it in auton writing, and learn Brain UI (standalone LVGL / Type R Dash)</li>
+                            <li>Self-check with <a href="#ch8-quiz">judge interview practice</a> (≥90% = comfortable with EzLib)</li>
+                        </ol>
+                        <p>Skipping steps often leads to match-day failure.</p>
+                    </div>
+                </div>
+            </section>
+                
+                <div class="callout danger">
+                    <div class="callout-icon">🚨</div>
+                    <div class="callout-content">
+                        <h4>Why you cannot run on LemLib alone?</h4>
+                        <p>LemLib odometry is powerful, but you <strong>must not</strong> trust it alone for a full 15/60-second auton. Collisions, wheel slip, and weight shifts create <strong>accumulated error</strong>. If you only trust the opening (0,0) pose, mid-to-late auton will drift badly.</p>
+                    </div>
+                </div>
+
+                <p>So this stack uses a <strong>hybrid architecture</strong>: LemLib handles complex curves / long tracking (<code>moveToPose</code>, etc.), while custom <strong>EzDrive (<code>ezPID</code>)</strong> handles high-precision short drive/turn PID, and you force <strong>pose resets</strong> at key moments (<code>wallReset</code> / <code>getRealPose</code>). That is how auton stays consistent.</p>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 1 -->
+            <h2 id="ch1-setup">Chapter 1: System setup &amp; initialize</h2>
+            
+            <p>In <code>main.cpp</code>’s <code>initialize()</code>, set up LemLib, EzDrive, and background tasks once. This defines how the robot physically responds.</p>
+
+            <div class="callout info">
+                <div class="callout-icon">📘</div>
+                <div class="callout-content">
+                    <h4>LemLib chassis setup notes</h4>
+                    <p>For basic LemLib <code>chassis</code> hardware setup (Drivetrain, Sensors, PID declarations), see the <a href="https://lemlib.readthedocs.io/" target="_blank" style="color: var(--accent-blue);">official LemLib docs</a>. This guide focuses on competition logic and integrating EzDrive.</p>
+                    <p><strong>Important:</strong> the <code>EzDrive</code> constructor calls <code>chassis.bindEzDrive(this)</code>. After that, <code>moveToPoint</code>, <code>moveToPose</code>, <code>turnToHeading</code>, <code>turnToPoint</code>, <code>swingToHeading</code>, and <code>swingToPoint</code> <strong>share</strong> <code>ezPID</code>’s drive/turn PID—you do not tune a second set of LemLib angular gains. Any LemLib <code>ControllerSettings</code> left at construct time are mainly for the construct API; after bind, real output comes from <code>ezPID</code>.</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 main.cpp -> initialize()</div>
+                <div class="code-block">
+<span class="c-kw">void</span> <span class="c-fn">initialize</span>() {
+    <span class="c-co">// --- 1. LemLib init ---</span>
+    chassis.<span class="c-fn">calibrate</span>(); <span class="c-co">// Required: calibrate IMU and tracking wheels</span>
+
+    <span class="c-co">// --- 2. EzDrive settings (distance unit: inches) ---</span>
+    ezPID.<span class="c-fn">set_x_drive</span>(<span class="c-kw">false</span>);
+
+    <span class="c-co">// [Drive PID] P: push, I: fine integral, D: brake/damping, startI: integral start threshold</span>
+    ezPID.<span class="c-fn">set_drive_constants</span>(<span class="c-st">8.25</span>, <span class="c-st">0</span>, <span class="c-st">42</span>, <span class="c-st">0</span>);
+
+    <span class="c-co">// [Heading-hold PID] only for ezPID.drive() straight moves; not for moveToPose angular</span>
+    ezPID.<span class="c-fn">set_heading_constants</span>(<span class="c-st">4</span>, <span class="c-st">0</span>, <span class="c-st">10</span>, <span class="c-st">0</span>);
+
+    <span class="c-co">// [Turn PID] in-place turns; also used by LemLib turn/curve angular after bind</span>
+    ezPID.<span class="c-fn">set_turn_constants</span>(<span class="c-st">4.1</span>, <span class="c-st">0</span>, <span class="c-st">30</span>, <span class="c-st">15</span>);
+
+    <span class="c-co">// Slew: smaller = gentler start. turn_slew &gt;= 250 means no turn slew limit</span>
+    ezPID.<span class="c-fn">set_drive_slew</span>(<span class="c-st">12</span>);
+    ezPID.<span class="c-fn">set_turn_slew</span>(<span class="c-st">255</span>);
+
+    <span class="c-co">// Exit conditions: (small err, small time ms, large err, large time ms, vel_t)</span>
+    <span class="c-co">// drive error unit: inches; turn error unit: degrees</span>
+    ezPID.<span class="c-fn">set_drive_exit_conditions</span>(<span class="c-st">0.5</span>, <span class="c-st">100</span>, <span class="c-st">2</span>, <span class="c-st">500</span>, <span class="c-st">0</span>);
+    ezPID.<span class="c-fn">set_turn_exit_conditions</span>(<span class="c-st">1</span>, <span class="c-st">100</span>, <span class="c-st">3</span>, <span class="c-st">250</span>, <span class="c-st">0</span>);
+
+    ezPID.<span class="c-fn">set_drive_velocity_threshold</span>(<span class="c-st">0.10</span>);
+    ezPID.<span class="c-fn">set_turn_velocity_threshold</span>(<span class="c-st">0.25</span>);
+    ezPID.<span class="c-fn">set_heading_velocity_threshold</span>(<span class="c-st">0.25</span>);
+
+    <span class="c-co">// --- 3. PID tuner (Brain + controller; auto teardown when field control connects) ---</span>
+    pidTuner.<span class="c-fn">start</span>();
+}
+                </div>
+            </div>
+
+            <div class="callout success">
+                <div class="callout-icon">💡</div>
+                <div class="callout-content">
+                    <h4>startI and settle logic</h4>
+                    <p><code>startI</code>: integral only runs when <code>|error|</code> is below this value and <code>startI != 0</code>; integral clears on error sign change.</p>
+                    <p>Settled when error stays in the small/large windows long enough and <code>|derivative| &lt;= velocity_threshold</code> (see exit/vel settings above).</p>
+                    <p><code>ezPID.turn</code> and <code>chassis.turnToHeading</code> share the <strong>same PID</strong> after bind, but motion logic differs slightly (direction / minSpeed / earlyExit, etc.). For everyday auton, <code>ezPID.turn</code> is enough.</p>
+                </div>
+            </div>
+
+            <h3 id="ch1-structure" style="margin-top: 30px;">Project structure &amp; declaration habits</h3>
+
+            <div class="only-v200">
+            <p>Simple rule: <strong>you edit customs</strong>; library files usually stay untouched. <code>chassis</code> / <code>ezPID</code> / <code>pidTuner</code> are set up in <code>src/main.cpp</code>.</p>
+            <table class="notion-table">
+                <tr><th>Path</th><th>What you need to know</th></tr>
+                <tr><td><code>src/main.cpp</code></td><td>Boot setup, chassis, PID numbers</td></tr>
+                <tr><td><code>include/customs/</code> + <code>src/customs/</code></td><td><strong>Your code</strong>: auton, buttons, mechanisms</td></tr>
+                <tr><td><code>include/ezlib/</code></td><td>Library (usually do not edit)</td></tr>
+            </table>
+            <p>Typical includes: <code>#include "ezlib/ez_compat.hpp"</code>, <code>#include "customs/dash_config.hpp"</code>.</p>
+            </div>
+
+            <div class="only-v201">
+            <p>2.0.1 adds the lift library. Remember folders like this:</p>
+            <table class="notion-table">
+                <tr><th>What you want to change</th><th>Where to go</th></tr>
+                <tr><td>auton / buttons / pneumatics</td><td><code>customs/</code> (your workbook)</td></tr>
+                <tr><td>chassis PID, boot</td><td><code>src/main.cpp</code></td></tr>
+                <tr><td>lift arm</td><td>also declare <code>armLift</code> in <code>main.cpp</code>; details in <a href="#ch8-liftlib">Chapter 8</a></td></tr>
+                <tr><td>Brain print (CONSOLE)</td><td><code>#include "ezlib/console.hpp"</code> then <code>ezlib::printf</code></td></tr>
+            </table>
+            <div class="callout info">
+                <div class="callout-icon">💡</div>
+                <div class="callout-content">
+                    <h4>Beginner mindset</h4>
+                    <p>You do not need to understand every folder at once. Get the drivetrain moving first, then add the arm, then print values. When stuck, copy the examples below and change ports and angles.</p>
+                </div>
+            </div>
+            </div>
+            <div class="callout warning">
+                <div class="callout-icon">🧯</div>
+                <div class="callout-content">
+                    <h4>robodash is phased out</h4>
+                    <p>Current beta uses <strong>standalone LVGL</strong> (Dash themes / PID / Anim). Do not write <code>rd::Console</code> / <code>rd::Selector</code>; use headless <code>auton_select</code> for auton. Version summary is in the <a href="#version-notes">intro</a>.</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 objDeclare.hpp / main.cpp (summary)</div>
+                <div class="code-block">
+<span class="c-co">// include/customs/objDeclare.hpp</span>
+<span class="c-kw">extern</span> lemlib::Chassis chassis;
+<span class="c-kw">extern</span> ez_compat::EzDrive ezPID;
+<span class="c-kw">extern</span> ez_compat::PidTuner pidTuner;
+<span class="c-co">// Auton uses auton_select (headless) — no rd::Selector</span>
+<span class="c-kw">extern</span> pros::Controller controller;
+<span class="c-kw">extern</span> pros::MotorGroup leftMotors;
+<span class="c-kw">extern</span> pros::MotorGroup rightMotors;
+<span class="c-kw">extern</span> pros::Imu imu;
+<span class="c-kw">extern</span> <span class="c-kw">const</span> lv_img_dsc_t robot01; <span class="c-co">// … robot10</span>
+
+<span class="c-kw">inline</span> pros::Distance dist_front(<span class="c-st">6</span>);
+<span class="c-kw">inline</span> pros::Distance dist_back(<span class="c-st">21</span>);
+<span class="c-kw">inline</span> pros::Distance dist_left(<span class="c-st">3</span>);
+<span class="c-kw">inline</span> pros::Distance dist_right(<span class="c-st">9</span>);
+
+<span class="c-kw">inline</span> pros::Motor left_intake(<span class="c-st">20</span>);
+<span class="c-kw">inline</span> pros::Motor right_intake(-<span class="c-st">17</span>);
+<span class="c-kw">inline</span> pros::Motor low_roller(<span class="c-st">18</span>);
+<span class="c-kw">inline</span> pros::Motor high_roller(<span class="c-st">19</span>);
+<span class="c-kw">inline</span> pros::MotorGroup intake_motors({<span class="c-st">20</span>, -<span class="c-st">17</span>});
+
+<span class="c-kw">inline</span> pros::adi::Pneumatics arm(<span class="c-st">'A'</span>, <span class="c-kw">false</span>);
+<span class="c-kw">inline</span> pros::adi::Pneumatics cover(<span class="c-st">'D'</span>, <span class="c-kw">false</span>);
+<span class="c-kw">inline</span> pros::adi::Pneumatics hook(<span class="c-st">'B'</span>, <span class="c-kw">false</span>);
+<span class="c-kw">inline</span> pros::adi::Pneumatics matchload(<span class="c-st">'C'</span>, <span class="c-kw">false</span>);
+
+<span class="c-co">// src/main.cpp (chassis-side definitions)</span>
+pros::MotorGroup rightMotors({<span class="c-st">11</span>, <span class="c-st">12</span>, <span class="c-st">13</span>}, pros::MotorGearset::blue);
+pros::MotorGroup leftMotors({-<span class="c-st">14</span>, -<span class="c-st">15</span>, -<span class="c-st">16</span>}, pros::MotorGearset::blue);
+pros::Imu imu(<span class="c-st">5</span>);
+<span class="c-co">// … TrackingWheel / Drivetrain / Chassis …</span>
+ez_compat::EzDrive ezPID(chassis, drivetrain);
+ez_compat::PidTuner pidTuner(ezPID);
+                </div>
+            </div>
+
+            <div class="callout info">
+                <div class="callout-icon">🌡️</div>
+                <div class="callout-content">
+                    <h4>Dash temperatures: <code>dash_config.hpp</code> (file you must edit)</h4>
+                    <p>Brain Dash <strong>DRV</strong> / <strong>MCH</strong> temperature rows are controlled <strong>only</strong> by <code>include/customs/dash_config.hpp</code>—you do not need to edit <code>ezlib/telem_dash.cpp</code>.</p>
+                    <ul>
+                        <li><strong>DRV</strong>: <code>format_drive_temps</code> — left LF/LM/LB | right RF/RM/RB (<code>leftMotors</code> / <code>rightMotors</code>)</li>
+                        <li><strong>MCH</strong>: <code>format_mech_temps</code> — L_intake / R_intake | low / high roller</li>
+                    </ul>
+                    <p>For MotorGroup use <code>get_temperature(index)</code>: <code>index</code> is the <strong>order inside the list</strong> in <code>main.cpp</code> (0, 1, 2…), <strong>not</strong> the smart-port number. Example: <code>leftMotors({-14, -15, -16})</code> → index <code>0</code> = port 14. Standalone <code>pros::Motor</code> uses <code>motor.get_temperature()</code>.</p>
+                </div>
+            </div>
+
+            <div class="callout warning">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-content">
+                    <h4>Motor / pneumatics notes</h4>
+                    <p>Negative port = reversed (e.g. <code>-14</code>). <strong>Do not</strong> declare a second <code>pros::Motor(...)</code> on the same port already in a <code>MotorGroup</code>—they fight over reverse/encoder and break <code>ezPID.drive</code>. Intake uses separate motors; drivetrain uses only <code>leftMotors</code> / <code>rightMotors</code>.</p>
+                    <p>Pneumatics: <code>pros::adi::Pneumatics(port, start_extended)</code>; second arg <code>false</code> = retracted at boot. Driver buttons via <code>pneumaticsBtn()</code> (<code>controls.cpp</code>)—call <strong>only when tuner is off</strong> (avoids X/A conflicts). Common: X = arm/hook sequence, A = <code>hook.toggle()</code>, Y = <code>matchload.toggle()</code>.</p>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 2 -->
+            <h2 id="ch2-ezdrive">Chapter 2: EzDrive chassis PID</h2>
+            
+            <p>In auton, EzDrive (global <code>ezPID</code>) runs the most precise point-to-point moves and turns. Distance is in <strong>inches</strong>; turn targets <strong>absolute heading (degrees)</strong>.</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 API signatures</div>
+                <div class="code-block">
+<span class="c-kw">void</span> <span class="c-fn">drive</span>(<span class="c-ty">double</span> distance_inches, <span class="c-ty">int</span> max_speed, <span class="c-ty">int</span> timeout = <span class="c-st">1500</span>, <span class="c-ty">bool</span> async = <span class="c-kw">false</span>);
+<span class="c-kw">void</span> <span class="c-fn">turn</span>(<span class="c-ty">double</span> angle, <span class="c-ty">int</span> max_speed, <span class="c-ty">int</span> timeout = <span class="c-st">1500</span>, <span class="c-ty">bool</span> async = <span class="c-kw">false</span>); <span class="c-co">// absolute heading °</span>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+ezPID.<span class="c-fn">drive</span>(<span class="c-st">24</span>, <span class="c-st">100</span>, <span class="c-st">2000</span>);
+ezPID.<span class="c-fn">drive</span>(-<span class="c-st">12</span>, <span class="c-st">90</span>, <span class="c-st">1800</span>);
+ezPID.<span class="c-fn">turn</span>(<span class="c-st">90</span>, <span class="c-st">100</span>, <span class="c-st">1500</span>);
+ezPID.<span class="c-fn">turn</span>(<span class="c-st">0</span>, <span class="c-st">90</span>, <span class="c-st">1500</span>);
+                </div>
+            </div>
+
+            <div class="callout warning">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-content">
+                    <h4>Auton distance caution</h4>
+                    <p>Some older routes may still use large encoder-degree-style numbers. New routes should always use <strong>inches / degrees</strong>. Do not treat old large numbers as inches when measuring.</p>
+                </div>
+            </div>
+
+            <h3 id="ch2-inline-pid">Hard rule: every distance has its own best PID</h3>
+            
+            <div class="callout warning">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-content">
+                    <h4>One set of gains cannot do everything</h4>
+                    <p>A common beginner mistake: tune one <code>kp, ki, kd</code> set and expect it to push 5 inches and 50 inches equally well. <strong>Physically that is impossible.</strong> Long moves need more braking (kd) against inertia; short nudges need sharper proportional push (kp).</p>
+                </div>
+            </div>
+
+            <p>So <code>ezPID.drive</code> / <code>turn</code> support <strong>inline PID</strong> (one-shot gain override). After the move, global gains restore; <code>startI</code> stays unchanged. For a specific distance, pass custom <code>{.p, .i, .d}</code>.</p>
+            
+            <div class="callout info">
+                <div class="callout-icon">💡</div>
+                <div class="callout-content">
+                    <h4>PID simulator</h4>
+                    <p>Build intuition before tuning on the robot:<br>
+                    <a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue); font-weight: 700;">pid.ykyle.eu — PID simulator</a></p>
+                    <p>Adjust P/I/D, watch overshoot, then use Brain/controller <strong>PID tuner</strong> + <code>/usd/pid_tune_log.csv</code> on the field. The simulator does not replace real testing.</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// Syntax: drive(inches, maxSpeed, timeoutMs, PIDGains, async)</span>
+
+<span class="c-co">// 1. Use default global PID</span>
+ezPID.<span class="c-fn">turn</span>(<span class="c-st">90</span>, <span class="c-st">90</span>, <span class="c-st">1500</span>, <span class="c-kw">true</span>);
+
+<span class="c-co">// 2. One-shot gain override (restores after; startI unchanged)</span>
+ezPID.<span class="c-fn">drive</span>(<span class="c-st">12</span>, <span class="c-st">90</span>, <span class="c-st">1800</span>, {.<span class="c-vr">p</span> = <span class="c-st">8.25</span>, .<span class="c-vr">i</span> = <span class="c-st">0</span>, .<span class="c-vr">d</span> = <span class="c-st">42</span>}, <span class="c-kw">false</span>);
+ezPID.<span class="c-fn">turn</span>(<span class="c-st">90</span>, <span class="c-st">90</span>, <span class="c-st">1500</span>, {.<span class="c-vr">p</span> = <span class="c-st">4.1</span>, .<span class="c-vr">i</span> = <span class="c-st">0</span>, .<span class="c-vr">d</span> = <span class="c-st">30</span>}, <span class="c-kw">false</span>);
+                </div>
+            </div>
+
+            <h3 id="ch2-slew-exit" style="margin-top: 30px;">⏳ Async / sync control &amp; WaitUntil</h3>
+            <p>Set the last argument of <code>drive</code> or <code>turn</code> to <code>true</code> for <strong>async mode</strong>: the next line runs immediately (e.g. start intake early). Only one motion owns the drivetrain at a time; arcade is disabled while <code>pidTuner</code> is open or <code>ezPID.is_busy()</code>.</p>
+            
+            <div class="callout danger">
+                <div class="callout-icon">⚠️</div>
+                <div class="callout-content">
+                    <h4>Important: always wait until done (waitUntilDone)</h4>
+                    <p>After using <code>ezPID.waitUntil(inches)</code> for mid-move actions, <strong>you must call <code>ezPID.waitUntilDone()</code></strong>. That ensures the move fully finishes before the next chassis command; otherwise old and new motions collide.</p>
+                    <p><code>ezPID.waitUntilDone()</code> returns when <code>motions_pending == 0</code> and <code>!chassis.isInMotion()</code>, or after a safety timeout with <code>cancel_movement()</code>. For long LemLib moves, use <code>chassis.waitUntilDone()</code>.</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// Example: drive 24" forward; at halfway (12") start intake early</span>
+ezPID.<span class="c-fn">drive</span>(<span class="c-st">24</span>, <span class="c-st">80</span>, <span class="c-st">2500</span>, <span class="c-kw">true</span>);
+ezPID.<span class="c-fn">waitUntil</span>(<span class="c-st">12</span>);
+intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
+ezPID.<span class="c-fn">waitUntilDone</span>();
+                </div>
+            </div>
+
+            <p><strong>Parameter reference:</strong></p>
+            <ul>
+                <li><code>distance_inches</code>: straight target distance (inches; can be negative).</li>
+                <li><code>angle</code>: turn target <strong>absolute heading</strong> (degrees).</li>
+                <li><code>max_speed</code>: max speed (0–127).</li>
+                <li><code>timeout</code>: forced exit time (ms). Safety net against waiting forever.</li>
+                <li><code>gains</code>: optional one-shot <code>{.p, .i, .d}</code> override.</li>
+                <li><code>async</code>: when <code>true</code>, chassis moves in the background and code continues.</li>
+            </ul>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 3 -->
+            <h2 id="ch3-lemlib">Chapter 3: LemLib motion commands</h2>
+            <p>For long distances, half-field moves, or smooth curves, use LemLib. <code>async</code> defaults to <strong>true</strong>; pass <code>false</code> to block, or call <code>waitUntilDone()</code> afterward.</p>
+
+            <div class="callout info">
+                <div class="callout-icon">🔗</div>
+                <div class="callout-content">
+                    <h4>Shared ezPID after bind</h4>
+                    <p>After EzDrive is bound, drive/turn PID for the motions below all go through <code>ezPID</code>. Your <code>set_drive_constants</code> / <code>set_turn_constants</code> affect both LemLib curves and <code>ezPID.drive</code> / <code>turn</code>.</p>
+                </div>
+            </div>
+
+            <table class="notion-table">
+                <tr><th>Call</th><th>PID (after bind)</th><th>Notes</th></tr>
+                <tr><td><code>turnToHeading</code> / <code>turnToPoint</code></td><td>turn</td><td>Can set direction / minSpeed / earlyExit</td></tr>
+                <tr><td><code>swingTo*</code></td><td>turn + swing_power</td><td>Locks one side</td></tr>
+                <tr><td><code>moveToPoint</code></td><td>drive + turn</td><td>Angular output drops to 0 under 7.5 in</td></tr>
+                <tr><td><code>moveToPose</code></td><td>drive + turn + lead</td><td>No separate ezPID API equivalent</td></tr>
+            </table>
+
+            <h3 id="ch3-movetopoint">1. moveToPoint (point-to-point straight)</h3>
+            <p>The basic move: the robot aims for the straight-line path to a point. <strong>Note: it does not care which way the nose points when you arrive.</strong></p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// Basic: chassis.moveToPoint(x, y, timeout);</span>
+chassis.<span class="c-fn">moveToPoint</span>(<span class="c-st">0</span>, <span class="c-st">24</span>, <span class="c-st">2500</span>, {}, <span class="c-kw">false</span>);
+
+<span class="c-co">// Advanced: with params</span>
+chassis.<span class="c-fn">moveToPoint</span>(<span class="c-st">24</span>, <span class="c-st">48</span>, <span class="c-st">2000</span>, {
+    .<span class="c-vr">forwards</span> = <span class="c-kw">false</span>,  <span class="c-co">// drive reverse (default true)</span>
+    .<span class="c-vr">maxSpeed</span> = <span class="c-st">90</span>     <span class="c-co">// max speed (0-127)</span>
+});
+                </div>
+            </div>
+
+            <h3 id="ch3-movetopose" style="margin-top: 30px;">2. moveToPose (curved pose move)</h3>
+            <p>Requires arriving at <code>(x, y)</code> with heading exactly <code>theta</code>. Angular control uses turn PID (not heading-hold PID).</p>
+            
+            <div class="callout info">
+                <div class="callout-icon">💻</div>
+                <div class="callout-content">
+                    <h4>Interactive simulator</h4>
+                    <p>Practice parameters first with the <a href="https://vex.ykyle.eu/moveToPose" target="_blank" style="color: var(--accent-blue); font-weight: 700;">moveToPose simulator</a> to see how each setting changes the path.</p>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// Go to (24, 24) with final heading 90°</span>
+chassis.<span class="c-fn">moveToPose</span>(<span class="c-st">24</span>, <span class="c-st">24</span>, <span class="c-st">90</span>, <span class="c-st">3000</span>, {
+    .<span class="c-vr">lead</span> = <span class="c-st">0.4</span>,
+    .<span class="c-vr">maxSpeed</span> = <span class="c-st">100</span>
+}, <span class="c-kw">false</span>);
+                </div>
+            </div>
+
+            <h4 style="color: var(--text-bold); margin-top: 20px; margin-bottom: 10px;">Common parameters</h4>
+            <table class="notion-table">
+                <tr><th>Parameter</th><th>What it means / when to use</th></tr>
+                <tr><td><code>forwards</code></td><td>Default <code>true</code>. <code>false</code> means reverse into the target.</td></tr>
+                <tr><td><code>lead</code></td><td>How early the robot starts turning. Too low = sharp corner; too high = huge arc.</td></tr>
+                <tr><td><code>maxSpeed</code></td><td>Max speed (0–127).</td></tr>
+                <tr><td><code>minSpeed</code></td><td>Minimum speed. Non-zero switches exit logic to “less precise, smoother.”</td></tr>
+                <tr><td><code>earlyExitRange</code></td><td>Chaining trick. <strong>Best with minSpeed &gt; 0</strong>. Ends early once inside the range.</td></tr>
+                <tr><td><code>direction</code></td><td>Turn direction (common for turn/swing).</td></tr>
+            </table>
+
+            <h3 id="ch3-turnto" style="margin-top: 30px;">3. turnToHeading &amp; turnToPoint</h3>
+            <p>In-place pivot turns. After bind, angular PID matches <code>ezPID.turn</code>.</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+chassis.<span class="c-fn">turnToHeading</span>(<span class="c-st">90</span>, <span class="c-st">1500</span>, {}, <span class="c-kw">false</span>);
+
+<span class="c-co">// Face the point (24, 48)</span>
+chassis.<span class="c-fn">turnToPoint</span>(<span class="c-st">24</span>, <span class="c-st">48</span>, <span class="c-st">1000</span>, {
+    .<span class="c-vr">direction</span> = AngularDirection::CW_CLOCKWISE,
+    .<span class="c-vr">minSpeed</span> = <span class="c-st">15</span>
+});
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 4 -->
+            <h2 id="ch4-reset">Chapter 4: Reset odometry</h2>
+            <p>Back to the intro: to fight accumulated error, mid-auton you must re-correct <code>(x, y, theta)</code> using field walls or sensors. Implementation lives in <code>src/ezlib/relocate.cpp</code>.</p>
+
+            <h3 id="ch4-wallreset">Wall reset (wallReset)</h3>
+            <p>Uses current + low speed to decide “we are truly jammed against the wall,” then hard-writes the matching axis to 0 and writes <code>theta</code>.</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// Syntax: wallReset(axis, velocity, targetAngle, timeoutMs)</span>
+<span class="c-co">// Example: reverse into the wall that defines Y=0 (axis 'x'), write heading 0</span>
+<span class="c-fn">wallReset</span>(<span class="c-st">'x'</span>, -<span class="c-st">30</span>, <span class="c-st">0</span>, <span class="c-st">800</span>);
+                </div>
+            </div>
+            <table class="notion-table">
+                <tr><th>Parameter</th><th>Meaning</th></tr>
+                <tr><td><code>axis</code></td><td><code>'x'</code>: treat as flush with the <strong>X-axis wall</strong> → <code>setPose(x, 0, theta)</code>; <code>'y'</code> → <code>setPose(0, y, theta)</code></td></tr>
+                <tr><td><code>velocity</code></td><td>Constant <code>tank(v,v)</code>; negative = reverse bump, positive = forward bump (often ±30–60)</td></tr>
+                <tr><td><code>theta</code></td><td>Heading forced in when stall is detected</td></tr>
+                <tr><td><code>timeout_ms</code></td><td>Safety timeout; stall ≈ <code>|vel|&lt;2</code> and current &gt;2000mA for ~100ms</td></tr>
+            </table>
+            <p>After bump: <code>tank(0,0)</code>, short delay, then restore <code>BRAKE_COAST</code>. Usually follow with <code>getRealPose</code> to fix the other axis.</p>
+
+            <h3 id="ch4-getrealpose">Sensor relative correction (getRealPose)</h3>
+            <p>Mid-auton fine correction. Meaning is <strong>relative</strong>: <code>expected − (actual_perp − golden) × side</code>, where <code>actual_perp = get_kf_dist × cos(α)</code>, and α is the angle between the beam and wall normal (from <code>chassis</code> θ)—you <strong>do not</strong> need CAD offset from distance sensor to tracking center (<code>golden</code> already includes it).</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// Syntax: getRealPose(expected, golden, sensor, side)</span>
+<span class="c-co">// Example: right sensor faces east (side=+1), expected X≈0, measured golden = 17.61"</span>
+<span class="c-co">// Third setPose arg θ: the heading YOU write; separate from odom θ used inside getRealPose</span>
+chassis.<span class="c-fn">setPose</span>(
+    <span class="c-fn">getRealPose</span>(<span class="c-st">0</span>, <span class="c-st">17.61</span>, dist_right, <span class="c-st">1</span>),
+    <span class="c-fn">getRealPose</span>(<span class="c-st">0</span>, <span class="c-st">8.7</span>,  dist_back, -<span class="c-st">1</span>),
+    <span class="c-st">0</span>   <span class="c-co">// later auton treats facing as 0; to only fix XY use chassis.getPose().theta</span>
+);
+                </div>
+            </div>
+
+            <table class="notion-table">
+                <tr><th>Parameter</th><th>Setup &amp; meaning</th></tr>
+                <tr><td><code>expected</code></td><td>Where you <strong>expect</strong> that axis to be (e.g. near Y=0 → pass <code>0</code>).</td></tr>
+                <tr><td><code>golden</code></td><td>When the robot is <strong>truly at expected</strong> (measure as square to the wall as possible), the distance the sensor should read (inches). Measure once on practice field and hard-code—<strong>includes mount offset</strong>.</td></tr>
+                <tr><td><code>sensor</code></td><td><code>dist_front</code> / <code>back</code> / <code>left</code> / <code>right</code>. Internally filtered via <code>get_kf_dist</code> (bad reads → <code>999</code> or previous).</td></tr>
+                <tr><td><code>side</code></td><td><code>+1</code>: sensor faces the <strong>increasing</strong> axis (north/east); <code>-1</code>: south/west.</td></tr>
+            </table>
+
+            <div class="callout success">
+                <div class="callout-icon">🛡️</div>
+                <div class="callout-content">
+                    <h4>Built-in getRealPose protections</h4>
+                    <p>1. <strong>KF / filtered reads</strong>: always check conf (<code>&lt;30</code> / <code>PROS_ERR</code>) → return <code>expected</code>.<br>
+                    2. <strong>Heading cos projection</strong>: use current <code>chassis</code> θ + sensor mount for <code>actual_perp = actual × cos(α)</code>; small angles often skip another <code>wallReset</code>. Abort if <code>|α| &gt; 25°</code>.<br>
+                    3. <strong>Ignore tiny error</strong>: if <code>|diff| &lt; 0.25"</code>, no correction.<br>
+                    4. <strong>Correction clamp ±6"</strong>: single-step limit so one bad read cannot jump pose.<br>
+                    5. <strong>Avoid field tolerance</strong>: only asks “how many inches off from practice golden,” so fence install error is not baked into absolute field inches.</p>
+                </div>
+            </div>
+
+            <table class="notion-table">
+                <tr><th>Question</th><th>Answer</th></tr>
+                <tr><td>Do I need CAD sensor offset?</td><td><strong>No.</strong> Measure <code>golden</code> once at the correct pose and it is included.</td></tr>
+                <tr><td>θ when getRealPose computes distance?</td><td><strong>You do not force it to 0</strong>—the function reads <code>chassis.getPose().theta</code> for cos. Odom/IMU must be roughly right.</td></tr>
+                <tr><td>What θ to write in <code>setPose(..., θ)</code>?</td><td>Whatever heading the following path assumes. Whole segment as (0,0,0) → write <code>0</code>; wall-distance-only fix → pass current <code>theta</code>. <strong>Do not</strong> hard-write <code>0</code> when you are actually at 45°.</td></tr>
+            </table>
+
+            <table class="notion-table">
+                <tr><th>Method</th><th>Approx. time</th><th>When to use</th></tr>
+                <tr><td>cos compensation (built-in)</td><td>0 ms</td><td>Everyday mid-auton; off by a few to ~teen degrees</td></tr>
+                <tr><td>Short <code>ezPID.turn</code> then reset</td><td>~200–400 ms</td><td>θ already &gt;15–20° off</td></tr>
+                <tr><td><code>wallReset</code></td><td>~0.8–1.5 s</td><td>Need to hard-lock one axis / do not trust distance</td></tr>
+            </table>
+
+            <p>Measuring <code>golden</code>: physically align / jig the bot at the mid-auton reset pose → read that cell’s inches on Brain <strong>Dash DIST</strong> → put it in code. If a new field’s fences differ a lot, remeasure golden instead of rewriting full offset geometry.</p>
+
+            <div class="callout info">
+                <div class="callout-icon">⚖️</div>
+                <div class="callout-content">
+                    <h4>Compared with RW-Template absolute reset</h4>
+                    <p><a href="https://github.com/richardbwang/RW-Template" target="_blank" style="color: var(--accent-blue);">RW-Template</a> distance reset uses <strong>absolute field coordinates</strong> (walls at ±70.25", requires CAD sensor offsets; angled walls use rays). EzLib intentionally uses an <strong>expected−actual</strong> relative model + cos(α): tuning cost is one <code>golden</code> per reset segment; messy fences mean remaking golden, not rewriting offset math. No built-in MCL.</p>
+                    <p>Want low CAD, messy fields, and “I roughly know where I am” mid-auton → use <code>getRealPose</code> + <code>wallReset</code>. Want angled-wall rays / optional MCL / tight absolute-field paths → RW-Template is more complete, but you must measure offsets carefully and accept field tolerance into the system.</p>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 5 -->
+            <h2 id="ch5-fsm">Chapter 5: State machines (FSM) &amp; anti-jam</h2>
+            <p>Do not hard-code mechanism control (e.g. intake) as raw <code>motor.move()</code> inside <code>opcontrol</code>. Prefer enum + switch FSMs so you can support smart anti-jam and async behavior. Driver pneumatics: <code>pneumaticsBtn()</code> (<code>controls.cpp</code>)—call <strong>only when tuner is off</strong> so it does not fight X/A tuning keys.</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 Intake states (example)</div>
+                <div class="code-block">
+<span class="c-kw">enum class</span> <span class="c-ty">IntakeState</span> { STOP, INTAKE, L1_SORT, REVERSING };
+<span class="c-ty">IntakeState</span> <span class="c-vr">currentState</span> = IntakeState::STOP;
+<span class="c-ty">IntakeState</span> <span class="c-vr">prevState</span> = IntakeState::STOP;
+                </div>
+            </div>
+
+            <p>Put all motor-power logic in a dedicated update function running in a background task. On current overload, the system can take over and reverse.</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 State update &amp; anti-jam (example)</div>
+                <div class="code-block">
+<span class="c-kw">void</span> <span class="c-fn">updateIntakeFSM</span>() {
+    <span class="c-ty">double</span> <span class="c-vr">maxCurrent</span> = std::<span class="c-fn">max</span>({
+        low_roller.<span class="c-fn">get_current_draw</span>(),
+        high_roller.<span class="c-fn">get_current_draw</span>(),
+        intake_motors.<span class="c-fn">get_current_draw</span>()
+    });
+
+    <span class="c-kw">switch</span> (<span class="c-vr">currentIntakeState</span>) {
+        <span class="c-kw">case</span> IntakeState::INTAKE:
+            intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
+            low_roller.<span class="c-fn">move</span>(<span class="c-st">127</span>);
+            high_roller.<span class="c-fn">move</span>(<span class="c-st">50</span>);
+
+            <span class="c-co">// Anti-jam: over threshold for long enough → force reverse</span>
+            <span class="c-kw">if</span> (<span class="c-vr">maxCurrent</span> > JAM_THRESHOLD) {
+                <span class="c-vr">jamTimer</span> += <span class="c-st">20</span>;
+                <span class="c-kw">if</span> (<span class="c-vr">jamTimer</span> > <span class="c-st">400</span>) {
+                    <span class="c-vr">prevState</span> = <span class="c-vr">currentIntakeState</span>;
+                    <span class="c-vr">currentIntakeState</span> = IntakeState::REVERSING;
+                    <span class="c-vr">jamTimer</span> = <span class="c-st">0</span>;
+                }
+            } <span class="c-kw">else</span> {
+                <span class="c-vr">jamTimer</span> = <span class="c-st">0</span>;
+            }
+            <span class="c-kw">break</span>;
+
+        <span class="c-co">// ... other states ...</span>
+    }
+}
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 6: Real-world Examples -->
+            <h2 id="ch6-examples">Chapter 6: Real auton writing examples</h2>
+            <p>This chapter shows theory in practice: LemLib curve → reset → ezPID short precision. Units are always <strong>inches / degrees</strong> (old code may still have encoder-degree-style big numbers—do not copy those into new routes).</p>
+
+            <h3 id="ch6-workflow">From push-bot to writing auton (suggested workflow)</h3>
+            <p>Goal: get drive/turn <strong>stable</strong>, then <strong>push / drive by hand</strong> to measure real distance and heading, then write into <code>customs/autons.cpp</code>.</p>
+
+            <div class="callout info">
+                <div class="callout-icon">1️⃣</div>
+                <div class="callout-content">
+                    <h4>1. Tune PID (get chassis right once)</h4>
+                    <ol>
+                        <li>Insert SD (optional), <strong>unplug field control</strong>.</li>
+                        <li><strong>X+A</strong> open PID tuner (see Chapter 7).</li>
+                        <li>Use B/Y (±12″), L1/R1 (±90°) until little oscillation and good settle; <strong>Print</strong> and paste numbers back into <code>initialize()</code>.</li>
+                        <li>Optionally pull CSV and plot error with AI (see SD CSV).</li>
+                        <li>Online helper: <a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue);">pid.ykyle.eu</a>.</li>
+                    </ol>
+                    <p>Writing a long auton before PID is solid means measured numbers get eaten by oscillation / incomplete settles.</p>
+                </div>
+            </div>
+
+            <div class="callout info">
+                <div class="callout-icon">2️⃣</div>
+                <div class="callout-content">
+                    <h4>2. Real push / drive; watch traveled and pose</h4>
+                    <p>On practice field, with <strong>tuner off</strong>:</p>
+                    <table class="notion-table">
+                        <tr><th>What you want</th><th>How</th></tr>
+                        <tr><td><strong>Straight inches traveled</strong> (For PID Distance)</td><td>Right stick → controller <strong>displayMenu = 1</strong> → <code>D:</code> = <code>ezPID.get_traveled()</code>; <code>T:</code> = heading</td></tr>
+                        <tr><td><strong>Field pose X / Y / θ</strong></td><td>Right stick → <strong>displayMenu = 2</strong>; or Brain <strong>Dash</strong> pose</td></tr>
+                        <tr><td><strong>Clear traveled to remeasure</strong></td><td><strong>DOWN</strong> (<code>reset_pid</code> + back to Dash) or <strong>UP</strong> cancel/reset</td></tr>
+                        <tr><td><strong>Inches to wall</strong> (measure <code>golden</code>)</td><td>Dash <strong>DIST</strong> four cells</td></tr>
+                    </table>
+                    <p><strong>Push to measure straight distance</strong>: place bot at start → controller menu 1 → DOWN/UP clear traveled → slowly push to next stop → read <code>D:</code> into <code>ezPID.drive(inches, …)</code> (negative for reverse). For turns, read θ and use <code>ezPID.turn(absoluteAngle, …)</code>.</p>
+                    <p><strong>Use pose for curves / long moves</strong>: Menu 2 or Dash note start/end <code>(x, y, θ)</code> → <code>chassis.moveToPose(...)</code>; try the <a href="https://vex.ykyle.eu/moveToPose" target="_blank" style="color: var(--accent-blue);">moveToPose simulator</a> for params. Mid-route correction: Chapter 4.</p>
+                </div>
+            </div>
+
+            <div class="callout success">
+                <div class="callout-icon">3️⃣</div>
+                <div class="callout-content">
+                    <h4>3. Write the auton</h4>
+                    <ol>
+                        <li>Declare in <code>include/customs/autons.hpp</code>; implement in <code>src/customs/autons.cpp</code>.</li>
+                        <li>In <code>src/main.cpp</code> <code>auton_select::init({...})</code> add <code>{"Display name", &amp;yourFunction}</code>.</li>
+                        <li>On practice field use <strong>← / →</strong> to pick auton (name shows on Dash/controller); <strong>DOWN+B</strong> runs once to verify.</li>
+                        <li>Add segment by segment: measure → write <code>drive</code> / <code>turn</code> / <code>moveToPose</code> → run → measure next.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 Registering auton (summary)</div>
+                <div class="code-block">
+<span class="c-co">// include/customs/autons.hpp</span>
+<span class="c-kw">void</span> <span class="c-fn">myRoute</span>();
+
+<span class="c-co">// src/customs/autons.cpp</span>
+<span class="c-kw">void</span> <span class="c-fn">myRoute</span>() {
+    chassis.<span class="c-fn">setPose</span>(<span class="c-st">0</span>, <span class="c-st">0</span>, <span class="c-st">0</span>);
+    ezPID.<span class="c-fn">drive</span>(<span class="c-st">24</span>, <span class="c-st">100</span>, <span class="c-st">2000</span>);
+    ezPID.<span class="c-fn">turn</span>(<span class="c-st">90</span>, <span class="c-st">100</span>, <span class="c-st">1500</span>);
+    chassis.<span class="c-fn">moveToPose</span>(<span class="c-st">24</span>, <span class="c-st">24</span>, <span class="c-st">90</span>, <span class="c-st">3000</span>, {.<span class="c-vr">lead</span> = <span class="c-st">0.4</span>, .<span class="c-vr">maxSpeed</span> = <span class="c-st">100</span>}, <span class="c-kw">false</span>);
+}
+
+<span class="c-co">// src/main.cpp — inside initialize()</span>
+auton_select::<span class="c-fn">init</span>({
+    {<span class="c-st">"My Route"</span>, &amp;myRoute},
+});
+                </div>
+            </div>
+
+            <div class="callout warning">
+                <div class="callout-icon">💡</div>
+                <div class="callout-content">
+                    <h4>Tips</h4>
+                    <ul>
+                        <li><code>ezPID.drive</code> distance = inches <strong>along the heading at start of that call</strong>, not chord length to a field (x,y) (use <code>moveToPoint</code> / <code>moveToPose</code> for that).</li>
+                        <li>When pushing to measure, match auton start pose/heading; after a turn, <strong>DOWN</strong> clear traveled before measuring the next straight.</li>
+                        <li>Controller menu 1 <code>D:</code> is the same idea as “For PID Distance”; Brain Dash is handy for pose / DIST / temps together.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 id="ch6-auto-init">1. Opening pose strategy: why drop “full auto align”?</h3>
+            <div class="callout danger">
+                <div class="callout-icon">🛑</div>
+                <div class="callout-content">
+                    <h4>Do not use auto_init_universal as your main opening</h4>
+                    <p><code>auto_init_universal</code> still exists in <code>src/ezlib/relocate.cpp</code>, but in matches we <strong>do not recommend</strong> it as the primary start. Two reasons:<br>
+                    1. <strong>Offset measurement is hard</strong>: precisely measuring each sensor’s X/Y offset from tracking center is extremely difficult.<br>
+                    2. <strong>Field tolerance hurts</strong>: competition fences often have ±1"+ error. Boundary ranging pulls that error into your system.</p>
+                </div>
+            </div>
+
+            <p><strong>👑 Top teams’ standard opening: physical alignment</strong></p>
+            <p>The most stable, blunt approach: jam a flat bumper or alignment jig <strong>hard against the field wall</strong>, then hard-write pose to 0.</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-block">
+<span class="c-co">// 1. Physically square against the back wall</span>
+<span class="c-co">// 2. After boot, define start as (0, 0, 0)</span>
+chassis.<span class="c-fn">setPose</span>(<span class="c-st">0</span>, <span class="c-st">0</span>, <span class="c-st">0</span>);
+
+<span class="c-co">// 3. If you need a precise leave, nudge with ezPID (inches)</span>
+ezPID.<span class="c-fn">drive</span>(<span class="c-st">6</span>, <span class="c-st">60</span>, <span class="c-st">800</span>, <span class="c-kw">false</span>);
+
+<span class="c-co">// 4. Start the auton route...</span>
+chassis.<span class="c-fn">moveToPoint</span>(<span class="c-st">0</span>, <span class="c-st">30.41</span>, <span class="c-st">800</span>, {.<span class="c-vr">forwards</span>=<span class="c-kw">true</span>, .<span class="c-vr">maxSpeed</span>=<span class="c-st">127</span>}, <span class="c-kw">false</span>);
+                </div>
+            </div>
+
+            <h3 id="ch6-skills">2. Skills: the perfect hybrid combo</h3>
+            <p>Standard flow: “curve path” → “wall reset” → “relative distance correct” → “high-precision fine move.”</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 autons.cpp excerpt (illustrative)</div>
+                <div class="code-block">
+<span class="c-co">// 1. LemLib large curve to the target</span>
+chassis.<span class="c-fn">moveToPose</span>(<span class="c-st">115.05</span>, <span class="c-st">47.73</span>, <span class="c-st">-95.96</span>, <span class="c-st">2000</span>, {
+    .<span class="c-vr">forwards</span>=<span class="c-kw">false</span>, .<span class="c-vr">earlyExitRange</span>=<span class="c-st">6</span>, .<span class="c-vr">minSpeed</span>=<span class="c-st">80</span>
+}, <span class="c-kw">false</span>);
+chassis.<span class="c-fn">waitUntilDone</span>();
+
+<span class="c-co">// 2. Wall hard reset (wipe accumulated error)</span>
+<span class="c-fn">wallReset</span>(<span class="c-st">'x'</span>, -<span class="c-st">40</span>, <span class="c-st">0</span>, <span class="c-st">500</span>);
+
+<span class="c-co">// 3. Relative correct: right/back sensors fix X/Y (golden must be measured first)</span>
+chassis.<span class="c-fn">setPose</span>(
+    <span class="c-fn">getRealPose</span>(<span class="c-st">0</span>, <span class="c-st">17.61</span>, dist_right, <span class="c-st">1</span>),
+    <span class="c-fn">getRealPose</span>(<span class="c-st">0</span>, <span class="c-st">8.7</span>, dist_back, -<span class="c-st">1</span>),
+    <span class="c-st">0</span>
+);
+
+<span class="c-co">// 4. ezPID precise in-place turn (absolute heading)</span>
+ezPID.<span class="c-fn">turn</span>(<span class="c-st">77.44</span>, <span class="c-st">100</span>, <span class="c-st">700</span>);
+
+cover.<span class="c-fn">set_value</span>(<span class="c-kw">false</span>);
+intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
+                </div>
+            </div>
+
+            <h3 id="ch6-opcontrol">3. Extremely clean driver period (opcontrol)</h3>
+            <p>A pro opcontrol is only a “translator”: read controller → change global state → return. Never bury long-blocking logic inside it. Note: use <code>pidTuner.suppress_arcade()</code> to decide whether arcade is off; handle pneumatics only when <code>!pidTuner.controller_mode()</code>.</p>
+
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 main.cpp -> opcontrol() (illustrative)</div>
+                <div class="code-block">
+<span class="c-kw">void</span> <span class="c-fn">opcontrol</span>() {
+    <span class="c-kw">while</span> (<span class="c-kw">true</span>) {
+        <span class="c-ty">int</span> <span class="c-vr">leftY</span> = controller.<span class="c-fn">get_analog</span>(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        <span class="c-ty">int</span> <span class="c-vr">leftX</span> = controller.<span class="c-fn">get_analog</span>(pros::E_CONTROLLER_ANALOG_LEFT_X);
+
+        <span class="c-co">// suppress_arcade: tuner owns sticks, or any Ez/chassis motion is running</span>
+        <span class="c-kw">if</span> (!pidTuner.<span class="c-fn">suppress_arcade</span>()) {
+            chassis.<span class="c-fn">arcade</span>(<span class="c-vr">leftY</span>, (<span class="c-vr">leftX</span> * <span class="c-st">0.85</span>));
+        }
+
+        <span class="c-kw">if</span> (!pidTuner.<span class="c-fn">controller_mode</span>()) {
+            <span class="c-fn">pneumaticsBtn</span>(); <span class="c-co">// only when tuner off — avoid X/A conflict</span>
+        }
+
+        pros::<span class="c-fn">delay</span>(<span class="c-st">20</span>);
+    }
+}
+                </div>
+            </div>
+            
+            <p>Heavy work (anti-jam, UI, telemetry) belongs in background tasks started from <code>initialize()</code>. Keep each <code>opcontrol</code> loop pass fast so the controller stays <strong>zero-latency</strong>.</p>
+
+            <div class="section-divider"></div>
+
+            <!-- Chapter 7: Telemetry & Shortcuts -->
+            <h2 id="ch7-debug">Chapter 7: Tools &amp; debug</h2>
+            <p>Practice tools include <strong>Brain Dash</strong> (themeable), PID tuner, SD CSV, controller monitor, animations, and field-control teardown. Auton uses headless <code>auton_select</code>.</p>
+
+            <div class="callout warning">
+                <div class="callout-icon">🧯</div>
+                <div class="callout-content">
+                    <h4>Robodash → standalone LVGL</h4>
+                    <p>There is <strong>no longer</strong> a robodash Console/Selector page. Brain UI uses <code>telem_dash</code> / PID / Anim (standalone LVGL). Old “Console telemetry” readers should use this section’s Dash (including DOS text themes). Version summary: <a href="#version-notes">intro</a>.</p>
+                </div>
+            </div>
+
+            <h3 id="ch7-dash">🖥️ Brain Dash (<code>telem_dash</code>)</h3>
+            <p>In <code>src/main.cpp</code>, pick themes with two constexpr values (<code>initialize()</code> calls <code>set_loading_theme</code> / <code>set_dash_theme</code>):</p>
+            <table class="notion-table">
+                <tr><th>Variable</th><th>Value</th><th>Effect</th></tr>
+                <tr><td rowspan="4"><code>k_loading_theme</code></td><td><code>1</code></td><td>none — skip boot animation</td></tr>
+                <tr><td><code>2</code></td><td>Type R — three ignition gauges (KM/H / TORQUE / FUEL)</td></tr>
+                <tr><td><code>3</code></td><td>Spear of Longinus — red progress + spear tip</td></tr>
+                <tr class="only-v201"><td><code>4</code></td><td>KeeTa Rider — splash logo</td></tr>
+                <tr><td rowspan="4"><code>k_dash_theme</code></td><td><code>1</code></td><td>Type R — gauge/card Dash (BATT arc + pose / DIST / DRV / MCH / RAM)</td></tr>
+                <tr><td><code>2</code></td><td>Terminal — DOS raw text (black bg, green text)</td></tr>
+                <tr><td><code>3</code></td><td>Light — same console style (white bg, black text)</td></tr>
+                <tr class="only-v201"><td><code>4</code></td><td>V5Console — classic Brain console look</td></tr>
+            </table>
+            <p>Loading and Dash are <strong>chosen separately</strong>. Type R Dash and PID page use exclusive <code>ui_pages</code> focus; opening PID/anim calls <code>set_gauge_hidden</code> so battery does not bleed through.</p>
+            <div class="callout info">
+                <div class="callout-icon">⌨️</div>
+                <div class="callout-content">
+                    <h4>DOS console (themes 2 / 3)</h4>
+                    <p>Full-screen raw text, no gauges or cards. Examples: <code>auton=...</code>, <code>batt=87%</code>, <code>ram=0.12M</code>, pose / dist / drv / mch. Invisible bottom-right <code>pid</code> opens the PID page. This is <strong>not</strong> the old robodash Console.</p>
+                </div>
+            </div>
+            <p>Map temperatures in <code>include/customs/dash_config.hpp</code> (no need to edit <code>telem_dash.cpp</code>). On Type R, batt/DIST colors hint status from battery and confidence.</p>
+
+            <h3>📊 Measuring distance: For PID Distance (inches)</h3>
+            <div class="callout info">
+                <div class="callout-icon">📏</div>
+                <div class="callout-content">
+                    <h4>Practice field displayMenu = 1</h4>
+                    <p>While pushing the robot by hand, the controller can show <code>ezPID.get_traveled()</code> (For PID Distance). Units are <strong>inches</strong>—the best way to set <code>ezPID.drive()</code> targets. Use the right stick left/right to reach menu 1. On Brain you can watch <strong>Dash</strong> pose / DIST / temps at the same time.</p>
+                </div>
+            </div>
+
+            <h3 id="ch7-tuner" style="margin-top: 30px;">🎛️ PID tuner</h3>
+            <div class="only-v200">
+            <p><code>pidTuner.start()</code> is called in <code>initialize()</code>. Gains write onto <code>ezPID</code>—the <strong>same set</strong> used by auton / chassis motion.</p>
+            <p>Brain <strong>PID</strong> page (compact UI): switch field, ± adjust, +12/−12, h±90, Print, Ctrl, Pose0, L10/R10 (ten revolutions). Or tune with controller via <strong>X+A</strong>. Build intuition online first: <a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue);">pid.ykyle.eu</a>.</p>
+            <p><strong>Suggested practice flow</strong>: unplug field control → power on → <strong>X+A</strong> open tuner → ←→ pick field; ↑↓ change value → B/Y test ±12″ → when happy, copy numbers into <code>initialize()</code> → <strong>X</strong> to exit.</p>
+            </div>
+            <div class="only-v201">
+            <p>To tune chassis “how hard it pushes / how hard it brakes”: unplug field control, press controller <strong>X+A</strong> (or the PID button on Brain Dash).</p>
+            <p>Brain layout roughly:</p>
+            <ul>
+                <li><strong>Left</strong>: which value you are tuning, live readout, <strong>Dash</strong> (back to main), <strong>Manual</strong> (when on, you can push with the stick while tuning)</li>
+                <li><strong>Right CONSOLE</strong>: text your program prints (see next section)</li>
+            </ul>
+            <div class="callout info">
+                <div class="callout-icon">🧪</div>
+                <div class="callout-content">
+                    <h4>First tuning session</h4>
+                    <ol>
+                        <li>Clear the field, unplug competition cable</li>
+                        <li><strong>X+A</strong> enter PID</li>
+                        <li>←→ pick e.g. drive P; ↑↓ nudge a little</li>
+                        <li>B/Y run ±12 inches; watch overshoot</li>
+                        <li>When happy, copy on-screen / Print numbers into <code>main.cpp</code> <code>set_drive_constants(...)</code></li>
+                        <li>Press Brain <strong>Dash</strong> or controller <strong>X</strong> to leave</li>
+                    </ol>
+                </div>
+            </div>
+            </div>
+
+            <p><strong>Controller tuning (field control must be unplugged)</strong>: <strong>X+A</strong> enters (rising edge); on enter, cancel motion and stop arcade. <strong>X</strong> (without holding A) exits.</p>
+            <table class="notion-table">
+                <tr><th>Button</th><th>Action</th></tr>
+                <tr><td>LEFT / RIGHT</td><td>Previous / next PID field, and <code>set_pose(0,0,0)</code></td></tr>
+                <tr><td>UP / DOWN</td><td>Field value ±step</td></tr>
+                <tr><td>A</td><td>pose (0,0,0) (Pose0)</td></tr>
+                <tr><td>B / Y</td><td><code>drive(+12)</code> / <code>drive(-12)</code> async → write <code>pid_tune_log.csv</code></td></tr>
+                <tr><td>L1 / R1</td><td>Absolute turn −90° / +90°</td></tr>
+                <tr><td>L2 / R2</td><td>Left CCW / right CW 10 revolutions → <code>findingOffset.csv</code></td></tr>
+                <tr><td>X (alone)</td><td>Exit tuner</td></tr>
+            </table>
+            <p>Ten-rev implementation: each rev is 4×(±90°) absolute turns (avoids wrap so you cannot spin 360° in one command). Starts with <code>set_pose(0,0,0)</code>. While tuning, shoulders are for L1/R1/L2/R2; they return after exit.</p>
+
+            <div class="only-v201">
+            <h3 id="ch7-console" style="margin-top: 30px;">📟 Brain right CONSOLE (print for yourself)</h3>
+            <p>After entering the PID page, the right side can show text your program prints—like a practice notebook, handy for “what angle is the arm at now.”</p>
+            <div class="code-block-wrapper">
+                <div class="code-header">📁 Example: opcontrol refresh one line every 0.2 s</div>
+                <div class="code-block">
+<span class="c-pp">#include</span> <span class="c-st">"ezlib/console.hpp"</span>
+
+<span class="c-co">// Keep only the newest line (good for live values)</span>
+ezlib::<span class="c-fn">set</span>(<span class="c-st">"arm %.1f"</span>, armLift.<span class="c-fn">getPosition</span>());
+
+<span class="c-co">// To accumulate line by line, use printf</span>
+ezlib::<span class="c-fn">printf</span>(<span class="c-st">"color %d\n"</span>, hue);
+                </div>
+            </div>
+            <div class="callout info">
+                <div class="callout-icon">📝</div>
+                <div class="callout-content">
+                    <h4>Remember three things</h4>
+                    <ul>
+                        <li>To see text → enter the PID page first (CONSOLE is on the right)</li>
+                        <li>With field control / competition cable connected → printing auto-stops so matches stay quiet</li>
+                        <li>You do not manage screen refresh yourself; just call <code>set</code> / <code>printf</code></li>
+                    </ul>
+                </div>
+            </div>
+            </div>
+
+            <h3 id="ch7-sd" style="margin-top: 30px;">💾 SD card CSV</h3>
+            <p>Path prefix <code>/usd/</code> (PROS); needs a microSD. Helper API is <code>sd_log</code> (<code>src/ezlib/sd_log.cpp</code>): if the file is missing or empty it writes a header, then <strong>appends</strong>.</p>
+            <ul>
+                <li><code>/usd/pid_tune_log.csv</code>: during tuner drive/turn, writes a <code>drive_tick</code> / <code>turn_tick</code> row about every <strong>15ms</strong> (full error curve), then a final <code>drive</code> / <code>turn</code> row; Print writes one <code>print</code> row. Columns include gains, odom, IMU, <code>traveled</code>, etc.</li>
+                <li><code>/usd/findingOffset.csv</code>: L2/R2 ten-rev test (<code>dir</code>=CW/CCW, <code>rev</code>, <code>quarter</code>, odom/IMU). Fit a circle from per-rev (x,y) to estimate tracking/rotation-center offset. Run both CW and CCW.</li>
+            </ul>
+            <p><strong>Retrieve</strong>: after a test, power off Brain → pull card → copy CSV (rename to keep backups) → reinsert to continue. If you change CSV headers in code, delete the old file on the card first. V5 often has no RTC: <code>wall_time</code> may be <code>boot_&lt;millis&gt;</code>; plot with <code>timestamp_ms</code>.</p>
+            <p><strong>Plot yourself</strong>: filter <code>event == drive_tick</code> (or <code>turn_tick</code>), X=<code>timestamp_ms</code>, Y=error column; also plot <code>traveled</code> / odom / IMU. <strong>With AI</strong>: hand the CSV over and ask for Python (pandas + matplotlib) for error vs time, compare two +12″ runs, or fit CW/CCW centers—plots help, but the robot’s behavior is the ground truth.</p>
+
+            <h3 id="ch7-monitor" style="margin-top: 30px;">📱 Controller monitor &amp; field-control teardown</h3>
+            <p><code>initialize()</code> starts two tasks: <code>uiTask_fn</code> (controller three lines + robot anim), <code>telemetry_fn</code> refreshing <strong>Dash</strong>. Controller <strong>prints a line only when text changes</strong> (dirty + round-robin), no timed <code>clear()</code>—reduces V5 controller dropped text / freezes. Dash/PID switch via <code>ui_pages</code> (standalone LVGL).</p>
+
+            <table class="notion-table">
+                <tr><th>Mode</th><th>L0 / L1 / L2 summary</th></tr>
+                <tr><td>Field <code>is_connected()</code></td><td><code>B:% C:%</code>, auton name, <code>X Y T</code> (int inches/degrees)</td></tr>
+                <tr><td>Tuner on</td><td><code>pidTuner.format_controller</code> (field / value / state)</td></tr>
+                <tr><td>Practice menu 0</td><td><code>T:</code> seconds, battery, auton name</td></tr>
+                <tr><td>Practice menu 1</td><td><code>D:</code> traveled (inches), <code>T:</code> theta</td></tr>
+                <tr><td>Practice menu 2</td><td><code>X</code> / <code>Y</code> / <code>T</code></td></tr>
+            </table>
+
+            <p><strong>When field control connects</strong> (<code>competition::is_connected()</code>): <code>pidTuner.force_off()</code>, block X+A, stop anim, release Anim/Dash/PID UI, slim controller to three lines. After unplug, rebuild PID/Dash.</p>
+
+            <h4 style="color: var(--text-bold); margin-top: 20px; margin-bottom: 10px;">Practice shortcuts (tuner off)</h4>
+            <table class="notion-table">
+                <tr><th>Action</th><th>Effect</th></tr>
+                <tr><td>Right stick left/right</td><td><code>displayMenu</code> 0 / 1 / 2</td></tr>
+                <tr><td>LEFT / RIGHT</td><td>Change auton (<strong>no</strong> <code>set_pose</code>); name on Dash/controller</td></tr>
+                <tr><td>UP (tap)</td><td>cancel + <code>reset_pid</code> + rumble</td></tr>
+                <tr><td>UP (hold)</td><td>start anim (<code>autoChange</code>); on start <code>set_gauge_hidden(true)</code></td></tr>
+                <tr><td>DOWN</td><td><code>reset_pid</code> (clear traveled) + back to Dash</td></tr>
+                <tr><td>DOWN+B</td><td>focus Dash + run <code>autonomous()</code></td></tr>
+                <tr><td>DOWN+Y</td><td><code>moveToPose(0,0,0,…)</code></td></tr>
+                <tr><td>X+A</td><td>open PID tuner (see table above)</td></tr>
+            </table>
+            <p>Inside tuner, LEFT/RIGHT still <code>set_pose(0,0,0)</code> when changing field. Changing auton on controller or DOWN back to Dash clears <code>autoChange</code>.</p>
+
+            <h3 id="ch7-lvgl" style="margin-top: 30px;">🖼️ standalone LVGL (no more robodash)</h3>
+            <div class="callout warning">
+                <div class="callout-icon">🎬</div>
+                <div class="callout-content">
+                    <h4>Animation &amp; LVGL memory</h4>
+                    <p>Standalone LVGL overlay: <code>anim_page</code> + <strong>one</strong> <code>lv_img</code>, swapping <code>robot01</code>…<code>robot10</code> src (hold UP → <code>autoChange</code>). Opening anim <code>set_gauge_hidden(true)</code>; closing anim / DOWN: <code>show_dash()</code> restores battery gauge. <strong>Do not</strong> create many widgets per frame then focus—heap blows up / fragments.</p>
+                    <p>Current: <code>LV_MEM_CUSTOM 1</code> (malloc); Dash shows free RAM. <code>EzLib_2.0.0_beta</code> <code>liblvgl.a</code> needs hard-float ABI. Do not use <code>rd::Console::printf</code>.</p>
+                </div>
+            </div>
+
+            <div class="section-divider only-v201"></div>
+
+            <section id="ch8-liftlib" class="only-v201">
+                <h2>Chapter 8: Lift arm intro (Liftlib)</h2>
+                <p>Want a motor lift / elevator? 2.0.1 uses Liftlib. Start with one motor, then two.</p>
+
+                <h3>1. Declare the arm in main.cpp</h3>
+                <p>Assume motor port <strong>1</strong>, gearing motor 12T → arm 84T, soft limits 0°–50° (output degrees):</p>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 Copy-paste: one motor</div>
+                    <div class="code-block">
+<span class="c-kw">constexpr</span> <span class="c-kw">float</span> k_arm_gear = <span class="c-st">12.0f</span> / <span class="c-st">84.0f</span>;
+liftlib::MotorConfig armMotorCfg{<span class="c-st">1</span>, k_arm_gear, pros::E_MOTOR_BRAKE_HOLD, pros::MotorGears::green};
+liftlib::PID armLiftPid(<span class="c-st">5.4f</span>, <span class="c-st">0</span>, <span class="c-st">1.0f</span>, <span class="c-st">2.0f</span>);
+liftlib::Subsystem armLift({armMotorCfg}, armLiftPid, <span class="c-st">0.0f</span>, <span class="c-st">50.0f</span>);
+                    </div>
+                </div>
+
+                <h3>2. Call once in initialize()</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 Inside initialize()</div>
+                    <div class="code-block">
+armLift.<span class="c-fn">initialize</span>();
+<span class="c-co">// Anti-gravity: raise 10→20→30 slowly until it holds mid-air when you let go without climbing</span>
+armLift.<span class="c-fn">setFeedforward</span>(liftlib::Feedforward::<span class="c-fn">constant</span>(<span class="c-st">20.0f</span>));
+armLift.<span class="c-fn">addPosition</span>(<span class="c-st">"max"</span>, <span class="c-st">50</span>);
+armLift.<span class="c-fn">addPosition</span>(<span class="c-st">"mid"</span>, <span class="c-st">25</span>);
+                    </div>
+                </div>
+
+                <h3>3. Controller example (Arcade: right stick up/down)</h3>
+                <p>Y → go max; A → go mid; RIGHT_Y manual lift. Release stick to hold (near bottom can coast).</p>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 Inside opcontrol (concept)</div>
+                    <div class="code-block">
+<span class="c-kw">if</span> (controller.<span class="c-fn">get_digital_new_press</span>(DIGITAL_Y))
+    armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"max"</span>, <span class="c-kw">true</span>, <span class="c-st">600</span>);
+<span class="c-kw">else if</span> (controller.<span class="c-fn">get_digital_new_press</span>(DIGITAL_A))
+    armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"mid"</span>, <span class="c-kw">true</span>, <span class="c-st">600</span>);
+
+<span class="c-kw">int</span> stick = controller.<span class="c-fn">get_analog</span>(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+<span class="c-co">// |stick| large enough → setOutput; too small → hold / near 0° use setOutput(0)</span>
+<span class="c-co">// At 0 / 50 stop output yourself — setOutput will not stop at soft limits</span>
+                    </div>
+                </div>
+
+                <h3>4. How to wire two motors?</h3>
+                <p>Liftlib <strong>does not</strong> use <code>MotorGroup</code>. Write two configs; reverse with a <strong>negative port</strong>:</p>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 Two motors (1 and 2, 2 reversed)</div>
+                    <div class="code-block">
+liftlib::Subsystem armLift(
+    {
+        {<span class="c-st">1</span>,  k_arm_gear, pros::E_MOTOR_BRAKE_HOLD, pros::MotorGears::green},
+        {<span class="c-st">-2</span>, k_arm_gear, pros::E_MOTOR_BRAKE_HOLD, pros::MotorGears::green},
+    },
+    armLiftPid,
+    <span class="c-st">0.0f</span>, <span class="c-st">50.0f</span>);
+                    </div>
+                </div>
+
+                <div class="callout warning">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-content">
+                        <h4>Common beginner pitfalls</h4>
+                        <ul>
+                            <li>Calling <code>hold()</code> every loop → easy red monitor. Call once when switching from manual back to auto hold.</li>
+                            <li>Manual <code>setOutput</code> can drive past the limit → check angle yourself and stop at the top.</li>
+                            <li>Gear ratio / soft-limit degrees must match the mechanism; wrong values look like “thought we hit 50 but we did not.”</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- Judge interview quiz -->
+            <section id="ch8-quiz">
+                <h2><span class="only-v200">Chapter 8</span><span class="only-v201">Chapter 9</span>: Judge interview practice</h2>
+                <p>Self-test with EzLib ideas covered on this site—questions mirror common judge stack/process prompts. Instant right/wrong feedback; score at the end.</p>
+                <div class="callout info">
+                    <div class="callout-icon">🎯</div>
+                    <div class="callout-content">
+                        <h4>Pass line: ≥90%</h4>
+                        <p><strong>20</strong> questions total; score <strong>≥90%</strong> (at least <strong>18/20</strong>) → judged <strong>comfortable with EzLib</strong>. If below, re-read the related chapters, then try again.</p>
+                    </div>
+                </div>
+
+                <div id="judge-quiz" class="judge-quiz" aria-live="polite">
+                    <div class="judge-quiz-bar">
+                        <span id="quiz-progress-label">Ready to start</span>
+                        <div class="judge-quiz-meter" aria-hidden="true"><span id="quiz-progress-fill"></span></div>
+                    </div>
+                    <div id="quiz-stage" class="judge-quiz-stage">
+                        <p class="judge-quiz-lead">20 multiple-choice questions covering PID units, chassis bind, Dash vs old Console, practice buttons, odom / getRealPose, dash_config, field-control teardown, standalone LVGL, auton_select, and more.</p>
+                        <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">Start practice</button>
+                    </div>
+                </div>
+            </section>
+
+            <div style="margin-top: 80px; padding-top: 20px; border-top: 1px solid var(--border-color); color: var(--text-muted); text-align: center; font-family: 'Fira Code', monospace; font-size: 14px;">
+                // COMPILED SUCCESSFULLY | POWERED BY 15383.
+            </div>
+            
+        </div>
+    </main>
+
+    <button id="back-to-top" class="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- JavaScript Logic -->
+    <script src="script.js"></script>
+</body>
+</html>

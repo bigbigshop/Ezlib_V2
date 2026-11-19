@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-HK" data-docs-version="2.0.0">
+<html lang="zh-HK" data-lang="zh" data-docs-version="2.0.0">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,12 @@
 </head>
 <body>
 
-    <div class="version-bar" aria-label="Docs version">
+    <div class="version-bar" aria-label="Docs controls">
+        <span class="version-bar-label">Lang</span>
+        <select id="docs-lang" aria-label="Language">
+            <option value="zh" selected>中文</option>
+            <option value="en">English</option>
+        </select>
         <span class="version-bar-label">Version</span>
         <select id="docs-version" aria-label="Select EzLib docs version">
             <option value="2.0.0">2.0.0</option>

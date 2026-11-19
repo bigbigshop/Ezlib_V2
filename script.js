@@ -1,17 +1,34 @@
-// --- Docs version switcher (same page; default 2.0.0) ---
-(function initDocsVersion() {
-    const select = document.getElementById('docs-version');
-    if (!select) return;
+// --- Lang + version switchers ---
+function isEnglishDocs() {
+    const langAttr = document.documentElement.getAttribute('data-lang');
+    if (langAttr === 'en') return true;
+    if (langAttr === 'zh') return false;
+    return /en\.html$/i.test(window.location.pathname);
+}
+
+function docsPageForLang(lang) {
+    return lang === 'en' ? '/en.html' : '/';
+}
+
+function buildDocsUrl(lang, version, hash) {
+    const url = new URL(docsPageForLang(lang), window.location.origin);
+    if (version === '2.0.1') url.searchParams.set('v', '2.0.1');
+    url.hash = hash || '';
+    return url.pathname + url.search + url.hash;
+}
+
+(function initDocsControls() {
+    const verSelect = document.getElementById('docs-version');
+    const langSelect = document.getElementById('docs-lang');
 
     function applyDocsVersion(v, pushUrl) {
         if (v !== '2.0.0' && v !== '2.0.1') v = '2.0.0';
         document.documentElement.setAttribute('data-docs-version', v);
-        select.value = v;
+        if (verSelect) verSelect.value = v;
         const mobileTitle = document.querySelector('.mobile-header .header-text');
         if (mobileTitle) mobileTitle.textContent = 'EzLib · ' + v;
-        document.title = 'EzLib說明書 · ' + v;
+        document.title = (isEnglishDocs() ? 'EzLib Docs · ' : 'EzLib說明書 · ') + v;
 
-        // Keep shareable link without leaving the page
         if (pushUrl) {
             const url = new URL(window.location.href);
             if (v === '2.0.0') url.searchParams.delete('v');
@@ -19,7 +36,6 @@
             history.replaceState(null, '', url.pathname + url.search + url.hash);
         }
 
-        // If current hash target is hidden in this version, scroll to intro
         const hash = window.location.hash.replace(/^#/, '');
         if (hash) {
             const target = document.getElementById(hash);
@@ -28,21 +44,33 @@
                 if (hidden && getComputedStyle(hidden).display === 'none') {
                     const intro = document.getElementById('intro');
                     const area = document.getElementById('scroll-area');
-                    if (intro && area) area.scrollTo({ top: Math.max(0, intro.offsetTop - 40), behavior: 'smooth' });
+                    if (intro && area) {
+                        area.scrollTo({ top: Math.max(0, intro.offsetTop - 40), behavior: 'smooth' });
+                    }
                 }
             }
         }
     }
 
     const params = new URLSearchParams(window.location.search);
-    const fromQuery = params.get('v');
-    // Default always 2.0.0 unless URL asks for 2.0.1 (no localStorage lock-in)
-    const initial = fromQuery === '2.0.1' ? '2.0.1' : '2.0.0';
-    applyDocsVersion(initial, false);
+    const initialVer = params.get('v') === '2.0.1' ? '2.0.1' : '2.0.0';
+    applyDocsVersion(initialVer, false);
 
-    select.addEventListener('change', function () {
-        applyDocsVersion(select.value, true);
-    });
+    if (verSelect) {
+        verSelect.addEventListener('change', function () {
+            applyDocsVersion(verSelect.value, true);
+        });
+    }
+
+    if (langSelect) {
+        langSelect.value = isEnglishDocs() ? 'en' : 'zh';
+        langSelect.addEventListener('change', function () {
+            const nextLang = langSelect.value === 'en' ? 'en' : 'zh';
+            if ((nextLang === 'en') === isEnglishDocs()) return;
+            const ver = (verSelect && verSelect.value) || initialVer;
+            window.location.href = buildDocsUrl(nextLang, ver, window.location.hash);
+        });
+    }
 })();
 
 // --- Theme Toggle Logic ---
@@ -175,15 +203,17 @@ function addCopyButtons() {
         if (header && codeBlock) {
             const copyButton = document.createElement('button');
             copyButton.className = 'code-copy-btn';
-            copyButton.textContent = '複製代碼';
+            const copyLabel = isEnglishDocs() ? 'Copy' : '複製代碼';
+            const copiedLabel = isEnglishDocs() ? 'Copied!' : '已複製!';
+            copyButton.textContent = copyLabel;
             header.appendChild(copyButton);
             
             copyButton.addEventListener('click', function() {
                 navigator.clipboard.writeText(codeBlock.textContent).then(() => {
-                    copyButton.textContent = '已複製!';
+                    copyButton.textContent = copiedLabel;
                     copyButton.classList.add('copied');
                     setTimeout(() => {
-                        copyButton.textContent = '複製代碼';
+                        copyButton.textContent = copyLabel;
                         copyButton.classList.remove('copied');
                     }, 2000);
                 }).catch(err => {
@@ -211,7 +241,41 @@ function initJudgeQuiz() {
     if (!root || !stage || !progressLabel || !progressFill) return;
 
     const PASS_RATIO = 0.9;
-    const questionBank = [
+    const en = isEnglishDocs();
+    const ui = en
+        ? {
+              ready: 'Ready',
+              lead: '20 multiple-choice questions covering PID units, chassis bind, Dash vs old Console, practice buttons, odom/getRealPose, dash_config, field teardown, standalone LVGL, auton_select, and more.',
+              start: 'Start practice',
+              next: 'Next',
+              results: 'See results',
+              correct: 'Correct.',
+              wrong: 'Not quite.',
+              progress: (i, t) => `Question ${i} / ${t}`,
+              done: (s, t) => `Done · ${s}/${t}`,
+              pass: 'Fluent with EzLib',
+              fail: 'Not yet “fluent with EzLib” — re-read the related chapters and retry',
+              passHint: 'Pass line: ≥90% correct. Review Chapter 7 Dash/LVGL, Chapter 2 units, and Chapter 4 reset.',
+              retry: 'Try again',
+              optGroup: 'Options'
+          }
+        : {
+              ready: '準備開始',
+              lead: '共 20 題選擇題，涵蓋 PID 單位、底盤 bind、Dash 與舊 Console、練習掣、odom／getRealPose、dash_config、場控 teardown、standalone LVGL、auton_select 等。',
+              start: '開始練習',
+              next: '下一題',
+              results: '睇成績',
+              correct: '正確。',
+              wrong: '未中。',
+              progress: (i, t) => `第 ${i} / ${t} 題`,
+              done: (s, t) => `完成 · ${s}/${t}`,
+              pass: '熟用 EzLib',
+              fail: '未達「熟用 EzLib」——再讀相關章節後重試',
+              passHint: '及格線：答對率 ≥90%。建議對照第七章 Dash／LVGL、第二章單位、第四章 reset。',
+              retry: '再試一次',
+              optGroup: '選項'
+          };
+    const questionBankZh = [
         {
             q: 'ezPID.drive(distance, …) 的距離單位是？裁判問「你 drive 寫 24 係咩意思？」',
             choices: [
@@ -434,6 +498,231 @@ function initJudgeQuiz() {
         }
     ];
 
+    const questionBankEn = [
+        {
+            q: 'What unit does ezPID.drive(distance, …) use? (Judge: “What does drive(24) mean?”)',
+            choices: [
+                'Inches (along the heading at the start of that call)',
+                'Motor encoder degrees',
+                'Centimeters',
+                'LemLib tiles (1 tile = 24")'
+            ],
+            answer: 0,
+            explain: 'Distance is inches, not motor degrees. See the units table and Chapter 2.'
+        },
+        {
+            q: 'What kind of angle does ezPID.turn target?',
+            choices: [
+                'Relative delta from current heading (degrees)',
+                'Radians',
+                'Absolute heading (degrees; LemLib: 0° → +Y, clockwise positive)',
+                'Tracking-wheel only; IMU is ignored'
+            ],
+            answer: 2,
+            explain: 'Turn targets absolute heading in degrees.'
+        },
+        {
+            q: 'After EzDrive binds with bindEzDrive, which PID do chassis.moveToPose / turnTo* / swingTo* use?',
+            choices: [
+                'Only LemLib ControllerSettings; ezPID is unrelated',
+                'You must tune a separate LemLib angular set',
+                'Drive is shared; turn is always independent',
+                'Shared ezPID drive / turn PID'
+            ],
+            answer: 3,
+            explain: 'After bind, moveToPoint / moveToPose / turnTo* / swingTo* share ezPID.'
+        },
+        {
+            q: 'Which describes EzLib_2.0.0_beta Brain UI correctly?',
+            choices: [
+                'Still uses robodash Console / Selector as the main UI',
+                'robodash is gone; use standalone LVGL (Type R Dash / PID / Anim)',
+                'No LVGL at all; terminal only',
+                'You must keep rd::Console::printf to see pose'
+            ],
+            answer: 1,
+            explain: 'On the hard-float path, robodash is retired for standalone LVGL + Type R Dash.'
+        },
+        {
+            q: 'In practice mode (tuner off), does LEFT/RIGHT to change auton also set_pose?',
+            choices: [
+                'No set_pose; name only (Dash / controller)',
+                'Yes, always set_pose(0,0,0)',
+                'Clears X/Y only; keeps θ',
+                'Calls wallReset'
+            ],
+            answer: 0,
+            explain: '←→ only changes auton. Inside the tuner, ←→ changes field and does set_pose.'
+        },
+        {
+            q: 'In practice mode (tuner off), what does DOWN do?',
+            choices: [
+                'Focus the old robodash Console',
+                'Force-open the PID tuner',
+                'reset_pid (clear traveled) + return to Type R Dash',
+                'Delete all LVGL pages and reboot'
+            ],
+            answer: 2,
+            explain: 'DOWN = reset_pid + back to Dash.'
+        },
+        {
+            q: 'Why can’t Auto trust LemLib odometry alone for the whole run with no resets?',
+            choices: [
+                'ezPID cannot do long moves',
+                'PROS forbids reading chassis.getPose()',
+                'moveToPose does not need pose',
+                'Bumps / slip accumulate drift; mid/late pose goes wrong'
+            ],
+            answer: 3,
+            explain: 'Hybrid: LemLib for curves/long moves, ezPID for short precise moves, wallReset/getRealPose at key points.'
+        },
+        {
+            q: 'What is the key idea of getRealPose (relative correction)?',
+            choices: [
+                'You must supply a CAD sensor offset first',
+                'expected − (actual_perp − golden)×side; small-angle cos; golden includes mount offset',
+                'Same as wallReset; you must hit a wall',
+                'Only changes θ; never X/Y'
+            ],
+            answer: 1,
+            explain: 'Relative formula + golden; no CAD offset needed. |α|>25° / low conf → expected; clamp ±6".'
+        },
+        {
+            q: 'Where do you map which motors feed Dash DRV/MCH temperatures?',
+            choices: [
+                'include/customs/dash_config.hpp',
+                'Edit ezlib/telem_dash.cpp directly',
+                'firmware/liblvgl.a',
+                'rd::Selector settings page'
+            ],
+            answer: 0,
+            explain: 'Temperature map lives in dash_config.hpp.'
+        },
+        {
+            q: 'Correct way to open the PID tuner in practice?',
+            choices: [
+                'Field control connected; press X only',
+                'SD card required first',
+                'Unplug field control, then X+A to enter; X alone to exit',
+                'DOWN+Y opens the tuner'
+            ],
+            answer: 2,
+            explain: 'Field control must be off; X+A enter, X exit. Connected field forces force_off.'
+        },
+        {
+            q: 'What unit is timeout, and what happens when it expires?',
+            choices: [
+                'Seconds; motors keep running',
+                'Encoder ticks; auto wallReset',
+                'LVGL frames',
+                'Milliseconds; motors stop and that motion ends'
+            ],
+            answer: 3,
+            explain: 'timeout is ms; when it expires motors stop (safety net).'
+        },
+        {
+            q: 'What does set_heading_constants mainly serve?',
+            choices: [
+                'moveToPose angular / lead curves',
+                'Only ezPID.drive() straight heading lock; not moveToPose angular',
+                'All LemLib turnTo* only; unrelated to drive',
+                'Controller display only; no motor effect'
+            ],
+            answer: 1,
+            explain: 'Heading PID is for ezPID.drive straight; turn/curves use set_turn_constants after bind.'
+        },
+        {
+            q: 'For MotorGroup.get_temperature(index) in dash_config, what is index?',
+            choices: [
+                'Order in the MotorGroup list in main.cpp (0,1,2…), not the smart-port number',
+                'Always equal to the smart-port number (port 14 → index 14)',
+                'The first motor Brain auto-scanned at boot',
+                'Must be negative for reversed ports'
+            ],
+            answer: 0,
+            explain: 'Example leftMotors({-14,-15,-16}) → index 0 = port 14.'
+        },
+        {
+            q: 'Which getRealPose safety rule is correct?',
+            choices: [
+                'Always force a correction with no cap',
+                'Even past 45° skew, write pose from raw distance',
+                'If |α|>25° or low conf, give up / return expected; clamp correction ±6"',
+                'Bad reads always return −1 and crash setPose'
+            ],
+            answer: 2,
+            explain: 'Cos projection; |α|>25° / low conf → expected; ±6" clamp.'
+        },
+        {
+            q: 'Where do you read “For PID Distance” while pushing the robot by hand?',
+            choices: [
+                'Only rd::Console on terminal',
+                'Only while tuner is open',
+                'Only SD CSV; controller never shows it',
+                'Right stick to displayMenu = 1 → D: = ezPID.get_traveled() (inches)'
+            ],
+            answer: 3,
+            explain: 'Practice menu 1 shows traveled; Dash can show pose/DIST/temps too.'
+        },
+        {
+            q: 'What do DOWN+B and DOWN+Y do in practice?',
+            choices: [
+                'Both only clear traveled',
+                'DOWN+B: focus Dash + run autonomous(); DOWN+Y: moveToPose(0,0,0,…)',
+                'DOWN+B opens tuner; DOWN+Y changes auton',
+                'DOWN+B deletes LVGL; DOWN+Y writes SD header'
+            ],
+            answer: 1,
+            explain: 'DOWN+B verifies auton; DOWN+Y curves back to pose (0,0,0).'
+        },
+        {
+            q: 'After an inline PID drive/turn with {.p,.i,.d}, what happens to gains? startI?',
+            choices: [
+                'Global P/I/D restore after the move; startI unchanged',
+                'Permanently overwrite globals until you set_*_constants again',
+                'startI also becomes the inline value',
+                'Only changes Brain PID page display'
+            ],
+            answer: 0,
+            explain: 'One-shot override; globals restore; startI unchanged.'
+        },
+        {
+            q: 'When field control connects (competition::is_connected()), what happens?',
+            choices: [
+                'Keep tuner open for pit tuning',
+                'Only stop animation; tuner and Dash keep thrashing',
+                'pidTuner.force_off(), block X+A, stop anim, release Anim/Dash/PID UI; rebuild after unplug',
+                'Automatically run autonomous() once'
+            ],
+            answer: 2,
+            explain: 'Field teardown closes tuner and heavy UI; rebuild when unplugged.'
+        },
+        {
+            q: 'Which LVGL memory statement is correct for EzLib_2.0.0_beta?',
+            choices: [
+                'Fixed 256KB BSS pool; malloc forbidden',
+                'Must use robodash’s built-in 10MB pool',
+                'Official softfp liblvgl.a works on a hard-float kernel',
+                'lv_conf: LV_MEM_CUSTOM 1 (malloc/free); beta liblvgl.a needs hard-float ABI'
+            ],
+            answer: 3,
+            explain: 'CUSTOM malloc; Dash shows free RAM via mallinfo; hardfp ABI required.'
+        },
+        {
+            q: 'How do you pick auton on current beta vs old robodash Selector?',
+            choices: [
+                'Still tap rd::Selector on the Brain',
+                'headless auton_select::init({name, fn}); ←→ changes name on Dash/controller; no Selector page',
+                'Only one hard-coded auton in main.cpp',
+                'SD card filename picks auton; controller unused'
+            ],
+            answer: 1,
+            explain: 'No Selector page; headless auton_select + name on controller/Dash.'
+        }
+    ];
+
+    const questionBank = en ? questionBankEn : questionBankZh;
+
     let session = [];
     let index = 0;
     let score = 0;
@@ -478,10 +767,10 @@ function initJudgeQuiz() {
         score = 0;
         answered = false;
         session = [];
-        setProgress('準備開始', 0);
+        setProgress(ui.ready, 0);
         stage.innerHTML = `
-            <p class="judge-quiz-lead">共 ${questionBank.length} 題選擇題，涵蓋 PID 單位、底盤 bind、Dash 與舊 Console、練習掣、odom／getRealPose、dash_config、場控 teardown、standalone LVGL、auton_select 等。</p>
-            <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">開始練習</button>
+            <p class="judge-quiz-lead">${ui.lead}</p>
+            <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">${ui.start}</button>
         `;
         stage.querySelector('#quiz-start-btn').addEventListener('click', startSession);
     }
@@ -490,13 +779,13 @@ function initJudgeQuiz() {
         answered = false;
         const item = session[index];
         const total = session.length;
-        setProgress(`第 ${index + 1} / ${total} 題`, index / total);
+        setProgress(ui.progress(index + 1, total), index / total);
         stage.innerHTML = `
             <p class="judge-quiz-q">${item.q}</p>
-            <div class="judge-quiz-options" role="group" aria-label="選項"></div>
+            <div class="judge-quiz-options" role="group" aria-label="${ui.optGroup}"></div>
             <p class="judge-quiz-feedback" id="quiz-feedback"></p>
             <div class="judge-quiz-actions">
-                <button type="button" id="quiz-next-btn" class="judge-quiz-btn primary" disabled>下一題</button>
+                <button type="button" id="quiz-next-btn" class="judge-quiz-btn primary" disabled>${ui.next}</button>
             </div>
         `;
         const optionsEl = stage.querySelector('.judge-quiz-options');
@@ -519,10 +808,10 @@ function initJudgeQuiz() {
                     if (j === i && !correct) el.classList.add('wrong');
                 });
                 feedback.className = `judge-quiz-feedback ${correct ? 'ok' : 'bad'}`;
-                feedback.textContent = (correct ? '正確。' : '未中。') + ' ' + item.explain;
+                feedback.textContent = (correct ? ui.correct : ui.wrong) + ' ' + item.explain;
                 nextBtn.disabled = false;
-                nextBtn.textContent = index === total - 1 ? '睇成績' : '下一題';
-                setProgress(`第 ${index + 1} / ${total} 題`, (index + 1) / total);
+                nextBtn.textContent = index === total - 1 ? ui.results : ui.next;
+                setProgress(ui.progress(index + 1, total), (index + 1) / total);
             });
             optionsEl.appendChild(btn);
         });
@@ -543,14 +832,14 @@ function initJudgeQuiz() {
         const pct = score / total;
         const pass = pct >= PASS_RATIO;
         const pctLabel = Math.round(pct * 100);
-        setProgress(`完成 · ${score}/${total}`, 1);
+        setProgress(ui.done(score, total), 1);
         stage.innerHTML = `
             <div class="judge-quiz-result">
-                <p class="score-line">${score} / ${total}（${pctLabel}%）</p>
-                <p class="${pass ? 'pass' : 'fail'}">${pass ? '熟用 EzLib' : '未達「熟用 EzLib」——再讀相關章節後重試'}</p>
-                <p class="judge-quiz-lead" style="margin-top:12px;">及格線：答對率 ≥90%。建議對照第七章 Dash／LVGL、第二章單位、第四章 reset。</p>
+                <p class="score-line">${score} / ${total} (${pctLabel}%)</p>
+                <p class="${pass ? 'pass' : 'fail'}">${pass ? ui.pass : ui.fail}</p>
+                <p class="judge-quiz-lead" style="margin-top:12px;">${ui.passHint}</p>
                 <div class="judge-quiz-actions">
-                    <button type="button" id="quiz-retry-btn" class="judge-quiz-btn primary">再試一次</button>
+                    <button type="button" id="quiz-retry-btn" class="judge-quiz-btn primary">${ui.retry}</button>
                 </div>
             </div>
         `;

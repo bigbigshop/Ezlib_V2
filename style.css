@@ -535,8 +535,11 @@ html[data-docs-version="2.0.1"] .only-v200 { display: none !important; }
     right: 16px;
     z-index: 1100;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    justify-content: flex-end;
+    gap: 6px 8px;
+    max-width: min(420px, calc(100vw - 24px));
     padding: 6px 10px;
     background-color: var(--bg-sidebar);
     border: 1px solid var(--border-color);
