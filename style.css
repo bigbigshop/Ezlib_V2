@@ -349,6 +349,24 @@ code {
     transition: width 0.25s ease;
 }
 
+.judge-quiz-diff {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.judge-quiz-diff select {
+    font: inherit;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary, transparent);
+    color: var(--text-main);
+}
+
 .judge-quiz-lead {
     color: var(--text-muted);
     margin-bottom: 18px;

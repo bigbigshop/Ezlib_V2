@@ -245,7 +245,7 @@ function initJudgeQuiz() {
     const ui = en
         ? {
               ready: 'Ready',
-              lead: '20 multiple-choice questions on units, bind, Dash, controls, odom/reset, dash_config, field control, LVGL, and auton_select.',
+              lead: 'Pick a difficulty, then start. Easy = basics; Hard = edge cases.',
               start: 'Start practice',
               next: 'Next',
               results: 'See results',
@@ -261,10 +261,10 @@ function initJudgeQuiz() {
           }
         : {
               ready: '準備開始',
-              lead: '共 20 題：單位、bind、Dash、練習掣、odom／reset、dash_config、場控、LVGL、auton_select 等。',
+              lead: '請先選擇難度，再開始。容易＝基礎；困難＝邊界細節。',
               start: '開始練習',
               next: '下一題',
-              results: '睇成績',
+              results: '看成績',
               correct: '正確。',
               wrong: '未中。',
               progress: (i, t) => `第 ${i} / ${t} 題`,
@@ -275,281 +275,727 @@ function initJudgeQuiz() {
               retry: '再試一次',
               optGroup: '選項'
           };
-                                const questionBankZh = [
+    const questionBankZhEasy = [
         {
-            q: "省略 async 參數時，ezPID.drive 與 LemLib moveToPoint 的預設有何差異？",
+            q: "ezPID.drive(distance, …) 的距離單位是？",
             choices: [
-                "兩者皆預設 async=true，會立刻回傳並排隊",
-                "ezPID 預設阻塞（false）；LemLib 多數運動預設 async=true",
-                "兩者皆預設 false，必須手動設 true 才非阻塞",
-                "只有 turn 會阻塞；drive 與 moveToPoint 行為相同"
+                "英吋（與行程一致）··　　",
+                "公分（再自行換算）··　　",
+                "編碼器輸出度數····　　",
+                "LemLib 的 tile"
+            ],
+            answer: 0,
+            explain: "drive 距離單位為英吋。"
+        },
+        {
+            q: "ezPID.turn 的目標角度是？",
+            choices: [
+                "相對目前航向差值",
+                "絕對航向（度）值",
+                "以弧度表示目標　",
+                "僅輪式角度目標　"
             ],
             answer: 1,
-            explain: "EzDrive 預設 async=false；LemLib 多數運動預設 async=true。"
+            explain: "turn 目標為絕對航向（度）。"
+        },
+        {
+            q: "bindEzDrive 之後，moveToPose 主要使用？",
+            choices: [
+                "建構時 LemLib 增益",
+                "另一套獨立 angular",
+                "與轉向共用 ezPID　　",
+                "只改畫面不改出力···　　"
+            ],
+            answer: 2,
+            explain: "bind 後 moveToPose／turnTo* 共用 ezPID。"
+        },
+        {
+            q: "在 Brain 上查看電量／位姿／溫度，主要靠？",
+            choices: [
+                "PC 端 USB terminal",
+                "Dash（telem_dash）　",
+                "只讀 SD 內 CSV····　　",
+                "只靠手掣三行字········　　"
+            ],
+            answer: 1,
+            explain: "使用 Brain 上的 Dash。"
+        },
+        {
+            q: "練習場用 ←→ 切換 auton 時，會 set_pose(0,0,0) 嗎？",
+            choices: [
+                "不會，只更換名稱····　　",
+                "會，每次都先歸零····　　",
+                "只清除 X／Y 軸···　　",
+                "會並執行 wallReset"
+            ],
+            answer: 0,
+            explain: "←→ 只換名稱，不重設位姿。"
+        },
+        {
+            q: "練習場單獨按 DOWN（未按 B／Y）會？",
+            choices: [
+                "直接開啟 PID tuner··",
+                "刪除全部 LVGL 頁····　",
+                "返回 Dash（常 reset）",
+                "只寫入 CSV header·　"
+            ],
+            answer: 2,
+            explain: "DOWN 返回 Dash；練習場通常 reset_pid。"
+        },
+        {
+            q: "長距離 Auto 不宜全程只信 odometry，主因是？",
+            choices: [
+                "ezPID 無法走遠路··　　",
+                "PROS 禁止 getPose",
+                "moveToPose 不用位姿",
+                "會漂移，中段要 reset　　"
+            ],
+            answer: 3,
+            explain: "碰撞／打滑累積誤差，需中段 reset。"
+        },
+        {
+            q: "getRealPose 的主要用途是？",
+            choices: [
+                "必須先填 CAD offset",
+                "做相對位姿校正用·····　　",
+                "等同 wallReset 撞牆",
+                "只改 θ 不改 XY···　　"
+            ],
+            answer: 1,
+            explain: "以距離感測做相對位姿校正。"
+        },
+        {
+            q: "要改 DRV／MCH 溫度對應哪顆馬達，應改？",
+            choices: [
+                "dash_config.hpp 對照",
+                "telem_dash.cpp 寫死·",
+                "重編 liblvgl.a 庫···　",
+                "auton_select 註冊表·　"
+            ],
+            answer: 0,
+            explain: "修改 customs/dash_config.hpp。"
+        },
+        {
+            q: "練習場如何進入 PID tuner？",
+            choices: [
+                "接場控後只按 X·　　",
+                "必須先插入 SD 卡　",
+                "拔場控後按 X+A　　",
+                "DOWN+Y 直接進入"
+            ],
+            answer: 2,
+            explain: "拔除場控後按 X+A。"
+        },
+        {
+            q: "timeout 單位與逾時行為是？",
+            choices: [
+                "秒；只寫一筆 log·····　　",
+                "tick；自動 wallReset",
+                "以 LVGL 幀計時·····　　",
+                "毫秒；該次運動停止······　　"
+            ],
+            answer: 3,
+            explain: "timeout 為毫秒；届滿停止該次運動。"
+        },
+        {
+            q: "set_heading_constants 主要服務？",
+            choices: [
+                "moveToPose 曲線角向",
+                "drive 直線時鎖航向·　　",
+                "全部 turnTo* 專用　　",
+                "只改手掣上顯示······　　"
+            ],
+            answer: 1,
+            explain: "heading 用於 drive() 直線鎖向。"
+        },
+        {
+            q: "MotorGroup.get_temperature(index) 的 index 是？",
+            choices: [
+                "宣告 list 次序（0 起）　",
+                "等於 smart-port 號碼",
+                "開機掃到的第一顆······　　",
+                "反轉馬達要用負值······　　"
+            ],
+            answer: 0,
+            explain: "是 MotorGroup 宣告次序，不是 port 號。"
+        },
+        {
+            q: "getRealPose 遇到不可信讀數時通常？",
+            choices: [
+                "仍然強制寫入位姿······",
+                "斜角再大也照樣用·····　",
+                "跳過並回傳 expected",
+                "固定回 -1 令崩潰···　"
+            ],
+            answer: 2,
+            explain: "低可信或大斜角會跳過該次修正。"
+        },
+        {
+            q: "手推車量測 For PID Distance，應看？",
+            choices: [
+                "只能看 PC terminal",
+                "必須開著 PID tuner　",
+                "只能事後開 CSV 檔··　　",
+                "手掣 menu 1 的 D:　"
+            ],
+            answer: 3,
+            explain: "displayMenu=1 顯示 get_traveled()（英吋）。"
+        },
+        {
+            q: "練習場按下 DOWN+B 會？",
+            choices: [
+                "只清除 traveled 值·",
+                "執行 autonomous()",
+                "開啟 PID tuner 頁　",
+                "刪 LVGL 重建 Dash　"
+            ],
+            answer: 1,
+            explain: "DOWN+B 執行 autonomous()。"
+        },
+        {
+            q: "inline PID {.p,.i,.d} 跑完之後？",
+            choices: [
+                "恢復原來的全域增益··　　",
+                "永久覆寫全域設定···　　",
+                "連 startI 一併永改",
+                "只改顯示不改出力···　　"
+            ],
+            answer: 0,
+            explain: "單次覆寫，結束後恢復全域。"
+        },
+        {
+            q: "場控接上後，PID tuner 會？",
+            choices: [
+                "保持開啟方便場邊調·····　　",
+                "只停動畫仍會刷新······　　",
+                "關閉並釋放 PID UI··　　",
+                "自動跑 autonomous()"
+            ],
+            answer: 2,
+            explain: "場控會 force_off／釋放 PID UI。"
+        },
+        {
+            q: "LV_MEM_CUSTOM 設為 1 表示？",
+            choices: [
+                "固定 256KB 禁 malloc",
+                "必須用 10MB 內建池···　　",
+                "softfp 可配 hardfp　",
+                "LVGL 改用系統 malloc　"
+            ],
+            answer: 3,
+            explain: "CUSTOM=1 使用系統 malloc／free。"
+        },
+        {
+            q: "如何切換目前 auton？",
+            choices: [
+                "必須點 Brain Selector",
+                "控制器 ←→ 換名稱······　　",
+                "main.cpp 只能寫死···　　",
+                "只靠 SD 檔名決定······　　"
+            ],
+            answer: 1,
+            explain: "auton_select + 控制器 ←→ 換名。"
+        }
+    ];
+
+    const questionBankEnEasy = [
+        {
+            q: "What unit does ezPID.drive(distance, …) use?",
+            choices: [
+                "Inches (matches travel)··　　",
+                "Centimeters (convert later)",
+                "Motor encoder degrees····　　",
+                "LemLib tile units········　　"
+            ],
+            answer: 0,
+            explain: "Drive distance is inches."
+        },
+        {
+            q: "What does ezPID.turn target?",
+            choices: [
+                "Relative delta heading",
+                "Absolute heading (deg)",
+                "Target in radians···　　",
+                "Wheel angle only····　　"
+            ],
+            answer: 1,
+            explain: "Turn targets absolute heading in degrees."
+        },
+        {
+            q: "After bindEzDrive, moveToPose mainly uses?",
+            choices: [
+                "Ctor LemLib gain sets　　",
+                "A separate angular set　",
+                "Shared ezPID gains···　　",
+                "Display only, no motors"
+            ],
+            answer: 2,
+            explain: "After bind, moveToPose/turnTo* share ezPID."
+        },
+        {
+            q: "Where do you read battery/pose/temps on Brain?",
+            choices: [
+                "PC USB terminal view　",
+                "Dash (telem_dash) UI　",
+                "SD CSV files only··　　",
+                "Controller lines only"
+            ],
+            answer: 1,
+            explain: "Use the Brain Dash (telem_dash)."
+        },
+        {
+            q: "Does practice ←→ changing auton also set_pose(0,0,0)?",
+            choices: [
+                "No; name change only　　",
+                "Yes; zeros pose always",
+                "Clears X/Y axes only　　",
+                "Yes, plus wallReset·　　"
+            ],
+            answer: 0,
+            explain: "←→ only changes the auton name."
+        },
+        {
+            q: "Solo DOWN in practice (no B/Y held) does?",
+            choices: [
+                "Opens the PID tuner·······",
+                "Deletes every LVGL page··　",
+                "Returns Dash (often reset)",
+                "Writes CSV header only···　"
+            ],
+            answer: 2,
+            explain: "DOWN returns to Dash; practice usually reset_pid."
+        },
+        {
+            q: "Why not trust odometry alone for a long Auto?",
+            choices: [
+                "ezPID cannot go far···　　",
+                "PROS forbids getPose··　　",
+                "moveToPose needs no pose",
+                "Drift; reset mid-run··　　"
+            ],
+            answer: 3,
+            explain: "Bumps/slip accumulate error; reset mid-run."
+        },
+        {
+            q: "What is getRealPose mainly for?",
+            choices: [
+                "Needs a CAD offset first",
+                "Relative pose correction",
+                "Same as wallReset hits　　",
+                "Only changes θ, not XY　　"
+            ],
+            answer: 1,
+            explain: "Relative pose correction from ranging."
+        },
+        {
+            q: "Where do you map DRV/MCH temperature motors?",
+            choices: [
+                "dash_config.hpp map　　",
+                "telem_dash.cpp ports　",
+                "Rebuild liblvgl.a··　　",
+                "auton_select registry"
+            ],
+            answer: 0,
+            explain: "Edit customs/dash_config.hpp."
+        },
+        {
+            q: "How do you open the PID tuner in practice?",
+            choices: [
+                "Field on, press X only",
+                "SD card is required·　　",
+                "Unplug field, then X+A",
+                "DOWN+Y opens tuner··　　"
+            ],
+            answer: 2,
+            explain: "Unplug field control, then X+A."
+        },
+        {
+            q: "timeout unit and behavior on expiry?",
+            choices: [
+                "Seconds; log only······",
+                "Ticks; auto wallReset·　",
+                "Counted in LVGL frames　",
+                "Milliseconds; stop move"
+            ],
+            answer: 3,
+            explain: "timeout is ms; that motion stops when time is up."
+        },
+        {
+            q: "set_heading_constants mainly serves?",
+            choices: [
+                "moveToPose curve heading",
+                "drive() heading lock··　　",
+                "All turnTo* calls only　　",
+                "Controller display only　"
+            ],
+            answer: 1,
+            explain: "Heading PID locks heading during drive()."
+        },
+        {
+            q: "index in MotorGroup.get_temperature(index)?",
+            choices: [
+                "List order starting at 0　　",
+                "Equals smart-port number　　",
+                "First motor found at boot　",
+                "Negative if motor reversed"
+            ],
+            answer: 0,
+            explain: "Declaration order, not port number."
+        },
+        {
+            q: "getRealPose on a bad or skewed reading?",
+            choices: [
+                "Still forces a pose write",
+                "Uses raw even if skewed　　",
+                "Skips / returns expected　",
+                "Returns -1 and crashes·　　"
+            ],
+            answer: 2,
+            explain: "Low confidence or large skew skips the correction."
+        },
+        {
+            q: "Where is For PID Distance while pushing?",
+            choices: [
+                "PC terminal readout only·",
+                "Only while tuner is open　",
+                "Only later via CSV file·　",
+                "Controller menu 1 D: line"
+            ],
+            answer: 3,
+            explain: "displayMenu=1 shows get_traveled() in inches."
+        },
+        {
+            q: "What does DOWN+B do in practice mode?",
+            choices: [
+                "Only clears traveled　　",
+                "Runs autonomous() now　",
+                "Opens the PID tuner·　　",
+                "Deletes LVGL, rebuilds"
+            ],
+            answer: 1,
+            explain: "DOWN+B runs autonomous()."
+        },
+        {
+            q: "After an inline PID {.p,.i,.d} move?",
+            choices: [
+                "Global gains restore···　　",
+                "Globals stay overwritten　",
+                "startI also stays changed",
+                "Display only, no motors　　"
+            ],
+            answer: 0,
+            explain: "One-shot override; globals restore afterward."
+        },
+        {
+            q: "When field control connects, the PID tuner?",
+            choices: [
+                "Stays open for pit tune　　",
+                "Anim stops; still refresh",
+                "Closes / releases PID UI　",
+                "Auto-runs autonomous()·　　"
+            ],
+            answer: 2,
+            explain: "Field control force_off / releases PID UI."
+        },
+        {
+            q: "LV_MEM_CUSTOM set to 1 means?",
+            choices: [
+                "Fixed 256KB; no malloc·",
+                "Must use a 10MB pool··　",
+                "softfp with hardfp OK·　",
+                "LVGL uses system malloc"
+            ],
+            answer: 3,
+            explain: "LV_MEM_CUSTOM uses system malloc/free."
+        },
+        {
+            q: "How do you switch the current auton?",
+            choices: [
+                "Brain Selector page only",
+                "Controller ←→ renames·　　",
+                "One hard-coded auton··　　",
+                "SD filename alone picks　"
+            ],
+            answer: 1,
+            explain: "auton_select + controller ←→ changes the name."
+        }
+    ];
+
+    const questionBankZhHard = [
+        {
+            q: "省略 async 時，ezPID.drive 與 LemLib moveToPoint 預設？",
+            choices: [
+                "兩者皆預設 async 並回傳···········",
+                "ezPID 預設阻塞；LemLib 多為 async",
+                "兩者皆預設阻塞，要手動非阻塞···········　",
+                "只有 turn 阻塞；drive 與點對點相同··　"
+            ],
+            answer: 1,
+            explain: "EzDrive 預設 async=false；LemLib 多數運動預設 true。"
         },
         {
             q: "wallReset('x', …) 實際會把哪一軸鎖成 0？",
             choices: [
-                "把 X 設為 0，Y 與 θ 完全不動",
-                "把 Y 設為 0（以該牆為基準校正），易與字母直覺相反",
-                "同時把 X 與 Y 都歸零，只保留 θ",
-                "只重設 θ，座標軸完全不變"
+                "把 X 設 0，Y／θ 都不變",
+                "把 Y 設 0，字母直覺易反　",
+                "X 與 Y 都歸零，只留 θ　",
+                "只重設 θ，兩軸都不改··　　"
             ],
             answer: 1,
             explain: "'x' → setPose(x, 0, θ)，鎖定的是 Y=0。"
         },
         {
-            q: "bindEzDrive 之後，建構時傳入的 LemLib ControllerSettings 實質上？",
+            q: "bindEzDrive 之後，建構時的 LemLib ControllerSettings？",
             choices: [
-                "仍是 moveToPose 的主要增益來源",
-                "只影響 swing，不影響 lateral／angular",
-                "大致被擱置；lateral／angular 改走 ezPID",
-                "每次 autonomous() 開頭會自動還原使用"
+                "仍是 moveToPose 主增益　",
+                "只影響 swing 不影響轉向·　　",
+                "大致擱置，改走 ezPID···　　",
+                "每次 autonomous 自動還原"
             ],
             answer: 2,
-            explain: "bind 後主要走 ezPID；建構時設定實質上被 unused。"
+            explain: "bind 後主要走 ezPID；建構設定實質 unused。"
         },
         {
-            q: "getRealPose 在 |α| 過大或 confidence 過低時會？",
+            q: "getRealPose 在大斜角或低 confidence 時？",
             choices: [
-                "仍強制寫入，並把修正量放大兩倍",
-                "直接 return -1，接著 setPose 會崩潰",
-                "跳過修正並回傳 expected（不硬扯位姿）",
-                "改呼叫 wallReset('y') 作為後備方案"
+                "仍強制寫入並放大修正······　　",
+                "回傳 -1 並令 setPose 崩",
+                "跳過修正，回傳 expected　　",
+                "改呼叫 wallReset 作後備　"
             ],
             answer: 2,
             explain: "不可信或大斜角時跳過，回傳 expected。"
         },
         {
-            q: "練習場按下 DOWN+Y（按住 Y 再 DOWN）會做什麼？",
+            q: "練習場按住 Y 再按 DOWN（DOWN+Y）會？",
             choices: [
-                "開啟 PID tuner 並自動寫入 CSV",
-                "只清除 traveled，不移動底盤",
-                "執行 moveToPose(0,0,0, …) 回原點附近",
-                "與單獨 DOWN 相同，只返回 Dash"
+                "開啟 tuner 並寫入 CSV·····",
+                "只清 traveled，車不動·····　",
+                "moveToPose(0,0,0) 回原點",
+                "與單獨 DOWN 一樣回 Dash···　"
             ],
             answer: 2,
             explain: "DOWN+Y：chassis.moveToPose(0,0,0, …)。"
         },
         {
-            q: "set_heading_constants 調的是哪一條控制迴路？",
+            q: "set_heading_constants 調的是哪一條迴路？",
             choices: [
-                "moveToPose 整段曲線的角向／lead",
-                "所有 turnToHeading／swingToHeading",
-                "僅 ezPID.drive() 直線時用來鎖航向",
-                "Dash 上顯示的 θ，不影響馬達出力"
+                "moveToPose 曲線角向 lead",
+                "全部 turnTo／swingTo 專用",
+                "僅 drive() 直線時鎖航向··　　",
+                "只改 Dash 的 θ 顯示值···　　"
             ],
             answer: 2,
-            explain: "headingPID 只服務 drive() 直線鎖向；轉向用 turnPID。"
+            explain: "headingPID 只服務 drive() 鎖向；轉向用 turnPID。"
         },
         {
-            q: "inline PID {.p,.i,.d} 對於 startI 的影響是？",
+            q: "inline PID {.p,.i,.d} 對 startI 的影響？",
             choices: [
-                "會一併覆寫 startI，結束後也不還原",
-                "會暫時改 startI，該次運動結束後還原",
-                "PIDGains 不帶 startI；startI 維持原全域設定",
-                "startI 會被強制設成 0，避免積分暴衝"
+                "一併覆寫且結束不還原········",
+                "暫時改 startI 結束再還··　",
+                "PIDGains 不含 startI",
+                "強制 startI=0 防暴衝··　"
             ],
             answer: 2,
-            explain: "inline 只覆寫 p／i／d；startI 不從 PIDGains 讀取。"
+            explain: "inline 只覆寫 p／i／d；startI 不從 PIDGains 來。"
         },
         {
-            q: "場控接上後，PID tuner 與 Dash 分別會如何？",
+            q: "場控接上後，PID tuner 與 Dash 分別？",
             choices: [
-                "兩者一併銷毀，必須重開機才恢復",
-                "tuner 被 force_off／釋放；Dash 通常保留",
-                "tuner 繼續開著，只是不能改增益",
-                "自動重開 tuner，並立刻跑 autonomous()"
+                "兩者銷毀，要重開機········　　",
+                "tuner 釋放；Dash 常保留　　",
+                "tuner 仍開，只讀增益····　　",
+                "自動重開 tuner 並跑 auton"
             ],
             answer: 1,
-            explain: "場控：force_off 釋放 PID UI；Dash 一般保留。"
+            explain: "場控 force_off 釋放 PID UI；Dash 一般保留。"
         },
         {
-            q: "getRealPose 成功修正時，單次位移修正量大致如何限制？",
+            q: "getRealPose 成功修正時，單次位移大約？",
             choices: [
-                "完全不限制，差值多大就寫多大",
-                "固定每次只改 0.1 英吋",
-                "軟性夾限約 ±6 英吋，避免一次扯太遠",
-                "超過 1 英吋就改呼叫 wallReset"
+                "不限制，差值多大寫多大····　　",
+                "固定每次只改 0.1 英吋··　　",
+                "軟夾限約 ±6 英吋·····　　",
+                "逾 1 英吋改 wallReset"
             ],
             answer: 2,
-            explain: "修正量有約 ±6″ 的 soft clamp。"
+            explain: "修正量約有 ±6″ soft clamp。"
         },
         {
-            q: "PID tuner 裡按 LEFT／RIGHT，與練習場 ←→ 的差異是？",
+            q: "PID tuner 內 LEFT／RIGHT 與練習場 ←→？",
             choices: [
-                "兩者都只切換 auton 名稱",
-                "tuner 裡用來切 PID 欄位，並可能 zero_pose",
-                "tuner 裡會執行 DOWN+B 同一套 auton",
-                "沒有差異；快捷鍵完全共用同一處理函式"
+                "兩者都只切 auton 名稱　　",
+                "tuner 切增益欄／可歸零　　",
+                "tuner 內等同 DOWN+B",
+                "快捷鍵完全同一處理函式···　　"
             ],
             answer: 1,
-            explain: "tuner 的 ←→ 切增益欄位／可 zero_pose；不是切 auton。"
+            explain: "tuner 的 ←→ 切增益欄位／可 zero_pose。"
         },
         {
-            q: "LemLib 的 slew step 設成 ≥250（例如 255）時，實際意義是？",
+            q: "LemLib slew step 設成 ≥250（如 255）？",
             choices: [
-                "達到硬體允許的最大斜率",
-                "視為 0，即關閉 slew（不等於最快爬升）",
-                "每 10ms 固定加 255，幾乎瞬間滿出力",
-                "只影響轉向，對直線 lateral 無效"
+                "代表硬體最大爬升斜率·····　　",
+                "視為 0，即關閉 slew··　　",
+                "每 10ms 加 255 近滿出力",
+                "只影響轉向，直線無效·····　　"
             ],
             answer: 1,
-            explain: "step≥250 會被當成 0＝unslewed。"
+            explain: "step≥250 當成 0＝unslewed。"
         },
         {
-            q: "練習場單獨按 UP（新按下）通常會？",
+            q: "練習場單獨新按下 UP 通常會？",
             choices: [
-                "開啟 PID tuner",
-                "執行 autonomous()",
-                "取消運動並 reset_pid（不一定回 Dash）",
-                "寫入 /usd/auton_sel.txt"
+                "開啟 PID tuner 畫面·　　",
+                "立刻執行 autonomous()　",
+                "取消運動並 reset_pid·　　",
+                "寫入 auton_sel.txt 檔"
             ],
             answer: 2,
-            explain: "練習場 UP：cancel + reset_pid；長按才偏動畫。"
+            explain: "練習場 UP：cancel + reset_pid。"
         },
         {
-            q: "ezPID.waitUntil(dist) 與 chassis.waitUntil(dist) 量的「距離」？",
+            q: "ezPID.waitUntil 與 chassis.waitUntil 量的距離？",
             choices: [
-                "完全相同，都是 motion 的 distTraveled",
-                "ezPID 用快照位姿的歐氏距離；chassis 用運動累計行程",
-                "兩者都以 IMU 積分路徑長度為準",
-                "ezPID 用編碼器度數；chassis 用英吋"
+                "完全相同，皆 distTraveled···",
+                "ezPID 歐氏距；chassis 累計行程",
+                "兩者皆 IMU 路徑積分·········　",
+                "ezPID 度數；chassis 英吋··　"
             ],
             answer: 1,
-            explain: "語意不同：EzDrive 看 hypot 位移；chassis 看 distTraveled。"
+            explain: "語意不同：hypot 位移 vs distTraveled。"
         },
         {
-            q: "auton_select 選到的 auton 名稱，重開機後通常？",
+            q: "auton_select 名稱在重開機後通常？",
             choices: [
-                "一定回到清單第一個",
-                "寫在 /usd/auton_sel.txt，載入時 index % size",
-                "存在 Brain 內部 EEPROM，與 SD 無關",
-                "只在當次 opcontrol 有效，auton 前必清"
+                "一定回到清單第一個·········",
+                "存 SD：auton_sel.txt",
+                "存 EEPROM，與 SD 無關·　",
+                "僅當次有效，auton 前清···　"
             ],
             answer: 1,
             explain: "持久化於 SD：/usd/auton_sel.txt。"
         },
         {
-            q: "drive／turn 未指定 timeout 時，預設大約是？",
+            q: "drive／turn 未給 timeout 時，預設約？",
             choices: [
-                "無限制，直到 settle 為止",
-                "約 1500 ms；届滿該次運動停止",
-                "固定 5000 ms，與 xPose 相同",
-                "以 LVGL 幀數換算，約 90 幀"
+                "無限制直到 settle····　　",
+                "約 1500 ms 後停止···　　",
+                "固定 5000 ms 同 xPose",
+                "約九十個 LVGL 幀·····　　"
             ],
             answer: 1,
-            explain: "drive／turn 預設約 1500ms；xPose 的 timeout 為必填。"
+            explain: "drive／turn 預設約 1500ms；xPose timeout 必填。"
         },
         {
-            q: "Dash 上 DRV／MCH 溫度要對應到正確馬達，應改？",
+            q: "Dash DRV／MCH 溫度要對到正確馬達？",
             choices: [
-                "ezlib/telem_dash.cpp 內的 port 硬編碼",
-                "customs/dash_config.hpp，且 index 是 MotorGroup 宣告次序",
-                "auton_select 註冊表裡的 motor 欄位",
-                "lv_conf.h 的 LV_MEM_SIZE"
+                "改 telem_dash.cpp port··",
+                "改 dash_config；index 為次序",
+                "改 auton_select motor 欄　",
+                "改 lv_conf 的 MEM_SIZE··　"
             ],
             answer: 1,
-            explain: "改 dash_config.hpp；index≠smart-port 號。"
+            explain: "改 dash_config.hpp；index≠smart-port。"
         },
         {
-            q: "LV_MEM_CUSTOM 為 1 時，加大 LV_MEM_SIZE 會？",
+            q: "LV_MEM_CUSTOM=1 時加大 LV_MEM_SIZE？",
             choices: [
-                "立刻擴大 LVGL 靜態記憶體池",
-                "幾乎不影響；配置改走系統 malloc／free",
-                "強制改用 softfp，並禁止 realloc",
-                "讓 Dash 的 RAM 數值改顯示 LV_MEM_SIZE"
+                "立刻擴大靜態記憶體池········　　",
+                "幾乎無影響，走系統 malloc··　　",
+                "強制 softfp 並禁 realloc",
+                "Dash RAM 改顯示該常數···　　"
             ],
             answer: 1,
-            explain: "CUSTOM=1 時靜態池無關緊要，走 libc 配置。"
+            explain: "CUSTOM=1 時靜態池無關，走 libc 配置。"
         },
         {
-            q: "←→ 切換 auton 與真正進入 autonomous() 時，位姿行為差在？",
+            q: "←→ 切 auton 與進入 autonomous() 的位姿？",
             choices: [
-                "兩者都會 set_pose(0,0,0)",
-                "←→ 不重設位姿；autonomous() 開頭常會 setPose(0,0,0)+reset_pid",
-                "只有 ←→ 會重設；autonomous() 保留場上座標",
-                "兩者都不動位姿，只改名稱"
+                "兩者都會 set_pose 歸零···",
+                "←→ 不重設；跑 auton 常先歸零",
+                "只有 ←→ 重設；auton 保留·　",
+                "兩者都不動，只改名稱········　"
             ],
             answer: 1,
-            explain: "切名不重設；跑 auton 時 main 常先歸零位姿。"
+            explain: "切名不重設；跑 auton 時 main 常先歸零。"
         },
         {
-            q: "moveToPoint／moveToPose 接近目標（約 <7.5″）時，角向輸出通常？",
+            q: "moveToPoint／Pose 接近目標（約 <7.5″）？",
             choices: [
-                "加大 angularOut 以最後對準",
-                "把 angularOut 強制為 0（close 區不再扭頭）",
-                "自動切換到 headingPID 接管",
-                "改用 wallReset 微調 θ"
+                "加大 angular 做最終對準·",
+                "angular 強制 0，不再扭頭",
+                "改由 headingPID 接管　",
+                "用 wallReset 微調 θ　"
             ],
             answer: 1,
             explain: "接近目標進入 close，angularOut=0。"
         },
         {
-            q: "Liftlib 的軟限位（soft min／max）在何時生效？",
+            q: "Liftlib 軟限位 soft min／max 何時生效？",
             choices: [
-                "addPosition 當下就會改寫已存的目標度數",
-                "開始移動時 clampTarget，命名位置本身仍存原值",
-                "只在 Brain Dash 顯示警告，不限制馬達",
-                "僅在 nest／CONSOLE 開啟時才夾限"
+                "addPosition 當下改寫目標",
+                "移動開始時 clamp，原值保留　　",
+                "只警告不限制馬達········　　",
+                "僅 nest／CONSOLE 開啟時"
             ],
             answer: 1,
-            explain: "命名位置存原值；移動時才套用 soft clamp。"
+            explain: "命名位置存原值；移動時才 soft clamp。"
         }
-    ];;;;;;;;
+    ];
 
-                            const questionBankEn = [
+    const questionBankEnHard = [
         {
-            q: "If you omit async, how do ezPID.drive and LemLib moveToPoint differ?",
+            q: "Omitting async: ezPID.drive vs LemLib moveToPoint?",
             choices: [
-                "Both default async=true and return immediately",
-                "ezPID blocks by default (false); most LemLib moves default async=true",
-                "Both default false; you must set true for non-blocking",
-                "Only turn blocks; drive and moveToPoint behave the same"
+                "Both default async and return······",
+                "ezPID blocks; most LemLib are async",
+                "Both block; set true to free······　",
+                "Only turn blocks; drive matches···　"
             ],
             answer: 1,
-            explain: "EzDrive defaults async=false; most LemLib moves default async=true."
+            explain: "EzDrive defaults async=false; most LemLib moves default true."
         },
         {
-            q: "wallReset('x', …) actually locks which axis to 0?",
+            q: "wallReset('x', …) locks which axis to 0?",
             choices: [
-                "Sets X to 0; Y and θ stay completely unchanged",
-                "Sets Y to 0 (wall-based); easy to invert vs the letter",
-                "Zeros both X and Y; keeps θ only",
-                "Resets θ only; axes unchanged"
+                "Sets X=0; Y/θ unchanged·········",
+                "Sets Y=0; letter is easy to flip",
+                "Zeros X and Y; keeps θ·········　",
+                "Resets θ only; axes stay·······　"
             ],
             answer: 1,
             explain: "'x' → setPose(x, 0, θ), i.e. Y=0."
         },
         {
-            q: "After bindEzDrive, the LemLib ControllerSettings from construction?",
+            q: "After bindEzDrive, ctor LemLib ControllerSettings?",
             choices: [
-                "Remain the main gains for moveToPose",
-                "Affect swing only, not lateral/angular",
-                "Are largely unused; lateral/angular go through ezPID",
-                "Are restored automatically at each autonomous() start"
+                "Still main moveToPose gains",
+                "Swing only, not drive/turn　",
+                "Mostly unused; ezPID drives",
+                "Restored each autonomous()　"
             ],
             answer: 2,
-            explain: "After bind, motion uses ezPID; ctor settings are effectively unused."
+            explain: "After bind, motion uses ezPID; ctor settings unused."
         },
         {
-            q: "getRealPose when |α| is large or confidence is low?",
+            q: "getRealPose when skew is large or confidence low?",
             choices: [
-                "Still forces a write and doubles the correction",
-                "Returns -1 and then setPose crashes",
-                "Skips the correction and returns expected",
-                "Falls back to wallReset('y')"
+                "Forces write and doubles fix",
+                "Returns -1; setPose crashes　",
+                "Skips fix; returns expected　",
+                "Falls back to wallReset···　　"
             ],
             answer: 2,
             explain: "Untrusted or skewed readings skip; return expected."
         },
         {
-            q: "In practice, what does DOWN+Y (hold Y, press DOWN) do?",
+            q: "Practice: hold Y then DOWN (DOWN+Y) does?",
             choices: [
-                "Opens the PID tuner and writes CSV",
-                "Only clears traveled; chassis does not move",
-                "Runs moveToPose(0,0,0, …) toward origin",
-                "Same as solo DOWN: only returns to Dash"
+                "Opens tuner and writes CSV·",
+                "Clears traveled; no motion　",
+                "moveToPose(0,0,0) to origin",
+                "Same as solo DOWN to Dash·　"
             ],
             answer: 2,
             explain: "DOWN+Y: chassis.moveToPose(0,0,0, …)."
@@ -557,65 +1003,65 @@ function initJudgeQuiz() {
         {
             q: "set_heading_constants tunes which loop?",
             choices: [
-                "Full moveToPose curve heading / lead",
-                "All turnToHeading / swingToHeading calls",
-                "Only heading lock during ezPID.drive()",
-                "Dash θ display only; no motor effect"
+                "moveToPose curve heading/lead",
+                "All turnTo/swingTo calls···　　",
+                "Only drive() heading lock··　　",
+                "Dash θ display only········　　"
             ],
             answer: 2,
             explain: "headingPID serves drive() lock; turns use turnPID."
         },
         {
-            q: "What does inline PID {.p,.i,.d} do to startI?",
+            q: "Inline PID {.p,.i,.d} effect on startI?",
             choices: [
-                "Overwrites startI permanently",
-                "Temporarily changes startI, then restores it",
-                "PIDGains carries no startI; global startI stays",
-                "Forces startI to 0 to avoid integral windup"
+                "Overwrites startI for good　　",
+                "Changes startI then restores",
+                "PIDGains has no startI····　　",
+                "Forces startI=0 always····　　"
             ],
             answer: 2,
-            explain: "Inline overrides p/i/d only; startI is not from PIDGains."
+            explain: "Inline overrides p/i/d only; startI not from PIDGains."
         },
         {
-            q: "When field control connects, tuner vs Dash?",
+            q: "Field connected: tuner vs Dash behavior?",
             choices: [
-                "Both are destroyed; reboot required",
-                "Tuner is force_off/released; Dash usually stays",
-                "Tuner stays open but gains become read-only",
-                "Tuner reopens and immediately runs autonomous()"
+                "Both destroyed; reboot needed···",
+                "Tuner released; Dash often stays",
+                "Tuner open, gains read-only····　",
+                "Reopens tuner and runs auton···　"
             ],
             answer: 1,
-            explain: "Field: force_off releases PID UI; Dash is generally kept."
+            explain: "Field force_off releases PID UI; Dash generally kept."
         },
         {
-            q: "When getRealPose applies a fix, the correction size is?",
+            q: "getRealPose successful fix: correction size?",
             choices: [
-                "Unlimited; whatever the raw diff is",
-                "Always exactly 0.1 inches",
-                "Soft-clamped about ±6 inches",
-                "If over 1 inch, switches to wallReset"
+                "Unlimited; raw diff written",
+                "Always 0.1 inches exactly　　",
+                "Soft-clamped about ±6 in·　　",
+                "Over 1 in uses wallReset·　　"
             ],
             answer: 2,
             explain: "Correction is soft-clamped around ±6″."
         },
         {
-            q: "LEFT/RIGHT in the PID tuner vs practice ←→?",
+            q: "LEFT/RIGHT in PID tuner vs practice ←→?",
             choices: [
-                "Both only change the auton name",
-                "In the tuner they cycle PID fields and may zero_pose",
-                "In the tuner they run the same path as DOWN+B",
-                "Identical; they share one handler"
+                "Both only change auton name····",
+                "Tuner cycles fields / zero_pose",
+                "Tuner runs same as DOWN+B·····　",
+                "Identical shared key handler··　"
             ],
             answer: 1,
-            explain: "Tuner ←→ cycles gain fields / may zero_pose; not auton."
+            explain: "Tuner ←→ cycles gain fields / may zero_pose."
         },
         {
-            q: "LemLib slew step ≥250 (e.g. 255) means?",
+            q: "LemLib slew step set to ≥250 (e.g. 255)?",
             choices: [
-                "Maximum hardware-allowed ramp",
-                "Treated as 0: slew off (not “fastest ramp”)",
-                "Add 255 every 10ms, nearly instant full power",
-                "Affects turn only; lateral ignores it"
+                "Max hardware ramp rate····　　",
+                "Treated as 0: slew disabled　",
+                "Add 255/10ms near full power",
+                "Turn only; lateral ignores　　"
             ],
             answer: 1,
             explain: "step≥250 is treated as 0 = unslewed."
@@ -623,87 +1069,87 @@ function initJudgeQuiz() {
         {
             q: "Solo new-press UP in practice usually?",
             choices: [
-                "Opens the PID tuner",
-                "Runs autonomous()",
-                "Cancels motion and reset_pid (not necessarily Dash)",
-                "Writes /usd/auton_sel.txt"
+                "Opens the PID tuner UI·····",
+                "Runs autonomous() at once·　",
+                "Cancel motion and reset_pid",
+                "Writes auton_sel.txt file·　"
             ],
             answer: 2,
-            explain: "Practice UP: cancel + reset_pid; hold UP is more about anim."
+            explain: "Practice UP: cancel + reset_pid."
         },
         {
-            q: "ezPID.waitUntil(dist) vs chassis.waitUntil(dist) measure?",
+            q: "ezPID.waitUntil vs chassis.waitUntil measure?",
             choices: [
-                "The same: both use motion distTraveled",
-                "ezPID: Euclidean from a pose snapshot; chassis: motion travel",
-                "Both use IMU-integrated path length",
-                "ezPID: encoder degrees; chassis: inches"
+                "Same: both distTraveled····　　",
+                "ezPID hypot; chassis travel　　",
+                "Both IMU path length only··　　",
+                "ezPID degrees; chassis inches"
             ],
             answer: 1,
-            explain: "Different semantics: hypot displacement vs distTraveled."
+            explain: "Different semantics: hypot vs distTraveled."
         },
         {
-            q: "After reboot, the auton_select name usually?",
+            q: "After reboot, auton_select name usually?",
             choices: [
-                "Always resets to the first entry",
-                "Persists in /usd/auton_sel.txt; load uses index % size",
-                "Lives in Brain EEPROM; SD is unused",
-                "Only lasts for that opcontrol; cleared before auton"
+                "Always first list entry　　",
+                "SD file auton_sel.txt··　　",
+                "Brain EEPROM; no SD····　　",
+                "Cleared before each auton"
             ],
             answer: 1,
             explain: "Persisted on SD: /usd/auton_sel.txt."
         },
         {
-            q: "Default timeout when drive/turn omit timeout?",
+            q: "Default timeout when drive/turn omit it?",
             choices: [
-                "Unlimited until settle",
-                "About 1500 ms; that motion then stops",
-                "Fixed 5000 ms, same as xPose",
-                "Derived from LVGL frames (~90)"
+                "Unlimited until settle　　",
+                "About 1500 ms then stop　",
+                "Fixed 5000 ms like xPose",
+                "About ninety LVGL frames"
             ],
             answer: 1,
-            explain: "drive/turn default ~1500ms; xPose timeout is required."
+            explain: "drive/turn default ~1500ms; xPose timeout required."
         },
         {
-            q: "To map Dash DRV/MCH temps to the right motors, edit?",
+            q: "Map Dash DRV/MCH temps to correct motors?",
             choices: [
-                "Port hardcodes in ezlib/telem_dash.cpp",
-                "customs/dash_config.hpp; index = MotorGroup list order",
-                "The motor field in the auton_select registry",
-                "LV_MEM_SIZE in lv_conf.h"
+                "Edit telem_dash.cpp ports···",
+                "Edit dash_config; list index",
+                "Edit auton_select motors···　",
+                "Edit lv_conf MEM_SIZE······　"
             ],
             answer: 1,
-            explain: "Edit dash_config.hpp; index ≠ smart-port number."
+            explain: "Edit dash_config.hpp; index ≠ smart-port."
         },
         {
-            q: "With LV_MEM_CUSTOM=1, raising LV_MEM_SIZE?",
+            q: "LV_MEM_CUSTOM=1 and raising LV_MEM_SIZE?",
             choices: [
-                "Immediately grows LVGL’s static pool",
-                "Mostly irrelevant; alloc goes through system malloc/free",
-                "Forces softfp and forbids realloc",
-                "Makes Dash RAM display equal LV_MEM_SIZE"
+                "Grows LVGL static pool now····",
+                "Mostly irrelevant; uses malloc",
+                "Forces softfp; bans realloc··　",
+                "Dash RAM shows that constant·　"
             ],
             answer: 1,
             explain: "CUSTOM=1: static pool unused; libc allocation."
         },
         {
-            q: "←→ changing auton vs entering autonomous() — pose?",
+            q: "←→ change auton vs enter autonomous() — pose?",
             choices: [
-                "Both call set_pose(0,0,0)",
-                "←→ keeps pose; autonomous() often setPose(0,0,0)+reset_pid",
-                "Only ←→ resets; autonomous() keeps field pose",
-                "Neither touches pose; name only"
+                "Both set_pose(0,0,0)··········",
+                "←→ keeps pose; run often zeros",
+                "Only ←→ resets; auton keeps··　",
+                "Neither touches pose; name···　"
             ],
             answer: 1,
-            explain: "Name change keeps pose; running auton often zeros first."
+            explain: "Name change keeps pose; running auton often zeros."
         },
         {
-            q: "Near the target (~<7.5″) in moveToPoint/Pose, angular out?",
+            q: "Near target (~<7.5″) in moveToPoint/Pose?",
             choices: [
-                "Increases angularOut for a final snap",
-                "Forces angularOut to 0 in the close zone",
-                "Hands control to headingPID",
-                "Uses wallReset to nudge θ"
+                "Raise angular for final snap",
+                "Force angularOut=0 in close　",
+                "Hand off to headingPID····　　",
+                "wallReset nudges θ a bit··　　"
             ],
             answer: 1,
             explain: "In close, angularOut=0."
@@ -711,19 +1157,35 @@ function initJudgeQuiz() {
         {
             q: "When do Liftlib soft min/max limits apply?",
             choices: [
-                "addPosition rewrites stored target degrees immediately",
-                "clampTarget at move start; named positions keep raw values",
-                "Dash warns only; motors are never limited",
-                "Only while nest/CONSOLE is open"
+                "addPosition rewrites targets·",
+                "Clamp at move; names stay raw",
+                "Dash warns; motors free·····　",
+                "Only if nest/CONSOLE open···　"
             ],
             answer: 1,
             explain: "Stored raw; soft clamp applies when a move starts."
         }
-    ];;;;;;;
+    ];
 
-    const questionBank = en ? questionBankEn : questionBankZh;
+    let difficulty = (localStorage.getItem('ezlib-quiz-difficulty') === 'hard') ? 'hard' : 'easy';
 
-    let session = [];
+    function currentBank() {
+        if (en) return difficulty === 'hard' ? questionBankEnHard : questionBankEnEasy;
+        return difficulty === 'hard' ? questionBankZhHard : questionBankZhEasy;
+    }
+
+    function leadForDifficulty() {
+        if (en) {
+            return difficulty === 'hard'
+                ? 'Hard · 20 edge-case questions (async defaults, wallReset axes, slew, waitUntil, soft limits, …).'
+                : 'Easy · 20 basics (units, bind, Dash, controls, odom/reset, dash_config, field, LVGL, auton_select).';
+        }
+        return difficulty === 'hard'
+            ? '困難 · 20 題邊界細節（async 預設、wallReset 軸向、slew、waitUntil、軟限位等）。'
+            : '容易 · 20 題基礎（單位、bind、Dash、練習掣、odom／reset、dash_config、場控、LVGL、auton_select）。';
+    }
+
+let session = [];
     let index = 0;
     let score = 0;
     let answered = false;
@@ -739,9 +1201,10 @@ function initJudgeQuiz() {
     }
 
     function buildSession() {
-        const order = shuffleInPlace(questionBank.map((_, i) => i));
+        const bank = currentBank();
+        const order = shuffleInPlace(bank.map((_, i) => i));
         session = order.map((qi) => {
-            const src = questionBank[qi];
+            const src = bank[qi];
             const choiceOrder = shuffleInPlace(src.choices.map((_, i) => i));
             const choices = choiceOrder.map((ci) => src.choices[ci]);
             const answer = choiceOrder.indexOf(src.answer);
@@ -768,10 +1231,25 @@ function initJudgeQuiz() {
         answered = false;
         session = [];
         setProgress(ui.ready, 0);
+        const easyLabel = en ? 'Easy' : '容易';
+        const hardLabel = en ? 'Hard' : '困難';
         stage.innerHTML = `
-            <p class="judge-quiz-lead">${ui.lead}</p>
+            <div class="judge-quiz-diff">
+                <label for="quiz-difficulty">${en ? 'Difficulty' : '難度'}</label>
+                <select id="quiz-difficulty" aria-label="${en ? 'Difficulty' : '難度'}">
+                    <option value="easy" ${difficulty === 'easy' ? 'selected' : ''}>${easyLabel}</option>
+                    <option value="hard" ${difficulty === 'hard' ? 'selected' : ''}>${hardLabel}</option>
+                </select>
+            </div>
+            <p class="judge-quiz-lead">${leadForDifficulty()}</p>
             <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">${ui.start}</button>
         `;
+        const diffSel = stage.querySelector('#quiz-difficulty');
+        diffSel.addEventListener('change', () => {
+            difficulty = diffSel.value === 'hard' ? 'hard' : 'easy';
+            localStorage.setItem('ezlib-quiz-difficulty', difficulty);
+            showIntro();
+        });
         stage.querySelector('#quiz-start-btn').addEventListener('click', startSession);
     }
 
@@ -846,8 +1324,5 @@ function initJudgeQuiz() {
         stage.querySelector('#quiz-retry-btn').addEventListener('click', showIntro);
     }
 
-    const startBtn = document.getElementById('quiz-start-btn');
-    if (startBtn) {
-        startBtn.addEventListener('click', startSession);
-    }
+    showIntro();
 }
