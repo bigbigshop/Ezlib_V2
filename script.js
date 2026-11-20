@@ -280,9 +280,9 @@ function initJudgeQuiz() {
         {
             q: "ezPID.drive(distance, …) 的距離單位是？",
             choices: [
-                "英吋（與行程一致）··　　",
-                "公分（再自行換算）··　　",
-                "編碼器輸出度數····　　",
+                "英吋（與行程一致）",
+                "公分（再自行換算）",
+                "編碼器輸出度數",
                 "LemLib 的 tile"
             ],
             answer: 0,
@@ -293,8 +293,8 @@ function initJudgeQuiz() {
             choices: [
                 "相對目前航向差值",
                 "絕對航向（度）值",
-                "以弧度表示目標　",
-                "僅輪式角度目標　"
+                "以弧度表示目標",
+                "僅輪式角度目標"
             ],
             answer: 1,
             explain: "turn 目標為絕對航向（度）。"
@@ -304,8 +304,8 @@ function initJudgeQuiz() {
             choices: [
                 "建構時 LemLib 增益",
                 "另一套獨立 angular",
-                "與轉向共用 ezPID　　",
-                "只改畫面不改出力···　　"
+                "與轉向共用 ezPID",
+                "只改畫面不改出力"
             ],
             answer: 2,
             explain: "bind 後 moveToPose／turnTo* 共用 ezPID。"
@@ -314,9 +314,9 @@ function initJudgeQuiz() {
             q: "在 Brain 上查看電量／位姿／溫度，主要靠？",
             choices: [
                 "PC 端 USB terminal",
-                "Dash（telem_dash）　",
-                "只讀 SD 內 CSV····　　",
-                "只靠手掣三行字········　　"
+                "Dash（telem_dash）",
+                "只讀 SD 內 CSV",
+                "只靠手掣三行字"
             ],
             answer: 1,
             explain: "使用 Brain 上的 Dash。"
@@ -324,9 +324,9 @@ function initJudgeQuiz() {
         {
             q: "練習場用 ←→ 切換 auton 時，會 set_pose(0,0,0) 嗎？",
             choices: [
-                "不會，只更換名稱····　　",
-                "會，每次都先歸零····　　",
-                "只清除 X／Y 軸···　　",
+                "不會，只更換名稱",
+                "會，每次都先歸零",
+                "只清除 X／Y 軸",
                 "會並執行 wallReset"
             ],
             answer: 0,
@@ -335,10 +335,10 @@ function initJudgeQuiz() {
         {
             q: "練習場單獨按 DOWN（未按 B／Y）會？",
             choices: [
-                "直接開啟 PID tuner··",
-                "刪除全部 LVGL 頁····　",
+                "直接開啟 PID tuner",
+                "刪除全部 LVGL 頁",
                 "返回 Dash（常 reset）",
-                "只寫入 CSV header·　"
+                "只寫入 CSV header"
             ],
             answer: 2,
             explain: "DOWN 返回 Dash；練習場通常 reset_pid。"
@@ -346,10 +346,10 @@ function initJudgeQuiz() {
         {
             q: "長距離 Auto 不宜全程只信 odometry，主因是？",
             choices: [
-                "ezPID 無法走遠路··　　",
+                "ezPID 無法走遠路",
                 "PROS 禁止 getPose",
                 "moveToPose 不用位姿",
-                "會漂移，中段要 reset　　"
+                "會漂移，中段要 reset"
             ],
             answer: 3,
             explain: "碰撞／打滑累積誤差，需中段 reset。"
@@ -358,9 +358,9 @@ function initJudgeQuiz() {
             q: "getRealPose 的主要用途是？",
             choices: [
                 "必須先填 CAD offset",
-                "做相對位姿校正用·····　　",
+                "做相對位姿校正用",
                 "等同 wallReset 撞牆",
-                "只改 θ 不改 XY···　　"
+                "只改 θ 不改 XY"
             ],
             answer: 1,
             explain: "以距離感測做相對位姿校正。"
@@ -369,9 +369,9 @@ function initJudgeQuiz() {
             q: "要改 DRV／MCH 溫度對應哪顆馬達，應改？",
             choices: [
                 "dash_config.hpp 對照",
-                "telem_dash.cpp 寫死·",
-                "重編 liblvgl.a 庫···　",
-                "auton_select 註冊表·　"
+                "telem_dash.cpp 寫死",
+                "重編 liblvgl.a 庫",
+                "auton_select 註冊表"
             ],
             answer: 0,
             explain: "修改 customs/dash_config.hpp。"
@@ -379,9 +379,9 @@ function initJudgeQuiz() {
         {
             q: "練習場如何進入 PID tuner？",
             choices: [
-                "接場控後只按 X·　　",
-                "必須先插入 SD 卡　",
-                "拔場控後按 X+A　　",
+                "接場控後只按 X",
+                "必須先插入 SD 卡",
+                "拔場控後按 X+A",
                 "DOWN+Y 直接進入"
             ],
             answer: 2,
@@ -390,10 +390,10 @@ function initJudgeQuiz() {
         {
             q: "timeout 單位與逾時行為是？",
             choices: [
-                "秒；只寫一筆 log·····　　",
+                "秒；只寫一筆 log",
                 "tick；自動 wallReset",
-                "以 LVGL 幀計時·····　　",
-                "毫秒；該次運動停止······　　"
+                "以 LVGL 幀計時",
+                "毫秒；該次運動停止"
             ],
             answer: 3,
             explain: "timeout 為毫秒；届滿停止該次運動。"
@@ -402,9 +402,9 @@ function initJudgeQuiz() {
             q: "set_heading_constants 主要服務？",
             choices: [
                 "moveToPose 曲線角向",
-                "drive 直線時鎖航向·　　",
-                "全部 turnTo* 專用　　",
-                "只改手掣上顯示······　　"
+                "drive 直線時鎖航向",
+                "全部 turnTo* 專用",
+                "只改手掣上顯示"
             ],
             answer: 1,
             explain: "heading 用於 drive() 直線鎖向。"
@@ -412,10 +412,10 @@ function initJudgeQuiz() {
         {
             q: "MotorGroup.get_temperature(index) 的 index 是？",
             choices: [
-                "宣告 list 次序（0 起）　",
+                "宣告 list 次序（0 起）",
                 "等於 smart-port 號碼",
-                "開機掃到的第一顆······　　",
-                "反轉馬達要用負值······　　"
+                "開機掃到的第一顆",
+                "反轉馬達要用負值"
             ],
             answer: 0,
             explain: "是 MotorGroup 宣告次序，不是 port 號。"
@@ -423,10 +423,10 @@ function initJudgeQuiz() {
         {
             q: "getRealPose 遇到不可信讀數時通常？",
             choices: [
-                "仍然強制寫入位姿······",
-                "斜角再大也照樣用·····　",
+                "仍然強制寫入位姿",
+                "斜角再大也照樣用",
                 "跳過並回傳 expected",
-                "固定回 -1 令崩潰···　"
+                "固定回 -1 令崩潰"
             ],
             answer: 2,
             explain: "低可信或大斜角會跳過該次修正。"
@@ -435,9 +435,9 @@ function initJudgeQuiz() {
             q: "手推車量測 For PID Distance，應看？",
             choices: [
                 "只能看 PC terminal",
-                "必須開著 PID tuner　",
-                "只能事後開 CSV 檔··　　",
-                "手掣 menu 1 的 D:　"
+                "必須開著 PID tuner",
+                "只能事後開 CSV 檔",
+                "手掣 menu 1 的 D:"
             ],
             answer: 3,
             explain: "displayMenu=1 顯示 get_traveled()（英吋）。"
@@ -445,10 +445,10 @@ function initJudgeQuiz() {
         {
             q: "練習場按下 DOWN+B 會？",
             choices: [
-                "只清除 traveled 值·",
+                "只清除 traveled 值",
                 "執行 autonomous()",
-                "開啟 PID tuner 頁　",
-                "刪 LVGL 重建 Dash　"
+                "開啟 PID tuner 頁",
+                "刪 LVGL 重建 Dash"
             ],
             answer: 1,
             explain: "DOWN+B 執行 autonomous()。"
@@ -456,10 +456,10 @@ function initJudgeQuiz() {
         {
             q: "inline PID {.p,.i,.d} 跑完之後？",
             choices: [
-                "恢復原來的全域增益··　　",
-                "永久覆寫全域設定···　　",
+                "恢復原來的全域增益",
+                "永久覆寫全域設定",
                 "連 startI 一併永改",
-                "只改顯示不改出力···　　"
+                "只改顯示不改出力"
             ],
             answer: 0,
             explain: "單次覆寫，結束後恢復全域。"
@@ -467,9 +467,9 @@ function initJudgeQuiz() {
         {
             q: "場控接上後，PID tuner 會？",
             choices: [
-                "保持開啟方便場邊調·····　　",
-                "只停動畫仍會刷新······　　",
-                "關閉並釋放 PID UI··　　",
+                "保持開啟方便場邊調",
+                "只停動畫仍會刷新",
+                "關閉並釋放 PID UI",
                 "自動跑 autonomous()"
             ],
             answer: 2,
@@ -479,9 +479,9 @@ function initJudgeQuiz() {
             q: "LV_MEM_CUSTOM 設為 1 表示？",
             choices: [
                 "固定 256KB 禁 malloc",
-                "必須用 10MB 內建池···　　",
-                "softfp 可配 hardfp　",
-                "LVGL 改用系統 malloc　"
+                "必須用 10MB 內建池",
+                "softfp 可配 hardfp",
+                "LVGL 改用系統 malloc"
             ],
             answer: 3,
             explain: "CUSTOM=1 使用系統 malloc／free。"
@@ -490,9 +490,9 @@ function initJudgeQuiz() {
             q: "如何切換目前 auton？",
             choices: [
                 "必須點 Brain Selector",
-                "控制器 ←→ 換名稱······　　",
-                "main.cpp 只能寫死···　　",
-                "只靠 SD 檔名決定······　　"
+                "控制器 ←→ 換名稱",
+                "main.cpp 只能寫死",
+                "只靠 SD 檔名決定"
             ],
             answer: 1,
             explain: "auton_select + 控制器 ←→ 換名。"
@@ -503,10 +503,10 @@ function initJudgeQuiz() {
         {
             q: "What unit does ezPID.drive(distance, …) use?",
             choices: [
-                "Inches (matches travel)··　　",
+                "Inches (matches travel)",
                 "Centimeters (convert later)",
-                "Motor encoder degrees····　　",
-                "LemLib tile units········　　"
+                "Motor encoder degrees",
+                "LemLib tile units"
             ],
             answer: 0,
             explain: "Drive distance is inches."
@@ -516,8 +516,8 @@ function initJudgeQuiz() {
             choices: [
                 "Relative delta heading",
                 "Absolute heading (deg)",
-                "Target in radians···　　",
-                "Wheel angle only····　　"
+                "Target in radians",
+                "Wheel angle only"
             ],
             answer: 1,
             explain: "Turn targets absolute heading in degrees."
@@ -525,9 +525,9 @@ function initJudgeQuiz() {
         {
             q: "After bindEzDrive, moveToPose mainly uses?",
             choices: [
-                "Ctor LemLib gain sets　　",
-                "A separate angular set　",
-                "Shared ezPID gains···　　",
+                "Ctor LemLib gain sets",
+                "A separate angular set",
+                "Shared ezPID gains",
                 "Display only, no motors"
             ],
             answer: 2,
@@ -536,9 +536,9 @@ function initJudgeQuiz() {
         {
             q: "Where do you read battery/pose/temps on Brain?",
             choices: [
-                "PC USB terminal view　",
-                "Dash (telem_dash) UI　",
-                "SD CSV files only··　　",
+                "PC USB terminal view",
+                "Dash (telem_dash) UI",
+                "SD CSV files only",
                 "Controller lines only"
             ],
             answer: 1,
@@ -547,10 +547,10 @@ function initJudgeQuiz() {
         {
             q: "Does practice ←→ changing auton also set_pose(0,0,0)?",
             choices: [
-                "No; name change only　　",
+                "No; name change only",
                 "Yes; zeros pose always",
-                "Clears X/Y axes only　　",
-                "Yes, plus wallReset·　　"
+                "Clears X/Y axes only",
+                "Yes, plus wallReset"
             ],
             answer: 0,
             explain: "←→ only changes the auton name."
@@ -558,10 +558,10 @@ function initJudgeQuiz() {
         {
             q: "Solo DOWN in practice (no B/Y held) does?",
             choices: [
-                "Opens the PID tuner·······",
-                "Deletes every LVGL page··　",
+                "Opens the PID tuner",
+                "Deletes every LVGL page",
                 "Returns Dash (often reset)",
-                "Writes CSV header only···　"
+                "Writes CSV header only"
             ],
             answer: 2,
             explain: "DOWN returns to Dash; practice usually reset_pid."
@@ -569,10 +569,10 @@ function initJudgeQuiz() {
         {
             q: "Why not trust odometry alone for a long Auto?",
             choices: [
-                "ezPID cannot go far···　　",
-                "PROS forbids getPose··　　",
+                "ezPID cannot go far",
+                "PROS forbids getPose",
                 "moveToPose needs no pose",
-                "Drift; reset mid-run··　　"
+                "Drift; reset mid-run"
             ],
             answer: 3,
             explain: "Bumps/slip accumulate error; reset mid-run."
@@ -582,8 +582,8 @@ function initJudgeQuiz() {
             choices: [
                 "Needs a CAD offset first",
                 "Relative pose correction",
-                "Same as wallReset hits　　",
-                "Only changes θ, not XY　　"
+                "Same as wallReset hits",
+                "Only changes θ, not XY"
             ],
             answer: 1,
             explain: "Relative pose correction from ranging."
@@ -591,9 +591,9 @@ function initJudgeQuiz() {
         {
             q: "Where do you map DRV/MCH temperature motors?",
             choices: [
-                "dash_config.hpp map　　",
-                "telem_dash.cpp ports　",
-                "Rebuild liblvgl.a··　　",
+                "dash_config.hpp map",
+                "telem_dash.cpp ports",
+                "Rebuild liblvgl.a",
                 "auton_select registry"
             ],
             answer: 0,
@@ -603,9 +603,9 @@ function initJudgeQuiz() {
             q: "How do you open the PID tuner in practice?",
             choices: [
                 "Field on, press X only",
-                "SD card is required·　　",
+                "SD card is required",
                 "Unplug field, then X+A",
-                "DOWN+Y opens tuner··　　"
+                "DOWN+Y opens tuner"
             ],
             answer: 2,
             explain: "Unplug field control, then X+A."
@@ -613,9 +613,9 @@ function initJudgeQuiz() {
         {
             q: "timeout unit and behavior on expiry?",
             choices: [
-                "Seconds; log only······",
-                "Ticks; auto wallReset·　",
-                "Counted in LVGL frames　",
+                "Seconds; log only",
+                "Ticks; auto wallReset",
+                "Counted in LVGL frames",
                 "Milliseconds; stop move"
             ],
             answer: 3,
@@ -625,9 +625,9 @@ function initJudgeQuiz() {
             q: "set_heading_constants mainly serves?",
             choices: [
                 "moveToPose curve heading",
-                "drive() heading lock··　　",
-                "All turnTo* calls only　　",
-                "Controller display only　"
+                "drive() heading lock",
+                "All turnTo* calls only",
+                "Controller display only"
             ],
             answer: 1,
             explain: "Heading PID locks heading during drive()."
@@ -635,9 +635,9 @@ function initJudgeQuiz() {
         {
             q: "index in MotorGroup.get_temperature(index)?",
             choices: [
-                "List order starting at 0　　",
-                "Equals smart-port number　　",
-                "First motor found at boot　",
+                "List order starting at 0",
+                "Equals smart-port number",
+                "First motor found at boot",
                 "Negative if motor reversed"
             ],
             answer: 0,
@@ -647,9 +647,9 @@ function initJudgeQuiz() {
             q: "getRealPose on a bad or skewed reading?",
             choices: [
                 "Still forces a pose write",
-                "Uses raw even if skewed　　",
-                "Skips / returns expected　",
-                "Returns -1 and crashes·　　"
+                "Uses raw even if skewed",
+                "Skips / returns expected",
+                "Returns -1 and crashes"
             ],
             answer: 2,
             explain: "Low confidence or large skew skips the correction."
@@ -657,9 +657,9 @@ function initJudgeQuiz() {
         {
             q: "Where is For PID Distance while pushing?",
             choices: [
-                "PC terminal readout only·",
-                "Only while tuner is open　",
-                "Only later via CSV file·　",
+                "PC terminal readout only",
+                "Only while tuner is open",
+                "Only later via CSV file",
                 "Controller menu 1 D: line"
             ],
             answer: 3,
@@ -668,9 +668,9 @@ function initJudgeQuiz() {
         {
             q: "What does DOWN+B do in practice mode?",
             choices: [
-                "Only clears traveled　　",
-                "Runs autonomous() now　",
-                "Opens the PID tuner·　　",
+                "Only clears traveled",
+                "Runs autonomous() now",
+                "Opens the PID tuner",
                 "Deletes LVGL, rebuilds"
             ],
             answer: 1,
@@ -679,10 +679,10 @@ function initJudgeQuiz() {
         {
             q: "After an inline PID {.p,.i,.d} move?",
             choices: [
-                "Global gains restore···　　",
-                "Globals stay overwritten　",
+                "Global gains restore",
+                "Globals stay overwritten",
                 "startI also stays changed",
-                "Display only, no motors　　"
+                "Display only, no motors"
             ],
             answer: 0,
             explain: "One-shot override; globals restore afterward."
@@ -690,10 +690,10 @@ function initJudgeQuiz() {
         {
             q: "When field control connects, the PID tuner?",
             choices: [
-                "Stays open for pit tune　　",
+                "Stays open for pit tune",
                 "Anim stops; still refresh",
-                "Closes / releases PID UI　",
-                "Auto-runs autonomous()·　　"
+                "Closes / releases PID UI",
+                "Auto-runs autonomous()"
             ],
             answer: 2,
             explain: "Field control force_off / releases PID UI."
@@ -701,9 +701,9 @@ function initJudgeQuiz() {
         {
             q: "LV_MEM_CUSTOM set to 1 means?",
             choices: [
-                "Fixed 256KB; no malloc·",
-                "Must use a 10MB pool··　",
-                "softfp with hardfp OK·　",
+                "Fixed 256KB; no malloc",
+                "Must use a 10MB pool",
+                "softfp with hardfp OK",
                 "LVGL uses system malloc"
             ],
             answer: 3,
@@ -713,9 +713,9 @@ function initJudgeQuiz() {
             q: "How do you switch the current auton?",
             choices: [
                 "Brain Selector page only",
-                "Controller ←→ renames·　　",
-                "One hard-coded auton··　　",
-                "SD filename alone picks　"
+                "Controller ←→ renames",
+                "One hard-coded auton",
+                "SD filename alone picks"
             ],
             answer: 1,
             explain: "auton_select + controller ←→ changes the name."
@@ -726,10 +726,10 @@ function initJudgeQuiz() {
         {
             q: "省略 async 時，ezPID.drive 與 LemLib moveToPoint 預設？",
             choices: [
-                "兩者皆預設 async 並回傳···········",
+                "兩者皆預設 async 並回傳",
                 "ezPID 預設阻塞；LemLib 多為 async",
-                "兩者皆預設阻塞，要手動非阻塞···········　",
-                "只有 turn 阻塞；drive 與點對點相同··　"
+                "兩者皆預設阻塞，要手動非阻塞",
+                "只有 turn 阻塞；drive 與點對點相同"
             ],
             answer: 1,
             explain: "EzDrive 預設 async=false；LemLib 多數運動預設 true。"
@@ -738,9 +738,9 @@ function initJudgeQuiz() {
             q: "wallReset('x', …) 實際會把哪一軸鎖成 0？",
             choices: [
                 "把 X 設 0，Y／θ 都不變",
-                "把 Y 設 0，字母直覺易反　",
-                "X 與 Y 都歸零，只留 θ　",
-                "只重設 θ，兩軸都不改··　　"
+                "把 Y 設 0，字母直覺易反",
+                "X 與 Y 都歸零，只留 θ",
+                "只重設 θ，兩軸都不改"
             ],
             answer: 1,
             explain: "'x' → setPose(x, 0, θ)，鎖定的是 Y=0。"
@@ -748,9 +748,9 @@ function initJudgeQuiz() {
         {
             q: "bindEzDrive 之後，建構時的 LemLib ControllerSettings？",
             choices: [
-                "仍是 moveToPose 主增益　",
-                "只影響 swing 不影響轉向·　　",
-                "大致擱置，改走 ezPID···　　",
+                "仍是 moveToPose 主增益",
+                "只影響 swing 不影響轉向",
+                "大致擱置，改走 ezPID",
                 "每次 autonomous 自動還原"
             ],
             answer: 2,
@@ -759,10 +759,10 @@ function initJudgeQuiz() {
         {
             q: "getRealPose 在大斜角或低 confidence 時？",
             choices: [
-                "仍強制寫入並放大修正······　　",
+                "仍強制寫入並放大修正",
                 "回傳 -1 並令 setPose 崩",
-                "跳過修正，回傳 expected　　",
-                "改呼叫 wallReset 作後備　"
+                "跳過修正，回傳 expected",
+                "改呼叫 wallReset 作後備"
             ],
             answer: 2,
             explain: "不可信或大斜角時跳過，回傳 expected。"
@@ -770,10 +770,10 @@ function initJudgeQuiz() {
         {
             q: "練習場按住 Y 再按 DOWN（DOWN+Y）會？",
             choices: [
-                "開啟 tuner 並寫入 CSV·····",
-                "只清 traveled，車不動·····　",
+                "開啟 tuner 並寫入 CSV",
+                "只清 traveled，車不動",
                 "moveToPose(0,0,0) 回原點",
-                "與單獨 DOWN 一樣回 Dash···　"
+                "與單獨 DOWN 一樣回 Dash"
             ],
             answer: 2,
             explain: "DOWN+Y：chassis.moveToPose(0,0,0, …)。"
@@ -783,8 +783,8 @@ function initJudgeQuiz() {
             choices: [
                 "moveToPose 曲線角向 lead",
                 "全部 turnTo／swingTo 專用",
-                "僅 drive() 直線時鎖航向··　　",
-                "只改 Dash 的 θ 顯示值···　　"
+                "僅 drive() 直線時鎖航向",
+                "只改 Dash 的 θ 顯示值"
             ],
             answer: 2,
             explain: "headingPID 只服務 drive() 鎖向；轉向用 turnPID。"
@@ -792,10 +792,10 @@ function initJudgeQuiz() {
         {
             q: "inline PID {.p,.i,.d} 對 startI 的影響？",
             choices: [
-                "一併覆寫且結束不還原········",
-                "暫時改 startI 結束再還··　",
+                "一併覆寫且結束不還原",
+                "暫時改 startI 結束再還",
                 "PIDGains 不含 startI",
-                "強制 startI=0 防暴衝··　"
+                "強制 startI=0 防暴衝"
             ],
             answer: 2,
             explain: "inline 只覆寫 p／i／d；startI 不從 PIDGains 來。"
@@ -803,9 +803,9 @@ function initJudgeQuiz() {
         {
             q: "場控接上後，PID tuner 與 Dash 分別？",
             choices: [
-                "兩者銷毀，要重開機········　　",
-                "tuner 釋放；Dash 常保留　　",
-                "tuner 仍開，只讀增益····　　",
+                "兩者銷毀，要重開機",
+                "tuner 釋放；Dash 常保留",
+                "tuner 仍開，只讀增益",
                 "自動重開 tuner 並跑 auton"
             ],
             answer: 1,
@@ -814,9 +814,9 @@ function initJudgeQuiz() {
         {
             q: "getRealPose 成功修正時，單次位移大約？",
             choices: [
-                "不限制，差值多大寫多大····　　",
-                "固定每次只改 0.1 英吋··　　",
-                "軟夾限約 ±6 英吋·····　　",
+                "不限制，差值多大寫多大",
+                "固定每次只改 0.1 英吋",
+                "軟夾限約 ±6 英吋",
                 "逾 1 英吋改 wallReset"
             ],
             answer: 2,
@@ -825,10 +825,10 @@ function initJudgeQuiz() {
         {
             q: "PID tuner 內 LEFT／RIGHT 與練習場 ←→？",
             choices: [
-                "兩者都只切 auton 名稱　　",
-                "tuner 切增益欄／可歸零　　",
+                "兩者都只切 auton 名稱",
+                "tuner 切增益欄／可歸零",
                 "tuner 內等同 DOWN+B",
-                "快捷鍵完全同一處理函式···　　"
+                "快捷鍵完全同一處理函式"
             ],
             answer: 1,
             explain: "tuner 的 ←→ 切增益欄位／可 zero_pose。"
@@ -836,10 +836,10 @@ function initJudgeQuiz() {
         {
             q: "LemLib slew step 設成 ≥250（如 255）？",
             choices: [
-                "代表硬體最大爬升斜率·····　　",
-                "視為 0，即關閉 slew··　　",
+                "代表硬體最大爬升斜率",
+                "視為 0，即關閉 slew",
                 "每 10ms 加 255 近滿出力",
-                "只影響轉向，直線無效·····　　"
+                "只影響轉向，直線無效"
             ],
             answer: 1,
             explain: "step≥250 當成 0＝unslewed。"
@@ -847,9 +847,9 @@ function initJudgeQuiz() {
         {
             q: "練習場單獨新按下 UP 通常會？",
             choices: [
-                "開啟 PID tuner 畫面·　　",
-                "立刻執行 autonomous()　",
-                "取消運動並 reset_pid·　　",
+                "開啟 PID tuner 畫面",
+                "立刻執行 autonomous()",
+                "取消運動並 reset_pid",
                 "寫入 auton_sel.txt 檔"
             ],
             answer: 2,
@@ -858,10 +858,10 @@ function initJudgeQuiz() {
         {
             q: "ezPID.waitUntil 與 chassis.waitUntil 量的距離？",
             choices: [
-                "完全相同，皆 distTraveled···",
+                "完全相同，皆 distTraveled",
                 "ezPID 歐氏距；chassis 累計行程",
-                "兩者皆 IMU 路徑積分·········　",
-                "ezPID 度數；chassis 英吋··　"
+                "兩者皆 IMU 路徑積分",
+                "ezPID 度數；chassis 英吋"
             ],
             answer: 1,
             explain: "語意不同：hypot 位移 vs distTraveled。"
@@ -869,10 +869,10 @@ function initJudgeQuiz() {
         {
             q: "auton_select 名稱在重開機後通常？",
             choices: [
-                "一定回到清單第一個·········",
+                "一定回到清單第一個",
                 "存 SD：auton_sel.txt",
-                "存 EEPROM，與 SD 無關·　",
-                "僅當次有效，auton 前清···　"
+                "存 EEPROM，與 SD 無關",
+                "僅當次有效，auton 前清"
             ],
             answer: 1,
             explain: "持久化於 SD：/usd/auton_sel.txt。"
@@ -880,10 +880,10 @@ function initJudgeQuiz() {
         {
             q: "drive／turn 未給 timeout 時，預設約？",
             choices: [
-                "無限制直到 settle····　　",
-                "約 1500 ms 後停止···　　",
+                "無限制直到 settle",
+                "約 1500 ms 後停止",
                 "固定 5000 ms 同 xPose",
-                "約九十個 LVGL 幀·····　　"
+                "約九十個 LVGL 幀"
             ],
             answer: 1,
             explain: "drive／turn 預設約 1500ms；xPose timeout 必填。"
@@ -891,10 +891,10 @@ function initJudgeQuiz() {
         {
             q: "Dash DRV／MCH 溫度要對到正確馬達？",
             choices: [
-                "改 telem_dash.cpp port··",
+                "改 telem_dash.cpp port",
                 "改 dash_config；index 為次序",
-                "改 auton_select motor 欄　",
-                "改 lv_conf 的 MEM_SIZE··　"
+                "改 auton_select motor 欄",
+                "改 lv_conf 的 MEM_SIZE"
             ],
             answer: 1,
             explain: "改 dash_config.hpp；index≠smart-port。"
@@ -902,10 +902,10 @@ function initJudgeQuiz() {
         {
             q: "LV_MEM_CUSTOM=1 時加大 LV_MEM_SIZE？",
             choices: [
-                "立刻擴大靜態記憶體池········　　",
-                "幾乎無影響，走系統 malloc··　　",
+                "立刻擴大靜態記憶體池",
+                "幾乎無影響，走系統 malloc",
                 "強制 softfp 並禁 realloc",
-                "Dash RAM 改顯示該常數···　　"
+                "Dash RAM 改顯示該常數"
             ],
             answer: 1,
             explain: "CUSTOM=1 時靜態池無關，走 libc 配置。"
@@ -913,10 +913,10 @@ function initJudgeQuiz() {
         {
             q: "←→ 切 auton 與進入 autonomous() 的位姿？",
             choices: [
-                "兩者都會 set_pose 歸零···",
+                "兩者都會 set_pose 歸零",
                 "←→ 不重設；跑 auton 常先歸零",
-                "只有 ←→ 重設；auton 保留·　",
-                "兩者都不動，只改名稱········　"
+                "只有 ←→ 重設；auton 保留",
+                "兩者都不動，只改名稱"
             ],
             answer: 1,
             explain: "切名不重設；跑 auton 時 main 常先歸零。"
@@ -924,10 +924,10 @@ function initJudgeQuiz() {
         {
             q: "moveToPoint／Pose 接近目標（約 <7.5″）？",
             choices: [
-                "加大 angular 做最終對準·",
+                "加大 angular 做最終對準",
                 "angular 強制 0，不再扭頭",
-                "改由 headingPID 接管　",
-                "用 wallReset 微調 θ　"
+                "改由 headingPID 接管",
+                "用 wallReset 微調 θ"
             ],
             answer: 1,
             explain: "接近目標進入 close，angularOut=0。"
@@ -949,10 +949,10 @@ function initJudgeQuiz() {
         {
             q: "Omitting async: ezPID.drive vs LemLib moveToPoint?",
             choices: [
-                "Both default async and return······",
+                "Both default async and return",
                 "ezPID blocks; most LemLib are async",
-                "Both block; set true to free······　",
-                "Only turn blocks; drive matches···　"
+                "Both block; set true to free",
+                "Only turn blocks; drive matches"
             ],
             answer: 1,
             explain: "EzDrive defaults async=false; most LemLib moves default true."
@@ -960,10 +960,10 @@ function initJudgeQuiz() {
         {
             q: "wallReset('x', …) locks which axis to 0?",
             choices: [
-                "Sets X=0; Y/θ unchanged·········",
+                "Sets X=0; Y/θ unchanged",
                 "Sets Y=0; letter is easy to flip",
-                "Zeros X and Y; keeps θ·········　",
-                "Resets θ only; axes stay·······　"
+                "Zeros X and Y; keeps θ",
+                "Resets θ only; axes stay"
             ],
             answer: 1,
             explain: "'x' → setPose(x, 0, θ), i.e. Y=0."
@@ -972,9 +972,9 @@ function initJudgeQuiz() {
             q: "After bindEzDrive, ctor LemLib ControllerSettings?",
             choices: [
                 "Still main moveToPose gains",
-                "Swing only, not drive/turn　",
+                "Swing only, not drive/turn",
                 "Mostly unused; ezPID drives",
-                "Restored each autonomous()　"
+                "Restored each autonomous()"
             ],
             answer: 2,
             explain: "After bind, motion uses ezPID; ctor settings unused."
@@ -983,9 +983,9 @@ function initJudgeQuiz() {
             q: "getRealPose when skew is large or confidence low?",
             choices: [
                 "Forces write and doubles fix",
-                "Returns -1; setPose crashes　",
-                "Skips fix; returns expected　",
-                "Falls back to wallReset···　　"
+                "Returns -1; setPose crashes",
+                "Skips fix; returns expected",
+                "Falls back to wallReset"
             ],
             answer: 2,
             explain: "Untrusted or skewed readings skip; return expected."
@@ -993,10 +993,10 @@ function initJudgeQuiz() {
         {
             q: "Practice: hold Y then DOWN (DOWN+Y) does?",
             choices: [
-                "Opens tuner and writes CSV·",
-                "Clears traveled; no motion　",
+                "Opens tuner and writes CSV",
+                "Clears traveled; no motion",
                 "moveToPose(0,0,0) to origin",
-                "Same as solo DOWN to Dash·　"
+                "Same as solo DOWN to Dash"
             ],
             answer: 2,
             explain: "DOWN+Y: chassis.moveToPose(0,0,0, …)."
@@ -1005,9 +1005,9 @@ function initJudgeQuiz() {
             q: "set_heading_constants tunes which loop?",
             choices: [
                 "moveToPose curve heading/lead",
-                "All turnTo/swingTo calls···　　",
-                "Only drive() heading lock··　　",
-                "Dash θ display only········　　"
+                "All turnTo/swingTo calls",
+                "Only drive() heading lock",
+                "Dash θ display only"
             ],
             answer: 2,
             explain: "headingPID serves drive() lock; turns use turnPID."
@@ -1015,10 +1015,10 @@ function initJudgeQuiz() {
         {
             q: "Inline PID {.p,.i,.d} effect on startI?",
             choices: [
-                "Overwrites startI for good　　",
+                "Overwrites startI for good",
                 "Changes startI then restores",
-                "PIDGains has no startI····　　",
-                "Forces startI=0 always····　　"
+                "PIDGains has no startI",
+                "Forces startI=0 always"
             ],
             answer: 2,
             explain: "Inline overrides p/i/d only; startI not from PIDGains."
@@ -1026,10 +1026,10 @@ function initJudgeQuiz() {
         {
             q: "Field connected: tuner vs Dash behavior?",
             choices: [
-                "Both destroyed; reboot needed···",
+                "Both destroyed; reboot needed",
                 "Tuner released; Dash often stays",
-                "Tuner open, gains read-only····　",
-                "Reopens tuner and runs auton···　"
+                "Tuner open, gains read-only",
+                "Reopens tuner and runs auton"
             ],
             answer: 1,
             explain: "Field force_off releases PID UI; Dash generally kept."
@@ -1038,9 +1038,9 @@ function initJudgeQuiz() {
             q: "getRealPose successful fix: correction size?",
             choices: [
                 "Unlimited; raw diff written",
-                "Always 0.1 inches exactly　　",
-                "Soft-clamped about ±6 in·　　",
-                "Over 1 in uses wallReset·　　"
+                "Always 0.1 inches exactly",
+                "Soft-clamped about ±6 in",
+                "Over 1 in uses wallReset"
             ],
             answer: 2,
             explain: "Correction is soft-clamped around ±6″."
@@ -1048,10 +1048,10 @@ function initJudgeQuiz() {
         {
             q: "LEFT/RIGHT in PID tuner vs practice ←→?",
             choices: [
-                "Both only change auton name····",
+                "Both only change auton name",
                 "Tuner cycles fields / zero_pose",
-                "Tuner runs same as DOWN+B·····　",
-                "Identical shared key handler··　"
+                "Tuner runs same as DOWN+B",
+                "Identical shared key handler"
             ],
             answer: 1,
             explain: "Tuner ←→ cycles gain fields / may zero_pose."
@@ -1059,10 +1059,10 @@ function initJudgeQuiz() {
         {
             q: "LemLib slew step set to ≥250 (e.g. 255)?",
             choices: [
-                "Max hardware ramp rate····　　",
-                "Treated as 0: slew disabled　",
+                "Max hardware ramp rate",
+                "Treated as 0: slew disabled",
                 "Add 255/10ms near full power",
-                "Turn only; lateral ignores　　"
+                "Turn only; lateral ignores"
             ],
             answer: 1,
             explain: "step≥250 is treated as 0 = unslewed."
@@ -1070,10 +1070,10 @@ function initJudgeQuiz() {
         {
             q: "Solo new-press UP in practice usually?",
             choices: [
-                "Opens the PID tuner UI·····",
-                "Runs autonomous() at once·　",
+                "Opens the PID tuner UI",
+                "Runs autonomous() at once",
                 "Cancel motion and reset_pid",
-                "Writes auton_sel.txt file·　"
+                "Writes auton_sel.txt file"
             ],
             answer: 2,
             explain: "Practice UP: cancel + reset_pid."
@@ -1081,9 +1081,9 @@ function initJudgeQuiz() {
         {
             q: "ezPID.waitUntil vs chassis.waitUntil measure?",
             choices: [
-                "Same: both distTraveled····　　",
-                "ezPID hypot; chassis travel　　",
-                "Both IMU path length only··　　",
+                "Same: both distTraveled",
+                "ezPID hypot; chassis travel",
+                "Both IMU path length only",
                 "ezPID degrees; chassis inches"
             ],
             answer: 1,
@@ -1092,9 +1092,9 @@ function initJudgeQuiz() {
         {
             q: "After reboot, auton_select name usually?",
             choices: [
-                "Always first list entry　　",
-                "SD file auton_sel.txt··　　",
-                "Brain EEPROM; no SD····　　",
+                "Always first list entry",
+                "SD file auton_sel.txt",
+                "Brain EEPROM; no SD",
                 "Cleared before each auton"
             ],
             answer: 1,
@@ -1103,8 +1103,8 @@ function initJudgeQuiz() {
         {
             q: "Default timeout when drive/turn omit it?",
             choices: [
-                "Unlimited until settle　　",
-                "About 1500 ms then stop　",
+                "Unlimited until settle",
+                "About 1500 ms then stop",
                 "Fixed 5000 ms like xPose",
                 "About ninety LVGL frames"
             ],
@@ -1114,10 +1114,10 @@ function initJudgeQuiz() {
         {
             q: "Map Dash DRV/MCH temps to correct motors?",
             choices: [
-                "Edit telem_dash.cpp ports···",
+                "Edit telem_dash.cpp ports",
                 "Edit dash_config; list index",
-                "Edit auton_select motors···　",
-                "Edit lv_conf MEM_SIZE······　"
+                "Edit auton_select motors",
+                "Edit lv_conf MEM_SIZE"
             ],
             answer: 1,
             explain: "Edit dash_config.hpp; index ≠ smart-port."
@@ -1125,10 +1125,10 @@ function initJudgeQuiz() {
         {
             q: "LV_MEM_CUSTOM=1 and raising LV_MEM_SIZE?",
             choices: [
-                "Grows LVGL static pool now····",
+                "Grows LVGL static pool now",
                 "Mostly irrelevant; uses malloc",
-                "Forces softfp; bans realloc··　",
-                "Dash RAM shows that constant·　"
+                "Forces softfp; bans realloc",
+                "Dash RAM shows that constant"
             ],
             answer: 1,
             explain: "CUSTOM=1: static pool unused; libc allocation."
@@ -1136,10 +1136,10 @@ function initJudgeQuiz() {
         {
             q: "←→ change auton vs enter autonomous() — pose?",
             choices: [
-                "Both set_pose(0,0,0)··········",
+                "Both set_pose(0,0,0)",
                 "←→ keeps pose; run often zeros",
-                "Only ←→ resets; auton keeps··　",
-                "Neither touches pose; name···　"
+                "Only ←→ resets; auton keeps",
+                "Neither touches pose; name"
             ],
             answer: 1,
             explain: "Name change keeps pose; running auton often zeros."
@@ -1148,9 +1148,9 @@ function initJudgeQuiz() {
             q: "Near target (~<7.5″) in moveToPoint/Pose?",
             choices: [
                 "Raise angular for final snap",
-                "Force angularOut=0 in close　",
-                "Hand off to headingPID····　　",
-                "wallReset nudges θ a bit··　　"
+                "Force angularOut=0 in close",
+                "Hand off to headingPID",
+                "wallReset nudges θ a bit"
             ],
             answer: 1,
             explain: "In close, angularOut=0."
