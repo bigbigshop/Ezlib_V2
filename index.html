@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-HK" data-lang="zh" data-docs-version="2.0.0">
+<html lang="zh-HK" data-lang="zh" data-docs-version="2.0.2">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,8 +20,9 @@
         </select>
         <span class="version-bar-label">Version</span>
         <select id="docs-version" aria-label="Select EzLib docs version">
-            <option value="2.0.0">2.0.0</option>
+            <option value="2.0.2" selected>2.0.2</option>
             <option value="2.0.1">2.0.1</option>
+            <option value="2.0.0">2.0.0</option>
         </select>
     </div>
 
@@ -33,7 +34,7 @@
             </button>
             <div class="header-title">
                 <span class="page-icon" style="font-size: 20px;">🤖</span>
-                <span class="header-text">EzLib · 2.0.0</span>
+                <span class="header-text">EzLib · 2.0.2</span>
             </div>
         </div>
     </header>
@@ -101,10 +102,15 @@
             <a href="#ch7-debug" class="nav-link">🛠️ 遙測與手制快捷鍵</a>
             <a href="#ch7-dash" class="nav-link">🖥️ Brain Dash 主題</a>
             <a href="#ch7-tuner" class="nav-link">🎛️ PID 調校器</a>
-            <a href="#ch7-console" class="nav-link only-v201">📟 Brain 右邊 CONSOLE</a>
+            <a href="#ch7-console" class="nav-link since-v201">📟 Brain 右邊 CONSOLE</a>
             <a href="#ch7-sd" class="nav-link">💾 SD 卡 CSV</a>
             <a href="#ch7-monitor" class="nav-link">📱 Controller monitor</a>
             <a href="#ch7-lvgl" class="nav-link">🖼️ standalone LVGL</a>
+        </div>
+
+        <div class="nav-group only-v202">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">第八章（2.0.2）</div>
+            <a href="#ch8-liftsys" class="nav-link">🦾 升降臂（LiftSys）入門</a>
         </div>
 
         <div class="nav-group only-v201">
@@ -113,7 +119,7 @@
         </div>
 
         <div class="nav-group">
-            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;"><span class="only-v200">第八章</span><span class="only-v201">第九章</span></div>
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;"><span class="only-v200">第八章</span><span class="only-v201">第九章</span><span class="only-v202">第九章</span></div>
             <a href="#ch8-quiz" class="nav-link">🎤 裁判訪問練習</a>
         </div>
     </nav>
@@ -156,7 +162,7 @@
                     <div class="callout-icon">🏷️</div>
                     <div class="callout-content">
                         <h4>你而家睇緊：2.0.0</h4>
-                        <p>呢個版本教你：底盤點行、點轉、點寫 auton、Brain 畫面（Dash）同 PID 調校。右上角可以隨時切去 <strong>2.0.1</strong>（有升降臂教學）。</p>
+                        <p>呢個版本教你：底盤點行、點轉、點寫 auton、Brain 畫面（Dash）同 PID 調校。右上角可切去 <strong>2.0.2</strong>（LiftSys，預設）或 <strong>2.0.1</strong>（Liftlib）。</p>
                         <ul>
                             <li>對應程式 branch：<code>EzLib_2.0.0_beta</code>（PROS 4.2.3）</li>
                             <li>Brain：Dash／PID 頁／動畫；auton 用 <code>auton_select</code></li>
@@ -178,6 +184,20 @@
                         <p>唔使一次讀晒。先跟例子抄，再慢慢改 port／度數。</p>
                     </div>
                 </div>
+                <div class="callout success only-v202">
+                    <div class="callout-icon">🏷️</div>
+                    <div class="callout-content">
+                        <h4>你而家睇緊：2.0.2（預設）</h4>
+                        <p>喺 2.0.1 基礎上，升降改用內建 <strong>ezlib::LiftSys</strong>（唔再靠 liftlib 馬達升降）：</p>
+                        <ul>
+                            <li><strong>LiftSys</strong> — soft limit 擋手動、raise／lower gains、<code>teleop</code>／<code>moveTo</code>／FF hold — 見<a href="#ch8-liftsys">第八章</a></li>
+                            <li>保留 Brain 右邊 <strong>CONSOLE</strong>（<code>ezlib::printf</code>）同 PID Dash 互切</li>
+                            <li>對應程式 branch：<code>EzLib_2.0.2_liftSys</code></li>
+                        </ul>
+                        <p>舊版說明仍可喺右上角切 <strong>2.0.1</strong>（Liftlib）／<strong>2.0.0</strong>。</p>
+                    </div>
+                </div>
+
                 </div>
                 
                 <!-- Preface: Warning Section -->
@@ -336,6 +356,18 @@
                 </div>
             </div>
             </div>
+
+            <div class="only-v202">
+            <p>2.0.2 升降喺 ezlib 入面；檔案位置可以咁記：</p>
+            <table class="notion-table">
+                <tr><th>你想改咩</th><th>去邊</th></tr>
+                <tr><td>auton／掣／氣壓</td><td><code>customs/</code></td></tr>
+                <tr><td>底盤 PID、開機</td><td><code>src/main.cpp</code></td></tr>
+                <tr><td>升降臂</td><td><code>main.cpp</code> 宣告 <code>ezlib::LiftSys armLift</code>；細節見<a href="#ch8-liftsys">第八章</a></td></tr>
+                <tr><td>Brain 印字（CONSOLE）</td><td><code>#include "ezlib/console.hpp"</code> 之後 <code>ezlib::printf</code></td></tr>
+            </table>
+            </div>
+
             <div class="callout info">
                 <div class="callout-icon">🖥️</div>
                 <div class="callout-content">
@@ -920,7 +952,7 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
                 <tr><td><code>k_dash_theme</code></td><td><code>3</code></td><td>Light — 白底黑字文字 Dash</td></tr>
             </table>
 
-            <table class="notion-table only-v201">
+            <table class="notion-table since-v201">
                 <tr><th>參數</th><th>值</th><th>效果</th></tr>
                 <tr><td><code>k_loading_theme</code></td><td><code>1</code></td><td>none — 跳過開機動畫</td></tr>
                 <tr><td><code>k_loading_theme</code></td><td><code>2</code></td><td>Type R — 三錶 ignition</td></tr>
@@ -964,7 +996,7 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             <p>Brain <strong>PID</strong> 頁（compact UI）：換 field、± 調值、+12／−12、h±90、Print、Ctrl、Pose0、L10／R10（十圈）。亦可 <strong>X+A</strong> 用 controller 調。線上先建立直覺：<a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue);">pid.ykyle.eu</a>。</p>
             <p><strong>建議流程（練習場）</strong>：拔場控 → 開機 → <strong>X+A</strong> 開 tuner → ←→ 揀 field；↑↓ 改數 → B／Y 測 ±12″ → 滿意就抄數字返 <code>initialize()</code> → <strong>X</strong> 退出。</p>
             </div>
-            <div class="only-v201">
+            <div class="since-v201">
             <p>想調底盤「推幾硬／煞幾急」：拔場控，手掣 <strong>X+A</strong>（或者 Brain Dash 上嘅 PID 掣）。</p>
             <p>Brain 畫面大概係：</p>
             <ul>
@@ -1000,7 +1032,7 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             </table>
             <p>十圈實作：每圈 4×(±90°) 絕對 turn（避開 wrap 無法一次轉 360°）。開始時會 <code>set_pose(0,0,0)</code>。調校開啟時肩鍵讓給 L1／R1／L2／R2；關閉後恢復。</p>
 
-            <div class="only-v201">
+            <div class="since-v201">
             <h3 id="ch7-console" style="margin-top: 30px;">📟 Brain 右邊 CONSOLE（印字俾自己睇）</h3>
             <p>入咗 PID 頁之後，右邊可以顯示你程式印出嚟嘅字——好似練習簿，方便睇「而家臂喺幾多度」。</p>
             <div class="code-block-wrapper">
@@ -1151,11 +1183,112 @@ liftlib::Subsystem armLift(
                 </div>
             </section>
 
-            <div class="section-divider"></div>
+            
+            <div class="section-divider only-v202"></div>
+
+            <section id="ch8-liftsys" class="only-v202">
+                <h2>第八章：升降臂入門（ezlib::LiftSys）</h2>
+                <p>2.0.2 升降用內建 <code>ezlib::LiftSys</code>（取代 liftlib 馬達部分，<strong>無氣動</strong>）。單位：輸出端度數；<strong>抬起 = <code>getPosition()</code> 增加</strong>。</p>
+
+                <div class="callout info">
+                    <div class="callout-icon">📌</div>
+                    <div class="callout-content">
+                        <h4>反轉約定（同 liftlib 唔一樣）</h4>
+                        <ul>
+                            <li>Port 只寫 <code>1..21</code>，<strong>不要負 port</strong></li>
+                            <li>要反轉用 <code>reversed = true</code>；<code>gear_ratio</code> 必須 <code>&gt; 0</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>1. 單馬達 + soft limit</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 main.cpp：一粒馬達</div>
+                    <div class="code-block">
+<span class="c-pp">#include</span> <span class="c-st">"ezlib/lift_sys.hpp"</span>
+
+<span class="c-kw">constexpr</span> <span class="c-kw">float</span> k_arm_gear = <span class="c-st">12.f</span> / <span class="c-st">84.f</span>;
+
+ezlib::LiftSys armLift(
+    {{<span class="c-st">10</span>, <span class="c-kw">false</span>, k_arm_gear}},
+    ezlib::<span class="c-fn">gains</span>(<span class="c-st">5.4f</span>, <span class="c-st">0.f</span>, <span class="c-st">1.f</span>, <span class="c-st">2.f</span>, <span class="c-st">127.f</span>, <span class="c-st">20.f</span>, <span class="c-st">4.f</span>),
+    <span class="c-st">0.f</span>, <span class="c-st">90.f</span>);
+                    </div>
+                </div>
+
+                <h3>2. initialize() 開機開一次</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 initialize()</div>
+                    <div class="code-block">
+armLift.<span class="c-fn">begin</span>();
+armLift.<span class="c-fn">setCoastBelow</span>(<span class="c-st">10.f</span>);
+armLift.<span class="c-fn">addPosition</span>(<span class="c-st">"high"</span>, <span class="c-st">90</span>);
+armLift.<span class="c-fn">addPosition</span>(<span class="c-st">"mid"</span>, <span class="c-st">50</span>);
+<span class="c-co">// 可選外部 rotation：armLift.setPositionSource(arm_rot);</span>
+<span class="c-co">// 升／落唔同 PID：armLift.setGains(raiseG, lowerG);</span>
+                    </div>
+                </div>
+
+                <h3>3. opcontrol（main 只綁掣）</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 opcontrol</div>
+                    <div class="code-block">
+<span class="c-kw">if</span> (controller.<span class="c-fn">get_digital_new_press</span>(DIGITAL_Y))
+    armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"high"</span>, <span class="c-kw">true</span>, <span class="c-st">600</span>);
+<span class="c-kw">if</span> (controller.<span class="c-fn">get_digital_new_press</span>(DIGITAL_A))
+    armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"mid"</span>, <span class="c-kw">true</span>, <span class="c-st">600</span>);
+
+armLift.<span class="c-fn">teleop</span>(
+    controller.<span class="c-fn">get_digital</span>(DIGITAL_R1),
+    controller.<span class="c-fn">get_digital</span>(DIGITAL_R2),
+    <span class="c-st">100.f</span>, <span class="c-st">50.f</span>);
+<span class="c-co">// stick：teleopAnalog(RIGHT_Y, 死區, 上升比例, 下降比例, invert)</span>
+                    </div>
+                </div>
+
+                <h3>4. 雙馬達／Auton</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 兩粒馬達（對面 reversed）</div>
+                    <div class="code-block">
+ezlib::LiftSys armLift(
+    {
+        {<span class="c-st">10</span>, <span class="c-kw">false</span>, k_arm_gear},
+        {<span class="c-st">11</span>, <span class="c-kw">true</span>,  k_arm_gear},
+    },
+    ezlib::<span class="c-fn">gains</span>(<span class="c-st">5.4f</span>, <span class="c-st">0</span>, <span class="c-st">1</span>, <span class="c-st">2</span>, <span class="c-st">127</span>, <span class="c-st">20</span>, <span class="c-st">4</span>),
+    <span class="c-st">0.f</span>, <span class="c-st">90.f</span>);
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 Auton</div>
+                    <div class="code-block">
+armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"high"</span>, <span class="c-kw">true</span>, <span class="c-st">1000</span>);
+armLift.<span class="c-fn">waitUntilDone</span>();
+<span class="c-kw">if</span> (!armLift.<span class="c-fn">isSettled</span>()) { <span class="c-co">/* timeout */</span> }
+                    </div>
+                </div>
+
+                <div class="callout warning">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-content">
+                        <h4>行為重點</h4>
+                        <ul>
+                            <li><strong>Soft limit</strong>：手動／PID 都硬擋；反向永遠可拉離。</li>
+                            <li><strong>鬆手</strong>：teleop 唔殺進行中 <code>moveTo</code>；Idle 用 brake + FF hold（唔係每幀叫 hold）。</li>
+                            <li><strong>低位 coast</strong>：<code>setCoastBelow</code> 以下 COAST，防過熱。</li>
+                            <li><strong>slew</strong>：增益入面嗰個；細啲＝起步更軟。</li>
+                            <li><strong>raise／lower gains</strong>：ctor 或 <code>setGains(raise, lower)</code>；<code>error≥0</code> 用 raise。</li>
+                        </ul>
+                    </div>
+                </div>
+                <p>完整 API 見 repo <code>docs/LiftSys.md</code>。branch：<code>EzLib_2.0.2_liftSys</code>。</p>
+            </section>
+
+<div class="section-divider"></div>
 
             <!-- Judge interview quiz -->
             <section id="ch8-quiz">
-                <h2><span class="only-v200">第八章</span><span class="only-v201">第九章</span>：裁判訪問練習（Judge Interview）</h2>
+                <h2><span class="only-v200">第八章</span><span class="only-v201">第九章</span><span class="only-v202">第九章</span>：裁判訪問練習（Judge Interview）</h2>
                 <p>用本站已寫的 EzLib 概念自測——題目模仿裁判常問的 stack／流程。答完即時看對錯；全部做完計分。可選<strong>容易</strong>或<strong>困難</strong>。</p>
                 <div class="callout info">
                     <div class="callout-icon">🎯</div>

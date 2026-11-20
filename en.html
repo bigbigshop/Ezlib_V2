@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-lang="en" data-docs-version="2.0.0">
+<html lang="en" data-lang="en" data-docs-version="2.0.2">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,8 +20,9 @@
         </select>
         <span class="version-bar-label">Version</span>
         <select id="docs-version" aria-label="Select EzLib docs version">
-            <option value="2.0.0">2.0.0</option>
+            <option value="2.0.2" selected>2.0.2</option>
             <option value="2.0.1">2.0.1</option>
+            <option value="2.0.0">2.0.0</option>
         </select>
     </div>
 
@@ -33,7 +34,7 @@
             </button>
             <div class="header-title">
                 <span class="page-icon" style="font-size: 20px;">🤖</span>
-                <span class="header-text">EzLib · 2.0.0</span>
+                <span class="header-text">EzLib · 2.0.2</span>
             </div>
         </div>
     </header>
@@ -101,10 +102,15 @@
             <a href="#ch7-debug" class="nav-link">🛠️ Telemetry &amp; shortcuts</a>
             <a href="#ch7-dash" class="nav-link">🖥️ Brain Dash themes</a>
             <a href="#ch7-tuner" class="nav-link">🎛️ PID tuner</a>
-            <a href="#ch7-console" class="nav-link only-v201">📟 Brain right CONSOLE</a>
+            <a href="#ch7-console" class="nav-link since-v201">📟 Brain right CONSOLE</a>
             <a href="#ch7-sd" class="nav-link">💾 SD card CSV</a>
             <a href="#ch7-monitor" class="nav-link">📱 Controller monitor</a>
             <a href="#ch7-lvgl" class="nav-link">🖼️ standalone LVGL</a>
+        </div>
+
+        <div class="nav-group only-v202">
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;">Chapter 8 (2.0.2)</div>
+            <a href="#ch8-liftsys" class="nav-link">🦾 Lift arm (LiftSys) intro</a>
         </div>
 
         <div class="nav-group only-v201">
@@ -113,7 +119,7 @@
         </div>
 
         <div class="nav-group">
-            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;"><span class="only-v200">Chapter 8</span><span class="only-v201">Chapter 9</span></div>
+            <div style="padding: 0 20px; font-size: 12px; color: var(--text-muted); margin-bottom: 5px;"><span class="only-v200">Chapter 8</span><span class="only-v201">Chapter 9</span><span class="only-v202">Chapter 9</span></div>
             <a href="#ch8-quiz" class="nav-link">🎤 Judge interview practice</a>
         </div>
     </nav>
@@ -156,7 +162,7 @@
                     <div class="callout-icon">🏷️</div>
                     <div class="callout-content">
                         <h4>You are viewing: 2.0.0</h4>
-                        <p>This version teaches chassis drive/turn, writing auton, Brain Dash, and PID tuning. Use the top-right control to switch to <strong>2.0.1</strong> (adds lift-arm docs).</p>
+                        <p>This version teaches chassis drive/turn, writing auton, Brain Dash, and PID tuning. Top-right: switch to <strong>2.0.2</strong> (LiftSys, default) or <strong>2.0.1</strong> (Liftlib).</p>
                         <ul>
                             <li>Matching code branch: <code>EzLib_2.0.0_beta</code> (PROS 4.2.3)</li>
                             <li>Brain: Dash / PID / anim; autons via <code>auton_select</code></li>
@@ -176,6 +182,20 @@
                             <li>Pressing <strong>Dash</strong> from the PID page clears the PID UI automatically (no more red monitor surprises)</li>
                         </ul>
                         <p>You do not need to read everything at once. Copy the examples first, then change ports and angles.</p>
+                    </div>
+                </div>
+
+                <div class="callout success only-v202">
+                    <div class="callout-icon">🏷️</div>
+                    <div class="callout-content">
+                        <h4>You are viewing: 2.0.2 (default)</h4>
+                        <p>On top of 2.0.1, lift is now built-in <strong>ezlib::LiftSys</strong> (no liftlib motor lift):</p>
+                        <ul>
+                            <li><strong>LiftSys</strong> — soft limits block manual, raise/lower gains, <code>teleop</code>/<code>moveTo</code>/FF hold — see <a href="#ch8-liftsys">Chapter 8</a></li>
+                            <li>Keeps Brain right <strong>CONSOLE</strong> (<code>ezlib::printf</code>) and PID↔Dash teardown</li>
+                            <li>Code branch: <code>EzLib_2.0.2_liftSys</code></li>
+                        </ul>
+                        <p>Older docs: top-right <strong>2.0.1</strong> (Liftlib) / <strong>2.0.0</strong>.</p>
                     </div>
                 </div>
                 </div>
@@ -335,6 +355,17 @@
                     <p>You do not need to understand every folder at once. Get the drivetrain moving first, then add the arm, then print values. When stuck, copy the examples below and change ports and angles.</p>
                 </div>
             </div>
+            </div>
+
+            <div class="only-v202">
+            <p>2.0.2 keeps lift inside ezlib. Folders:</p>
+            <table class="notion-table">
+                <tr><th>You want to change</th><th>Where</th></tr>
+                <tr><td>auton / buttons / pneumatics</td><td><code>customs/</code></td></tr>
+                <tr><td>chassis PID, boot</td><td><code>src/main.cpp</code></td></tr>
+                <tr><td>lift arm</td><td>declare <code>ezlib::LiftSys armLift</code> in <code>main.cpp</code>; see <a href="#ch8-liftsys">Chapter 8</a></td></tr>
+                <tr><td>Brain text (CONSOLE)</td><td><code>#include "ezlib/console.hpp"</code> then <code>ezlib::printf</code></td></tr>
+            </table>
             </div>
             <div class="callout info">
                 <div class="callout-icon">🖥️</div>
@@ -920,7 +951,7 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
                 <tr><td><code>k_dash_theme</code></td><td><code>3</code></td><td>Light — white/black text Dash</td></tr>
             </table>
 
-            <table class="notion-table only-v201">
+            <table class="notion-table since-v201">
                 <tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
                 <tr><td><code>k_loading_theme</code></td><td><code>1</code></td><td>none — skip boot animation</td></tr>
                 <tr><td><code>k_loading_theme</code></td><td><code>2</code></td><td>Type R — triple-gauge ignition</td></tr>
@@ -964,7 +995,7 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             <p>Brain <strong>PID</strong> page (compact UI): switch field, ± adjust, +12/−12, h±90, Print, Ctrl, Pose0, L10/R10 (ten revolutions). Or tune with controller via <strong>X+A</strong>. Build intuition online first: <a href="https://pid.ykyle.eu" target="_blank" style="color: var(--accent-blue);">pid.ykyle.eu</a>.</p>
             <p><strong>Suggested practice flow</strong>: unplug field control → power on → <strong>X+A</strong> open tuner → ←→ pick field; ↑↓ change value → B/Y test ±12″ → when happy, copy numbers into <code>initialize()</code> → <strong>X</strong> to exit.</p>
             </div>
-            <div class="only-v201">
+            <div class="since-v201">
             <p>To tune chassis “how hard it pushes / how hard it brakes”: unplug field control, press controller <strong>X+A</strong> (or the PID button on Brain Dash).</p>
             <p>Brain layout roughly:</p>
             <ul>
@@ -1000,7 +1031,7 @@ intake_motors.<span class="c-fn">move</span>(<span class="c-st">127</span>);
             </table>
             <p>Ten-rev implementation: each rev is 4×(±90°) absolute turns (avoids wrap so you cannot spin 360° in one command). Starts with <code>set_pose(0,0,0)</code>. While tuning, shoulders are for L1/R1/L2/R2; they return after exit.</p>
 
-            <div class="only-v201">
+            <div class="since-v201">
             <h3 id="ch7-console" style="margin-top: 30px;">📟 Brain right CONSOLE (print for yourself)</h3>
             <p>After entering the PID page, the right side can show text your program prints—like a practice notebook, handy for “what angle is the arm at now.”</p>
             <div class="code-block-wrapper">
@@ -1151,11 +1182,112 @@ liftlib::Subsystem armLift(
                 </div>
             </section>
 
-            <div class="section-divider"></div>
+            
+            <div class="section-divider only-v202"></div>
+
+            <section id="ch8-liftsys" class="only-v202">
+                <h2>Chapter 8: Lift arm intro (ezlib::LiftSys)</h2>
+                <p>2.0.2 uses built-in <code>ezlib::LiftSys</code> (replaces liftlib motor lift; <strong>no pneumatics</strong>). Units: output degrees; <strong>raise = <code>getPosition()</code> increases</strong>.</p>
+
+                <div class="callout info">
+                    <div class="callout-icon">📌</div>
+                    <div class="callout-content">
+                        <h4>Reverse convention (unlike liftlib)</h4>
+                        <ul>
+                            <li>Ports are <code>1..21</code> only — <strong>no negative ports</strong></li>
+                            <li>Use <code>reversed = true</code>; <code>gear_ratio</code> must be <code>&gt; 0</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>1. One motor + soft limits</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 main.cpp: single motor</div>
+                    <div class="code-block">
+<span class="c-pp">#include</span> <span class="c-st">"ezlib/lift_sys.hpp"</span>
+
+<span class="c-kw">constexpr</span> <span class="c-kw">float</span> k_arm_gear = <span class="c-st">12.f</span> / <span class="c-st">84.f</span>;
+
+ezlib::LiftSys armLift(
+    {{<span class="c-st">10</span>, <span class="c-kw">false</span>, k_arm_gear}},
+    ezlib::<span class="c-fn">gains</span>(<span class="c-st">5.4f</span>, <span class="c-st">0.f</span>, <span class="c-st">1.f</span>, <span class="c-st">2.f</span>, <span class="c-st">127.f</span>, <span class="c-st">20.f</span>, <span class="c-st">4.f</span>),
+    <span class="c-st">0.f</span>, <span class="c-st">90.f</span>);
+                    </div>
+                </div>
+
+                <h3>2. initialize() once</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 initialize()</div>
+                    <div class="code-block">
+armLift.<span class="c-fn">begin</span>();
+armLift.<span class="c-fn">setCoastBelow</span>(<span class="c-st">10.f</span>);
+armLift.<span class="c-fn">addPosition</span>(<span class="c-st">"high"</span>, <span class="c-st">90</span>);
+armLift.<span class="c-fn">addPosition</span>(<span class="c-st">"mid"</span>, <span class="c-st">50</span>);
+<span class="c-co">// optional: armLift.setPositionSource(arm_rot);</span>
+<span class="c-co">// raise/lower PID: armLift.setGains(raiseG, lowerG);</span>
+                    </div>
+                </div>
+
+                <h3>3. opcontrol (bind buttons only)</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 opcontrol</div>
+                    <div class="code-block">
+<span class="c-kw">if</span> (controller.<span class="c-fn">get_digital_new_press</span>(DIGITAL_Y))
+    armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"high"</span>, <span class="c-kw">true</span>, <span class="c-st">600</span>);
+<span class="c-kw">if</span> (controller.<span class="c-fn">get_digital_new_press</span>(DIGITAL_A))
+    armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"mid"</span>, <span class="c-kw">true</span>, <span class="c-st">600</span>);
+
+armLift.<span class="c-fn">teleop</span>(
+    controller.<span class="c-fn">get_digital</span>(DIGITAL_R1),
+    controller.<span class="c-fn">get_digital</span>(DIGITAL_R2),
+    <span class="c-st">100.f</span>, <span class="c-st">50.f</span>);
+<span class="c-co">// stick: teleopAnalog(RIGHT_Y, deadzone, scale_up, scale_down, invert)</span>
+                    </div>
+                </div>
+
+                <h3>4. Dual motor / Auton</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 Two motors (opposite reversed)</div>
+                    <div class="code-block">
+ezlib::LiftSys armLift(
+    {
+        {<span class="c-st">10</span>, <span class="c-kw">false</span>, k_arm_gear},
+        {<span class="c-st">11</span>, <span class="c-kw">true</span>,  k_arm_gear},
+    },
+    ezlib::<span class="c-fn">gains</span>(<span class="c-st">5.4f</span>, <span class="c-st">0</span>, <span class="c-st">1</span>, <span class="c-st">2</span>, <span class="c-st">127</span>, <span class="c-st">20</span>, <span class="c-st">4</span>),
+    <span class="c-st">0.f</span>, <span class="c-st">90.f</span>);
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header">📁 Auton</div>
+                    <div class="code-block">
+armLift.<span class="c-fn">moveTo</span>(<span class="c-st">"high"</span>, <span class="c-kw">true</span>, <span class="c-st">1000</span>);
+armLift.<span class="c-fn">waitUntilDone</span>();
+<span class="c-kw">if</span> (!armLift.<span class="c-fn">isSettled</span>()) { <span class="c-co">/* timeout */</span> }
+                    </div>
+                </div>
+
+                <div class="callout warning">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-content">
+                        <h4>Behavior highlights</h4>
+                        <ul>
+                            <li><strong>Soft limits</strong>: hard-block manual and PID; reverse always OK.</li>
+                            <li><strong>Release</strong>: teleop does not kill an in-flight <code>moveTo</code>; Idle uses brake + FF hold.</li>
+                            <li><strong>Coast below</strong>: <code>setCoastBelow</code> avoids stall heat near bottom.</li>
+                            <li><strong>slew</strong>: in gains; smaller = softer start.</li>
+                            <li><strong>raise/lower gains</strong>: ctor or <code>setGains(raise, lower)</code>; <code>error≥0</code> uses raise.</li>
+                        </ul>
+                    </div>
+                </div>
+                <p>Full API: repo <code>docs/LiftSys.md</code>. Branch: <code>EzLib_2.0.2_liftSys</code>.</p>
+            </section>
+
+<div class="section-divider"></div>
 
             <!-- Judge interview quiz -->
             <section id="ch8-quiz">
-                <h2><span class="only-v200">Chapter 8</span><span class="only-v201">Chapter 9</span>: Judge interview practice</h2>
+                <h2><span class="only-v200">Chapter 8</span><span class="only-v201">Chapter 9</span><span class="only-v202">Chapter 9</span>: Judge interview practice</h2>
                 <p>Self-test with EzLib ideas covered on this site—questions mirror common judge stack/process prompts. Instant right/wrong feedback; score at the end. Choose <strong>Easy</strong> or <strong>Hard</strong>.</p>
                 <div class="callout info">
                     <div class="callout-icon">🎯</div>

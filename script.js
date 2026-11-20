@@ -12,7 +12,7 @@ function docsPageForLang(lang) {
 
 function buildDocsUrl(lang, version, hash) {
     const url = new URL(docsPageForLang(lang), window.location.origin);
-    if (version === '2.0.1') url.searchParams.set('v', '2.0.1');
+    if (version && version !== '2.0.2') url.searchParams.set('v', version);
     url.hash = hash || '';
     return url.pathname + url.search + url.hash;
 }
@@ -22,7 +22,7 @@ function buildDocsUrl(lang, version, hash) {
     const langSelect = document.getElementById('docs-lang');
 
     function applyDocsVersion(v, pushUrl) {
-        if (v !== '2.0.0' && v !== '2.0.1') v = '2.0.0';
+        if (v !== '2.0.0' && v !== '2.0.1' && v !== '2.0.2') v = '2.0.2';
         document.documentElement.setAttribute('data-docs-version', v);
         if (verSelect) verSelect.value = v;
         const mobileTitle = document.querySelector('.mobile-header .header-text');
@@ -31,7 +31,7 @@ function buildDocsUrl(lang, version, hash) {
 
         if (pushUrl) {
             const url = new URL(window.location.href);
-            if (v === '2.0.0') url.searchParams.delete('v');
+            if (v === '2.0.2') url.searchParams.delete('v');
             else url.searchParams.set('v', v);
             history.replaceState(null, '', url.pathname + url.search + url.hash);
         }
@@ -40,7 +40,7 @@ function buildDocsUrl(lang, version, hash) {
         if (hash) {
             const target = document.getElementById(hash);
             if (target) {
-                const hidden = target.closest('.only-v200, .only-v201');
+                const hidden = target.closest('.only-v200, .only-v201, .only-v202, .since-v201');
                 if (hidden && getComputedStyle(hidden).display === 'none') {
                     const intro = document.getElementById('intro');
                     const area = document.getElementById('scroll-area');
@@ -53,7 +53,8 @@ function buildDocsUrl(lang, version, hash) {
     }
 
     const params = new URLSearchParams(window.location.search);
-    const initialVer = params.get('v') === '2.0.1' ? '2.0.1' : '2.0.0';
+    const rawVer = params.get('v');
+    const initialVer = (rawVer === '2.0.0' || rawVer === '2.0.1' || rawVer === '2.0.2') ? rawVer : '2.0.2';
     applyDocsVersion(initialVer, false);
 
     if (verSelect) {
@@ -932,15 +933,15 @@ function initJudgeQuiz() {
             explain: "接近目標進入 close，angularOut=0。"
         },
         {
-            q: "Liftlib 軟限位 soft min／max 何時生效？",
+            q: "LiftSys soft min／max 對手動 setVoltage／teleop？",
             choices: [
-                "addPosition 當下改寫目標",
-                "移動開始時 clamp，原值保留　　",
-                "只警告不限制馬達········　　",
-                "僅 nest／CONSOLE 開啟時"
+                "只擋 moveTo，手動可衝過",
+                "庫內硬擋；反向永遠可拉離邊界",
+                "只警告，唔停出力",
+                "要自己每幀 if 角度"
             ],
             answer: 1,
-            explain: "命名位置存原值；移動時才 soft clamp。"
+            explain: "有 limit 時 setVoltage／PID 都不可突破；反向永遠放行。"
         }
     ];
 
@@ -1155,174 +1156,13 @@ function initJudgeQuiz() {
             explain: "In close, angularOut=0."
         },
         {
-            q: "When do Liftlib soft min/max limits apply?",
+            q: "LiftSys soft min/max vs manual setVoltage/teleop?",
             choices: [
-                "addPosition rewrites targets·",
-                "Clamp at move; names stay raw",
-                "Dash warns; motors free·····　",
-                "Only if nest/CONSOLE open···　"
+                "Only clamps moveTo; manual can overshoot",
+                "Hard-blocked in-lib; reverse always allowed",
+                "Warn only; motors keep pushing",
+                "You must if-angle every loop yourself"
             ],
             answer: 1,
-            explain: "Stored raw; soft clamp applies when a move starts."
+            explain: "With limits, setVoltage/PID cannot breach; reverse always OK."
         }
-    ];
-
-    let difficulty = (localStorage.getItem('ezlib-quiz-difficulty') === 'hard') ? 'hard' : 'easy';
-
-    function currentBank() {
-        if (en) return difficulty === 'hard' ? questionBankEnHard : questionBankEnEasy;
-        return difficulty === 'hard' ? questionBankZhHard : questionBankZhEasy;
-    }
-
-    function leadForDifficulty() {
-        if (en) {
-            return difficulty === 'hard'
-                ? 'Hard · 20 edge-case questions (async defaults, wallReset axes, slew, waitUntil, soft limits, …).'
-                : 'Easy · 20 basics (units, bind, Dash, controls, odom/reset, dash_config, field, LVGL, auton_select).';
-        }
-        return difficulty === 'hard'
-            ? '困難 · 20 題邊界細節（async 預設、wallReset 軸向、slew、waitUntil、軟限位等）。'
-            : '容易 · 20 題基礎（單位、bind、Dash、練習掣、odom／reset、dash_config、場控、LVGL、auton_select）。';
-    }
-
-let session = [];
-    let index = 0;
-    let score = 0;
-    let answered = false;
-
-    function shuffleInPlace(arr) {
-        for (let i = arr.length - 1; i > 0; i -= 1) {
-            const j = Math.floor(Math.random() * (i + 1));
-            const tmp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = tmp;
-        }
-        return arr;
-    }
-
-    function buildSession() {
-        const bank = currentBank();
-        const order = shuffleInPlace(bank.map((_, i) => i));
-        session = order.map((qi) => {
-            const src = bank[qi];
-            const choiceOrder = shuffleInPlace(src.choices.map((_, i) => i));
-            const choices = choiceOrder.map((ci) => src.choices[ci]);
-            const answer = choiceOrder.indexOf(src.answer);
-            return { q: src.q, choices, answer, explain: src.explain };
-        });
-    }
-
-    function startSession() {
-        buildSession();
-        index = 0;
-        score = 0;
-        answered = false;
-        renderQuestion();
-    }
-
-    function setProgress(label, ratio) {
-        progressLabel.textContent = label;
-        progressFill.style.width = `${Math.max(0, Math.min(100, ratio * 100))}%`;
-    }
-
-    function showIntro() {
-        index = 0;
-        score = 0;
-        answered = false;
-        session = [];
-        setProgress(ui.ready, 0);
-        const easyLabel = en ? 'Easy' : '容易';
-        const hardLabel = en ? 'Hard' : '困難';
-        stage.innerHTML = `
-            <div class="judge-quiz-diff">
-                <label for="quiz-difficulty">${en ? 'Difficulty' : '難度'}</label>
-                <select id="quiz-difficulty" aria-label="${en ? 'Difficulty' : '難度'}">
-                    <option value="easy" ${difficulty === 'easy' ? 'selected' : ''}>${easyLabel}</option>
-                    <option value="hard" ${difficulty === 'hard' ? 'selected' : ''}>${hardLabel}</option>
-                </select>
-            </div>
-            <p class="judge-quiz-lead">${leadForDifficulty()}</p>
-            <button type="button" id="quiz-start-btn" class="judge-quiz-btn primary">${ui.start}</button>
-        `;
-        const diffSel = stage.querySelector('#quiz-difficulty');
-        diffSel.addEventListener('change', () => {
-            difficulty = diffSel.value === 'hard' ? 'hard' : 'easy';
-            localStorage.setItem('ezlib-quiz-difficulty', difficulty);
-            showIntro();
-        });
-        stage.querySelector('#quiz-start-btn').addEventListener('click', startSession);
-    }
-
-    function renderQuestion() {
-        answered = false;
-        const item = session[index];
-        const total = session.length;
-        setProgress(ui.progress(index + 1, total), index / total);
-        stage.innerHTML = `
-            <p class="judge-quiz-q">${item.q}</p>
-            <div class="judge-quiz-options" role="group" aria-label="${ui.optGroup}"></div>
-            <p class="judge-quiz-feedback" id="quiz-feedback"></p>
-            <div class="judge-quiz-actions">
-                <button type="button" id="quiz-next-btn" class="judge-quiz-btn primary" disabled>${ui.next}</button>
-            </div>
-        `;
-        const optionsEl = stage.querySelector('.judge-quiz-options');
-        const feedback = stage.querySelector('#quiz-feedback');
-        const nextBtn = stage.querySelector('#quiz-next-btn');
-
-        item.choices.forEach((text, i) => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'judge-quiz-option';
-            btn.textContent = `${String.fromCharCode(65 + i)}. ${text}`;
-            btn.addEventListener('click', () => {
-                if (answered) return;
-                answered = true;
-                const correct = i === item.answer;
-                if (correct) score += 1;
-                optionsEl.querySelectorAll('.judge-quiz-option').forEach((el, j) => {
-                    el.disabled = true;
-                    if (j === item.answer) el.classList.add('correct');
-                    if (j === i && !correct) el.classList.add('wrong');
-                });
-                feedback.className = `judge-quiz-feedback ${correct ? 'ok' : 'bad'}`;
-                feedback.textContent = (correct ? ui.correct : ui.wrong) + ' ' + item.explain;
-                nextBtn.disabled = false;
-                nextBtn.textContent = index === total - 1 ? ui.results : ui.next;
-                setProgress(ui.progress(index + 1, total), (index + 1) / total);
-            });
-            optionsEl.appendChild(btn);
-        });
-
-        nextBtn.addEventListener('click', () => {
-            if (!answered) return;
-            if (index >= total - 1) {
-                renderResult();
-            } else {
-                index += 1;
-                renderQuestion();
-            }
-        });
-    }
-
-    function renderResult() {
-        const total = session.length;
-        const pct = score / total;
-        const pass = pct >= PASS_RATIO;
-        const pctLabel = Math.round(pct * 100);
-        setProgress(ui.done(score, total), 1);
-        stage.innerHTML = `
-            <div class="judge-quiz-result">
-                <p class="score-line">${score} / ${total} (${pctLabel}%)</p>
-                <p class="${pass ? 'pass' : 'fail'}">${pass ? ui.pass : ui.fail}</p>
-                <p class="judge-quiz-lead" style="margin-top:12px;">${ui.passHint}</p>
-                <div class="judge-quiz-actions">
-                    <button type="button" id="quiz-retry-btn" class="judge-quiz-btn primary">${ui.retry}</button>
-                </div>
-            </div>
-        `;
-        stage.querySelector('#quiz-retry-btn').addEventListener('click', showIntro);
-    }
-
-    showIntro();
-}
